@@ -16,7 +16,7 @@ full_path = desk_path + 'pw' + '.txt'
 passwordFile = open(full_path)
 lines = passwordFile.readlines()  # Not read 2 times, or the 2nd will tell: list index out of range.
 
-keywords = (lines[0].strip("\n")).split(" ")
+keywords = (lines[0].strip("\n")).split(" ")  # qudiao \n
 passwords = lines[1].split(" ")
 PASSWORD = dict(zip(keywords, passwords))
 
