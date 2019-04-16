@@ -2,3 +2,5 @@
 _src/price/
 
 *.txt
+
+_src/ghostdriver.log
