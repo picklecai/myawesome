@@ -1,5 +1,11 @@
 # 正则表达式的用法  
 
+别人的笔记：[可能是最好的正则表达式的教程笔记了吧... - 掘金](https://juejin.im/post/5b5db5b8e51d4519155720d2)  
+
+[这可能是迄今最好的正则表达式语法测试教程学习笔记 - 神评(www.ishenping.com)](http://www.ishenping.com/ArtInfo/29302.html)
+
+这里还有个在线测试工具：[在线正则表达式测试](http://tool.oschina.net/regex)
+
 ## 1. 匹配过程  
 
 `import re`  
