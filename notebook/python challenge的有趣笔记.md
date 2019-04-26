@@ -275,5 +275,94 @@ for line in a:
 ```
 print('\n'.join([''.join([ch*count for ch, count in line]) for line in a]))
 ```
-里面一层的推导式结果list需要先join起来，作为字符串，再给外面一层的推导式用。
+里面一层的推导式结果list需要先join起来，作为字符串，再给外面一层的推导式用。  
+
+## 6. 压缩文件的读取  
+
+### 6.1 精简原来的程序  
+
+- 和一般文件一样，先open后read，区别在于需要解码二进制  
+- with的好处是出了with语句块后自动关闭file 
+- 列表推导式仍然是最简洁的，可以把5行代码变成一行，并意义仍然清晰  
+- 匹配文档内容中的数字串，如果匹配不到就跳出循环。有两种方式来实现，一是用if，一是用try。用if不如用try的语句块清晰，但是省一行代码。  
+- 没有数字就跳出。如果用while xx.isdigital()这样的，会直接走到最后一个文件，省略中间所有过程，导致无法打印。只好用`while True:` + try/if  
+
+原来的程序：  
+
+```
+import re,zipfile
+
+digitalRegex = re.compile('\d{2,5}')
+channelFile = zipfile.ZipFile('./channel.zip') # 对压缩文件进行操作
+list_numbers = [] # 为了存储数字串而设置的列表
+fileInfo = [] # 为了存储每个文件的info而设置的列表
+filename = channelFile.namelist()[-1]  # 因为readme放在最后一个
+while True:
+    try:
+        fileInfo.append(channelFile.getinfo(filename)) # 为了按序获得info
+        file = channelFile.open(filename)
+        text = bytes.decode(file.read()) # 和一般文件一样，先open后read，只不过结果是二进制的，需要解码
+        next_number = int(digitalRegex.search(text).group())
+        list_numbers.append(next_number) # 数字串列表，可以没有。只是为了视觉方便
+        file.close()
+        filename = str(next_number)+ '.txt' 
+    except:
+        print(text) # 没有数字就跳出。其实也可以用while xx.isdigital()
+        break
+strComment = []
+for info in fileInfo:
+    strComment.append(bytes.decode(info.comment)) #bytes转string，把所有info的comement读出来
+stringComment =''.join(strComment)
+print(stringComment)
+```
+
+精简后的程序：  
+
+```
+import re,zipfile
+
+channelFile = zipfile.ZipFile('./channel.zip') # 对压缩文件进行操作
+fileInfo = [] # 为了存储每个文件的info而设置的列表
+filename = channelFile.namelist()[-1]  # 因为readme放在最后一个
+while True:
+    fileInfo.append(channelFile.getinfo(filename)) # 为了按序获得info
+    with channelFile.open(filename) as file: # with的好处是出了with语句块后自动关闭file        
+        text = bytes.decode(file.read()) # 和一般文件一样，先open后read，区别在于需要解码二进制
+    if re.search(r'\d{2,5}', text)==None: # 用if没有用try的语句块清晰。
+        break
+    next_number = re.search(r'\d{2,5}',text).group()
+    filename = next_number + '.txt'
+print(text) # 没有数字就跳出。如果用while xx.isdigital()这样的，会直接走到最后一个文件，省略中间所有过程，导致无法打印。
+print(''.join([bytes.decode(info.comment) for info in fileInfo])) # bytes转string，把所有info的comement读出来
+```  
+
+### 6.2 不用re模块  
+
+抓住每个文件最后一个字符串都是数字字符串的漏洞，不用re模块  
+
+```
+import zipfile
+
+channelFile = zipfile.ZipFile('./channel.zip') # 对压缩文件进行操作
+filename = '90052.txt' # 抓住每个文件最后一个字符串都是数字字符串的漏洞，不用re模块
+while True:
+    try:
+        print(bytes.decode(channelFile.getinfo(filename).comment), end='') # 为了按序获得info
+        filename = bytes.decode(channelFile.open(filename).read()).split()[-1] + '.txt'
+    except:
+        break
+```
+ 
+ 异常简洁！！！  
+ 这个做法，什么存储结构都没用，直奔主题：打印，获取下一个文件名，再打印。什么时候文件名出错了，就表示做完了，退出循环。
+ 
+ 还是用字符串的split，给它设置分割符为数字前面的文本，也一样可以达到效果。  
+ 
+ ```
+filename = bytes.decode(channelFile.open(filename).read()).split('Next nothing is ')[1] + '.txt'
+
+ ```
+ 
+
+
 
