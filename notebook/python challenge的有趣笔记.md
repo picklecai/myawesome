@@ -242,3 +242,38 @@ requests方法明确多了。但是对于超时是否要等，这句话我还不
 
 `''.join(re.findall(r'nothing is (\d+)', p.text))`这一句可能避免了两个数字那个的坑。  
 
+## 5. pickle  
+
+### 5.1 不用文件，直接用pickle读取  
+
+可以不必先保存，直接用pickle，但是不用load，用loads。
+
+```
+import requests, pickle
+
+url = 'http://www.pythonchallenge.com/pc/def/banner.p'
+a = pickle.loads(requests.get(url).content)
+for i in range(len(a)):
+    for j in range(len(a[i])):
+        print(a[i][j][0]*int(a[i][j][1]),end='')
+    print('\n')
+```
+
+`requests.get(url)`，如果`.content`，则结果是二进制形式，如果`.text`，则结果是str。  
+
+### 5.2 善用列表推导式  
+
+上面的画法，改用列表推导式：  
+
+```
+for line in a:
+	print(''.join([ch*count for ch, count in line]))
+```
+
+合并列表推导式：  
+
+```
+print('\n'.join([''.join([ch*count for ch, count in line]) for line in a]))
+```
+里面一层的推导式结果list需要先join起来，作为字符串，再给外面一层的推导式用。
+
