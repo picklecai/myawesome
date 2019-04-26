@@ -363,6 +363,45 @@ filename = bytes.decode(channelFile.open(filename).read()).split('Next nothing i
 
  ```
  
+## 7. 灰度图像解析 
 
+### 7.1 直接使用图像文件网址，不下载   
 
+网页图片是可以直接当成文件读取的   
+
+```
+from PIL import Image, ImageColor
+import requests, urllib
+from io import BytesIO
+
+im = Image.open(BytesIO(requests.get('http://www.pythonchallenge.com/pc/def/oxygen.png').content))
+img = Image.open(BytesIO(urllib.request.urlopen('http://www.pythonchallenge.com/pc/def/oxygen.png').read()))
+```
+
+ `requests.get(url).content` 和 `urllib.request.urlopen(url).read()`等效，返回结果都是二进制的，需要通过`BytesIO`转换为Image可以打开的对象。
+
+### 7.2 ascii码转character，不用专门写函数  
+
+使用map函数，完全不需要专门写一个这样的转换函数。  
+map(参数1一个函数，参数2一个列表)  
+
+它的作用就是把参数2放入参数1中都运算一遍，返回结果。  
+
+原来写的函数：  
+
+```
+def chrlist(numList):
+    resultList = []
+    for i in numList:
+        resultList.append(chr(i))
+    return ''.join(resultList)
+```
+
+现在用map：  
+
+```
+alphaDicNext = [105, 110, 116, 101, 103, 114, 105, 116, 121]
+print(''.join(map(chr,alphaDicNext)))
+```
+又是一个5行变1行的例子！！！  
 
