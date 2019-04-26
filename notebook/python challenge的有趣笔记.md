@@ -213,3 +213,32 @@ re.findall(参数1Regex，参数2string)
 print(''.join(re.findall(r'[a-z]+[A-Z]{3}([a-z])[A-Z]{3}[a-z]+', msg)))
 ```
 
+## 4. 解链锁  
+
+怎么从网页上读取并解析内容。上次用的是urllib，好多人反应这个模块不好用。于是今天试了一下requests。和网络环境很有关系，很容易timeout。两种方法都是。  
+
+试了好几次，终于成功了。
+
+```
+import re, requests
+
+digital = '12345'
+i = 1
+while True:
+    url = 'http://www.pythonchallenge.com/pc/def/linkedlist.php' + '?nothing=' + digital
+    i+=1
+    p = requests.get(url, verify=False, timeout=None)
+    if 'Divide' in p.text:
+        digital = str(int(digital)/2)
+    else:
+        digital = ''.join(re.findall(r'nothing is (\d+)', p.text))
+    if p.text.find('html')!=-1:
+        break
+print(i, p.text)
+```
+requests方法明确多了。但是对于超时是否要等，这句话我还不怎么有数。
+
+`if 'Divide' in p.text`这一句，避免了16044/2的莫名其妙。  
+
+`''.join(re.findall(r'nothing is (\d+)', p.text))`这一句可能避免了两个数字那个的坑。  
+
