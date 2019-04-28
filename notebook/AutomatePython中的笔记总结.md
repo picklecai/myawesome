@@ -198,3 +198,80 @@ number = int(input('Enter an integer:'))
 caculateCollatz(number)
 ```
 
+## 8. pprint
+
+打印字典或嵌套字典，键值排序  
+
+`pprint.pprint`和`pprint.pformat`的区别是，后者是得到字符串，而不是None。所以：  
+
+```
+pprint.pprint(sth)  
+print(pprint.pformat(sth))
+```
+二者等价。  
+
+如果字典包含嵌套的列表或字典，pprint就更有用。  
+
+## 9. 判断是否汉字  
+
+
+不用正则：  
+```
+def is_chinese(uchar):
+    '''
+    判断一个unicode是否是汉字
+    '''
+    if uchar >= u'\u4e00' and uchar<=u'\u9fa5':
+        return True
+    else:
+        return False
+```
+
+用正则：  
+```
+u"[\u4e00-\u9fa5]+"
+```
+
+## 10. 字典排序  
+
+### 10.1 按放入顺序排序  
+
+```
+import collections
+count =  collections.OrderedDict()
+```
+### 10.2 按键排序 
+
+```
+dict(sorted(dictionary_name.items(), key=lambda item:item[0], reverse=True))
+```
+ 测试一下：  
+ 
+ ```
+ dictionary = {
+    'Pickle':32,
+    'Cindy':21,
+    'Alice':19,
+    'Coco':35,
+    'Mia':18
+}
+
+sorted(dictionary.items(), key=lambda item:item[0], reverse=True)
+ ```
+输出结果为：  
+`[('Pickle', 32), ('Mia', 18), ('Coco', 35), ('Cindy', 21), ('Alice', 19)]`
+
+确实按名字倒序了。
+
+测试有效。  
+
+### 10.3 按值排序  
+
+```
+dict(sorted(dictionary_name.items(), key=lambda item:item[1], reverse=True))
+```
+用reverse调节升序还是降序。True代表降序。  
+
+sorted结果是list，加上dict就能变回字典了。
+
+
