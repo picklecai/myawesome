@@ -89,3 +89,112 @@ def getAnswer(answerNumber):
         return 'AnswerNumber is %d . This is not in any month of the year.'%answerNumber 
 ```
 
+## 5. try-except  
+
+**执行跳到except代码块，就不会回到try代码块。**  
+
+比较这两段：  
+
+```
+def spam(divideBy):
+    try:
+        return 42/divideBy
+    except ZeroDivisionError:
+        print("Error:Invalid argument.")    
+print(spam(2))
+print(spam(12))
+print(spam(0))
+print(spam(6))
+```
+
+第二段：  
+```
+def spam(number):
+    return 42/number
+   
+try:
+    print(spam(2))
+    print(spam(12))
+    print(spam(0))
+    print(spam(6))
+except ZeroDivisionError:
+    print("Error:Invalid argument.")
+```
+第二段就不会执行`print(spam(6))`。
+
+## 6. python的容错  
+
+while子句不小心多缩进了4格，居然也运行正确。number变量拼写错误，导致次次死循环崩溃。
+
+死循环：  
+```
+def collatz(number):   
+    if number%2==0:
+        number = number//2
+    else:
+        number = number*3+1  
+    print(number)         
+    return number
+number = int(input('Enter an integer:'))
+while True:
+    if number!=1:
+        nubmer = collatz(number)
+    else:
+        break
+```
+
+多缩进：  
+
+```
+def collatz(number):   
+    if number%2==0:
+        number = number//2
+    else:
+        number = number*3+1  
+    print(number)         
+    return number
+number = int(input('Enter an integer:'))
+while number!=1:
+        nubmer = collatz(number)
+```
+
+## 7. global  
+
+```
+def collatz(number):   
+    if number%2==0:
+        number = number//2
+    else:
+        number = number*3+1  
+    collatzList.append(number)        
+    while number!=1:
+        number = collatz(number)
+    return number
+number = int(input('Enter an integer:'))
+collatzList = [number]
+collatz(number)
+print('The sequence collatz(%d) is: '%number, collatzList)
+```
+这段程序运行没问题。列表collatzList先赋值第一个number，然后在调用collatz的过程中逐渐增加。
+
+当把调用执行过程如下一样包装进另一个函数时，列表collatzList在调用collatz的过程中不再新增，因为它是局部变量。这时必须增加**global**
+```
+def collatz(number):   
+    if number%2==0:
+        number = number//2
+    else:
+        number = number*3+1  
+    collatzList.append(number)        
+    while number!=1:
+        number = collatz(number)
+    return number
+def caculateCollatz(number):
+    global collatzList
+    collatzList = [number]
+    collatz(number)
+    print('The sequence collatz(%d) is: '%number, collatzList)
+
+number = int(input('Enter an integer:'))
+caculateCollatz(number)
+```
+
