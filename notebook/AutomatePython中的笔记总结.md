@@ -275,3 +275,43 @@ dict(sorted(dictionary_name.items(), key=lambda item:item[1], reverse=True))
 sorted结果是list，加上dict就能变回字典了。
 
 
+## 11. 棋盘对弈切换双方  
+
+想了半天，用了键为1和-1的字典，每次完了就让键乘以-1。
+```
+chess = {1:'X', (-1):'O'}
+turn = 1
+if inputN in listNumber:
+    …… 
+    turn = turn *(-1)
+```
+
+但是书上是这样处理的：  
+
+```
+turn = 'X'  
+
+if ......:
+    if turn=='X':
+        turn = ‘O’
+    else:
+        turn = 'X'
+```
+貌似用字典比它的简洁？  
+
+## 12. 下过棋的位置不许再下  
+
+我用了一个列表来表示位置，每下一个位置，就把这个位置从列表中删除（不能用pop，必须用remove）  
+
+```
+listNumber = [1,2,3,4,5,6,7,8,9]
+while listNumber!=[]:    
+    inputN = int(input('%s turn. Where\'ll put?'%chess[turn]))
+    if inputN in listNumber:
+        ……
+        listNumber.remove(inputN)
+        ……
+```
+这样谁都不能在已经下过的位置再下棋了。
+
+
