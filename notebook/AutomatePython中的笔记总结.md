@@ -314,4 +314,8 @@ while listNumber!=[]:
 ```
 这样谁都不能在已经下过的位置再下棋了。
 
+## 色彩代码获取 
+
+[HTML颜色代码](https://htmlcolorcodes.com/zh/)
+
 
