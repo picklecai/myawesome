@@ -10,3 +10,7 @@ _src/ghostdriver.log
 _src/yazhitieba/yazhi.xlsx
 
 *.jpg
+
+*.png
+
+*.gif
