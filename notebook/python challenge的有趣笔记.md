@@ -40,6 +40,30 @@ str有个maketrans方法，专门用来解决密钥翻译为明文的问题。�
 
 ## 2. 字符串中的字符计数  
 
+### 2.0 读取网页html中的注释内容  
+
+```
+import os, requests, bs4
+
+# 从html文件中读取注释部分的内容
+url = 'http://www.pythonchallenge.com/pc/def/ocr.html'
+'''msgSoup = bs4.BeautifulSoup(requests.get(url).text) # 放弃用soup，改用comment
+print(msgSoup.find_all(string=lambda text:isinstance(text, bs4.element.Comment)))'''
+msgComment = bs4.Comment(requests.get(url).text)
+msg = (msgComment.partition('-->'))[2].strip('\n\n<!--\n').strip('\n-->')
+```
+
+[爬虫入门之爬取策略 XPath与bs4实现(五) - 诚实善良小郎君 - 博客园](https://www.cnblogs.com/why957/p/9235988.html)   
+
+每个节点都是Python对象，我们只用根据节点进行查询 , 归纳为4大对象
+
+- Tag #节点类型
+- NavigableString # 标签内容
+- BeautifulSoup #根节点类型
+- Comment #注释
+
+Comment是和Soup并列的一大类型。所以就放弃Soup了。
+
 ### 2.1 字典的setdefault  
 
 用字典来存放计数结果，形式为`{'某字符':countnum，……}`  
