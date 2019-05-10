@@ -169,5 +169,13 @@ fatal: index-pack failed
 caimeijuandeAir:local caimeijuan$ ```
 
 
+## 安装bottle
+
+用pip3安装：  
+
+```
+pip3 install bottle
+```
+又改用pip安装了一遍，才能在终端下用的。这回用的是python2.7.
 
 
