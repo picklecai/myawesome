@@ -98,6 +98,10 @@ s.sendall()
 
 ##### UDP协议数据发送和接收  
 
+[python实现UDP通信 - 艾欧尼亚归我了 - CSDN博客](https://blog.csdn.net/qq_41262248/article/details/80805269)
+
+> UDP，用户数据报传输协议，它位于TCP/IP协议的传输层，是一种无连接的协议，它发送的报文不能确定是否完整地到达了另外一端。UDP广泛应用于需要相互传输数据的网络应用中，如QQ使用的就是UDP协议。在网络质量不好的情况下，使用UDP协议时丢包现象十分严重，但UDP**占用资源少，处理速度快**，UDP依然是传输数据时常用的协议。
+
 ```
 s.recvfrom()
 s.sendto()
@@ -483,9 +487,15 @@ b'\xe6\x88\x91\xe8\xbf\x98\xe6\x98\xaf\xe6\x98\xaf\xe8\xbf\x98\xe6\x98\xaf\xe4\x
 
 ```
 
-### 6.4 print和save的函数，放在哪里？  
+### 6.4 print和save的函数，放在哪里？ 
+
+#### 6.4.1. print history & save两个函数的位置   
 
 发现这两个函数，放在客户端，直接用，也是可以的。根本不需要放在服务端去import。那么以前为什么要放在服务端呢？？？？
+
+思考了一个晚上，觉得两个函数，放在服务端，可能的原因是：服务器端就是负责‘计算’或者说‘处理数据’的，客户端只需要负责输入数据，获取处理结果（输出数据）。这个流程就像把服务器想象成一个黑匣子。我们不知道它具体干了什么，但知道输入数据，然后获得想要的输出。🉐️
+
+#### 6.4.2. 函数必须先定义再使用  
 
 还有个问题是，在客户端，它们不能在被调用之后再定义。
 
@@ -499,6 +509,45 @@ b'\xe6\x88\x91\xe8\xbf\x98\xe6\x98\xaf\xe6\x98\xaf\xe8\xbf\x98\xe6\x98\xaf\xe4\x
 
 那是因为自从用ipython以来，不喜欢写main()发现的情况。  
 
-所以**def main的作用**，一个是可以import，一个是可以把函数放在后面定义。
+所以**def main的作用**，一个是可以import，一个是可以把函数放在后面定义。  
 
+main中定义的变量，如果要在其他函数中使用，也必须定义成全局变量。  
+
+```
+def main():
+    global sel
+    sel = selectors.DefaultSelector()
+    
+……    
+
+def accept_wrapper(sock):
+    ……
+    sel.register(conn, events, data=data)    
+```
+
+### 6.5 socket小结  
+
+#### 6.5.1 如何写一个socket服务端程序？  
+
+- 规定好HOST & PORT  
+- 定义一个socket对象，规定好family和协议。family一般用IP4，协议分TCP & UDP
+- 如何写一个TCP阻塞式服务端？
+	- 协议写上SOCK_STREAM
+	- s.bind(地址)，地址就是(HOST,PORT)元组
+	- s.listen()，参数可以不写，会默认。
+	- conn, addr = s.accept(). accept就是阻塞，以下操作都在conn下进行了。可以用with conn方便操作。
+	- 循环：内含三个动作，发送（sendall），接收（recv），退出机制（当接收不到消息时自己退出，实际上这里接收不到消息不是客户端没有发出消息，而是客户端退出了连接）。
+
+- 如何写一个TCP非阻塞式服务端？
+	- 用selectors 
+	- s.bind(地址)，地址就是(HOST,PORT)元组
+	- s.listen()，参数可以不写，会默认。
+	- s.setblocking(False)
+	- sel.register(s, mask, data)
+	- 循环：……
+	  
+- 如何写一个UDP服务端？
+	- 协议写上DGRAM
+	- s.bind(地址)，地址就是(HOST,PORT)元组
+	- 循环：内含两个动作，接收是recvfrom，发送是sendto，必须规定好发送对象，所以sendto有两个参数：一个是data，一个是cs。接收也会产生这两个。
 

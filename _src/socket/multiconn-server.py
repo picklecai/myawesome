@@ -4,17 +4,28 @@ import selectors
 import socket
 import types
 
-HOST = '127.0.0.1'
-PORT = 65432
 
-sel = selectors.DefaultSelector()
-
-lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-lsock.bind((HOST, PORT))
-lsock.listen()
-print('listening on', (HOST, PORT))
-lsock.setblocking(False)
-sel.register(lsock, selectors.EVENT_READ, data=None)
+def main():
+    HOST = '127.0.0.1'
+    PORT = 65432
+    # 使用selector
+    global sel
+    sel = selectors.DefaultSelector()
+    # 定义socket
+    lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    lsock.bind((HOST, PORT))
+    lsock.listen()
+    print('listening on', (HOST, PORT))
+    lsock.setblocking(False)
+    sel.register(lsock, selectors.EVENT_READ, data=None)
+    # 进入循环
+    while True:
+        events = sel.select(timeout=None)
+        for key, mask in events:
+            if key.data is None:
+                accept_wrapper(key.fileobj)
+            else:
+                service_connection(key, mask)
 
 
 def accept_wrapper(sock):
@@ -43,10 +54,5 @@ def service_connection(key, mask):
             sent = sock.send(data.outb)
             data.outb = data.outb[sent:]
 
-while True:
-    events = sel.select(timeout=None)
-    for key, mask in events:
-        if key.data is None:
-            accept_wrapper(key.fileobj)
-        else:
-            service_connection(key, mask)
+if __name__ == '__main__':
+    main()
