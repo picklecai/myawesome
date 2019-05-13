@@ -204,3 +204,166 @@ Template 'hello_template.tpl' not found.
 所以模版文件就是一堆写好的页面，运行时放在同目录下就行了。有点印象了。  
 
 
+## 5. Youtube视频和GitHub文档——关于template，bottle等  
+
+还遇到了一些上传下载文档的。因为和我的目的有点远，就没看。
+
+[Intro to Templates in Bottle - YouTube](https://www.youtube.com/watch?v=kDJFjC3Fjxc)  
+
+从这里知道了template页面中可以循环打印列表：  
+
+```
+% for i in range(len(history)):
+    <p> {{history[i]}} </p>
+```
+
+还可以用if-else根据True或False，让页面打印不同的内容。
+
+[Bottle Python Web Framework - Static Files - YouTube](https://www.youtube.com/watch?v=JZEgN03vigk)
+
+讲页面载入静态文件，例如图片。
+
+[Creating a RESTFul API With Python and Bottle - YouTube](https://www.youtube.com/watch?v=BHAUJUuhiDw)
+
+在页面中载入字典，除了get和post，还有delete方法  
+
+[Bottle Routing Tutorial - YouTube](https://www.youtube.com/watch?v=Mb06RZBaL9w)
+
+这个是基础，怎么架网页，怎么使用变量，怎么写动态网页，以及在route中加入method。
+
+[Python Web Frameworks: 5 Bottle Todo Templates 2 - YouTube](https://www.youtube.com/watch?v=mY8DynrzIzk)
+
+静态文件也可以用来挂css文件。
+
+[How To Create Custom Error Pages in Bottle - YouTube](https://www.youtube.com/watch?v=4bUMh2cEJ7c)
+
+出错页面，404，405，500
+
+[Accessing URL Query Strings in Bottle - YouTube](https://www.youtube.com/watch?v=v0BXg1W9bt0)
+
+字符串参数放到url中。  
+
+
+【以下为两个来自github的教程】：  
+
+[nummy/bottle-cn: bottle中文文档](https://github.com/nummy/bottle-cn)
+
+bottle中文文档  
+
+[bottle-doc-zh-cn/tutorial_app.rst at master · myzhan/bottle-doc-zh-cn](https://github.com/myzhan/bottle-doc-zh-cn/blob/master/docs/tutorial_app.rst)
+
+貌似开发一个todolist，包含对sqlite3的应用。后面用得上。
+
+## 5. 改bottle程序  
+
+### 5.1 接受表单内容  
+
+想让程序获得页面上输入的内容，无论是return还是独立的template文件，都需要用form包裹起来
+
+```
+    <form action='/' method="post">
+        <h1>输入新记录</h1>
+        <input name="record" type="text" />
+        <p></p>
+        <input value="save" type="submit" />
+    </form>
+```
+
+### 5.2 页面上呈现不一样的返回内容
+
+想在输入成功后，返回不一样的内容，同时还能继续工作，就可以用if-else给页面写不同的内容  
+
+```
+% if savetxt == False:
+    <h1>打印历史记录</h1>
+    <a href='/history'>点击这里</a>
+    <form action='/' method="post">
+        <h1>输入新记录</h1>
+        <input name="record" type="text" />
+        <p></p>
+        <input value="save" type="submit" />
+    </form>
+
+% else:
+    <h1>打印历史记录</h1>
+    <a href='/history'>点击这里</a>
+    <form action='/' method="post">
+        <p>保存成功，继续输入：</p>
+        <h1>输入新记录</h1>
+        <input name="record" type="text" />
+        <p></p>
+        <input value="save" type="submit" />
+    </form>
+```
+
+template文件中，程序部分要用%开头。看到有写end的，但貌似不写也没问题。不知道这部分是不是python语法。  
+
+
+### 5.3 在页面上逐行打印list内容  
+
+打印字符串变量，是直接不分行的。但是记事本文件中是分行的， 所以改用list。逐行读出来，怎么逐行写进去呢？要在template文件中用for循环：  
+
+```
+% for i in range(len(history)):
+    <p> {{history[i]}} </p>
+```
+
+### 5.4 兼容网页形式和命令行形式  
+
+退出网页后，继续接受命令行端的输入。  
+
+找了很久bottle停止的办法，后来发现要求就写着简单的Ctrl+C。那就是第一次点击这个组合时，并没有无安全退出。之前试两个端口没成功，现在把if not run 这种句子拿掉，直接在socket连接中使用第二个端口。客户端程序里也用第二个端口，成功了。  
+
+所以代码就是简单的两行：  
+```
+    run(host=HOST, port=PORT1, debug=True, reloader=True)
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+       s.bind((HOST, PORT2))
+```
+无须其他累赘。
+
+另外，之所以这么长时间没发现Ctrl+C是可以的，是因为每次一按这个组合，就出现这样的提示：  
+
+```
+OSError: [Errno 48] Address already in use
+```  
+事实上之后能运行。但我不知道啊。现在我怀疑不用两个port也是可以的。经过实验，还是要用两个port。否则客户端就连接不上。s
+
+### 5.5 网页端输入中文的问题  
+
+在网页上输入中文，出来是乱码。但是结果又已经是string，不能对它decode了。找了很久解决方案，最后发现，可以先decode再get：  
+
+```
+newline = request.POST.decode('utf-8').get('record')  # 先decode再get，中文无碍
+```
+这里用的是POST，用forms也一样吧。试了确实这样。重点是**先decode再get**。
+
+### 5.6 两层quit问题  
+
+在客户端程序中，设置了两层quit，一层是choose，一层是输入内容。结果内层（输入内容）的quit输入后，服务端是可以退出的。而外层（和打印输入新内容并列的）的quit输入后，服务端不能自己退出。但此时重启命令行客户端，也会被服务器拒绝连接。  
+
+其实它们使用了同样的`sys.exit(0)`。
+
+```
+        choose = input('1. 打印历史记录 2. 输入今日记录 （输入quit退出程序）')
+        if choose == '1':
+            nbwebserver.print_history()
+        elif choose == '2':
+            data = input('今日记录，请输入（输入quit退出程序）：')
+            if data == 'quit':
+                sys.exit(0)
+            else:
+                s.sendall(bytes(data.encode('utf-8')))
+                data = s.recv(1024)
+                print('Data:', time.strftime('%Y/%m/%d %H:%M:%S'), data.decode('utf-8'))
+                nbwebserver.save_new(data.decode('utf-8'))
+        elif choose == 'quit':
+            sys.exit(0)
+```
+
+这里**不明白**。
+
+### 5.7 改进
+
+对比以前写的程序，以上全是改进。由衷感叹：现在写的，比以前写的漂亮多了！！！
+
