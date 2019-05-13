@@ -219,9 +219,25 @@ Template 'hello_template.tpl' not found.
 
 还可以用if-else根据True或False，让页面打印不同的内容。
 
+知道了end的作用。如果同时用了if和for，前面的if必须end，否则后面的for就不工作了。  
+
+```
+% if True:
+    <h1>It's Pickle.</h1>
+% else:
+    <h1>It's Ahcai</h1>
+
+% end
+
+% for i in range(10):
+    <p>This is loop index: {{i}} </p>
+```
+
 [Bottle Python Web Framework - Static Files - YouTube](https://www.youtube.com/watch?v=JZEgN03vigk)
 
 讲页面载入静态文件，例如图片。
+
+原来`reloader=True`的作用是，即使python程序发生了改变，也不需要重新启动，只要刷新就好了。
 
 [Creating a RESTFul API With Python and Bottle - YouTube](https://www.youtube.com/watch?v=BHAUJUuhiDw)
 
