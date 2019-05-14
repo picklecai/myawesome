@@ -1,8 +1,10 @@
 <html>
     <head>
         <title>Static File</title>
+        <!--Content-Type: application/json-->
     </head>
     <body>
+
         % if False:
             <h1>It's Pickle.</h1>
         % else:

@@ -208,7 +208,7 @@ Template 'hello_template.tpl' not found.
 
 还遇到了一些上传下载文档的。因为和我的目的有点远，就没看。
 
-[Intro to Templates in Bottle - YouTube](https://www.youtube.com/watch?v=kDJFjC3Fjxc)  
+### 5.1 [Intro to Templates in Bottle - YouTube](https://www.youtube.com/watch?v=kDJFjC3Fjxc)  
 
 从这里知道了template页面中可以循环打印列表：  
 
@@ -233,40 +233,110 @@ Template 'hello_template.tpl' not found.
     <p>This is loop index: {{i}} </p>
 ```
 
-[Bottle Python Web Framework - Static Files - YouTube](https://www.youtube.com/watch?v=JZEgN03vigk)
+### 5.2 [Bottle Python Web Framework - Static Files - YouTube](https://www.youtube.com/watch?v=JZEgN03vigk)
 
 讲页面载入静态文件，例如图片。
 
 原来`reloader=True`的作用是，即使python程序发生了改变，也不需要重新启动，只要刷新就好了。
 
-[Creating a RESTFul API With Python and Bottle - YouTube](https://www.youtube.com/watch?v=BHAUJUuhiDw)
+### 5.3 [Creating a RESTFul API With Python and Bottle - YouTube](https://www.youtube.com/watch?v=BHAUJUuhiDw)
 
 在页面中载入字典，除了get和post，还有delete方法  
 
-[Bottle Routing Tutorial - YouTube](https://www.youtube.com/watch?v=Mb06RZBaL9w)
+```
+# _*_coding:utf-8_*_
+from bottle import route, run, get, template, static_file
+
+animals = [{'name': 'Ellie', 'type': 'Elephant'},
+           {'name': 'Zed', 'type': 'Zebra'},
+           {'name': 'JumpJump', 'type': 'tiger'}]
+
+
+@get('/animal')
+def get_all():
+    return {'animals': animals}
+
+
+@get('/animal/<name>')
+def get_one(name):
+    the_animal = [animal for animal in animals if animal['name'] == name]
+    return the_animal[0]  # 为什么一定要dict呢？
+```
+在get_one中，the_animal是list，return时，如果没有加上[0]，或者外面加上{}，就会提示这样的：  
+
+```
+Error: 500 Internal Server Error
+Sorry, the requested URL 'http://127.0.0.1:8080/animal/Ellie' caused an error:
+Unsupported response type: <class 'dict'>
+
+```
+为什么一定要dict呢？
+
+当然list直接加{}肯定是不行的，还得按照字典的规矩来，变成这样： ` return {'animal': the_animal} ` 
+
+另外，get_one的参数，作者没有加，我觉得应该加，然后他出错啦！发现如果不加错误是：  
+
+```
+Exception:
+TypeError("get_one() got an unexpected keyword argument 'name'")
+
+```
+
+这里有个问题花了很久没想明白怎么测试：  
+
+```
+@post('/animal')
+def add_one():
+    new_animal = {'name': request.json.get('name'),
+                  'type': request.json.get('type')}
+    animals.append(new_animal)
+    return template('animal', animal=animals)
+```
+**从哪里输入json数据？**'name' 'type'有这样的类似forms的框吗？？？
+
+试过不管用的方法：  
+1. url中加入？json=
+2. 独立写一个animal.tpl页面，在页面上放上两个input，分别取名为name和type
+
+搜索，大多是爬虫，flask，django等。
+bottle官方文档[Tutorial: Todo-List Application — Bottle 0.13-dev documentation](https://bottlepy.org/docs/dev/tutorial_app.html)提到json的，也不是说这个的。
+
+遵照搜索结果建议，在animal.tpl中加入了这个：  
+```
+    <head>
+        <title>Static File</title>
+        Content-Type: application/json
+    </head>
+```
+
+暂时搁置吧。花费了4个半番茄了，近两个小时了。
+
+可能出于同一个原因，后面写的delete也不好测试，因为url形式和之前选定某一个是一模一样的。
+
+### 5.4 [Bottle Routing Tutorial - YouTube](https://www.youtube.com/watch?v=Mb06RZBaL9w)
 
 这个是基础，怎么架网页，怎么使用变量，怎么写动态网页，以及在route中加入method。
 
-[Python Web Frameworks: 5 Bottle Todo Templates 2 - YouTube](https://www.youtube.com/watch?v=mY8DynrzIzk)
+### 5.5 [Python Web Frameworks: 5 Bottle Todo Templates 2 - YouTube](https://www.youtube.com/watch?v=mY8DynrzIzk)
 
 静态文件也可以用来挂css文件。
 
-[How To Create Custom Error Pages in Bottle - YouTube](https://www.youtube.com/watch?v=4bUMh2cEJ7c)
+### 5.6 [How To Create Custom Error Pages in Bottle - YouTube](https://www.youtube.com/watch?v=4bUMh2cEJ7c)
 
 出错页面，404，405，500
 
-[Accessing URL Query Strings in Bottle - YouTube](https://www.youtube.com/watch?v=v0BXg1W9bt0)
+### 5.7 [Accessing URL Query Strings in Bottle - YouTube](https://www.youtube.com/watch?v=v0BXg1W9bt0)
 
 字符串参数放到url中。  
 
 
 【以下为两个来自github的教程】：  
 
-[nummy/bottle-cn: bottle中文文档](https://github.com/nummy/bottle-cn)
+### 5.8 [nummy/bottle-cn: bottle中文文档](https://github.com/nummy/bottle-cn)
 
 bottle中文文档  
 
-[bottle-doc-zh-cn/tutorial_app.rst at master · myzhan/bottle-doc-zh-cn](https://github.com/myzhan/bottle-doc-zh-cn/blob/master/docs/tutorial_app.rst)
+### 5.9 [bottle-doc-zh-cn/tutorial_app.rst at master · myzhan/bottle-doc-zh-cn](https://github.com/myzhan/bottle-doc-zh-cn/blob/master/docs/tutorial_app.rst)
 
 貌似开发一个todolist，包含对sqlite3的应用。后面用得上。
 
@@ -379,7 +449,14 @@ newline = request.POST.decode('utf-8').get('record')  # 先decode再get，中文
 
 这里**不明白**。
 
+今天操作，外层的quit都可以令服务端退出了。真奇怪。
+
 ### 5.7 改进
 
 对比以前写的程序，以上全是改进。由衷感叹：现在写的，比以前写的漂亮多了！！！
+
+### 5.8 又一个问题  
+
+晚上突发奇想，客户端程序能import服务端被route的程序吗？于是早上赶紧来试了试，不能。也不报错也不退出，就是不工作。所以像现在这样弄两套函数（打印历史记录和保存新记录）是必要的。
+
 
