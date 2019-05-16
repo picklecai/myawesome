@@ -30,3 +30,5 @@ _src/yazhitieba/yazhi.xlsx
 *.zip
 
 *.pdf
+
+_src/sae/pickle/
