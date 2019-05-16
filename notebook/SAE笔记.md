@@ -4,6 +4,25 @@
 
 玩了半天，不要关机了连地址都没记住。写在这里吧。
 
+## 0. 安装
+
+`source activate python35`
+`pip install sae-python-dev`  
+pip3安装失败，改用pip安装了，一堆error，不过能import
+
+```
+ERROR: graphlab-create 1.8.5 requires awscli==1.6.2, which is not installed.
+ERROR: graphlab-create 1.8.5 requires genson==0.1.0, which is not installed.
+ERROR: graphlab-create 1.8.5 requires mixpanel-py==3.1.1, which is not installed.
+ERROR: graphlab-create 1.8.5 requires sseclient==0.0.8, which is not installed.
+ERROR: graphlab-create 1.8.5 has requirement boto==2.33.0, but you'll have boto 2.38.0 which is incompatible.
+ERROR: graphlab-create 1.8.5 has requirement certifi==2015.04.28, but you'll have certifi 2018.11.29 which is incompatible.
+ERROR: graphlab-create 1.8.5 has requirement decorator==3.4.0, but you'll have decorator 4.0.4 which is incompatible.
+ERROR: graphlab-create 1.8.5 has requirement jsonschema==2.5.0, but you'll have jsonschema 2.4.0 which is incompatible.
+ERROR: graphlab-create 1.8.5 has requirement requests==2.3.0, but you'll have requests 2.21.0 which is incompatible.
+ERROR: graphlab-create 1.8.5 has requirement tornado==4.1, but you'll have tornado 4.3 which is incompatible.
+```
+
 ## 1. 创建新应用  
 
 控制台，点击创建新应用。原本担心只支持python2.7，发现如果选择独享环境就能自定义。代码管理方式也可以选择git。二级域名选择了pickle。
