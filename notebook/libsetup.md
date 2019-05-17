@@ -1,4 +1,4 @@
-安装库
+# 安装库
 
 使用pip3安装了几个库：  
 
@@ -177,5 +177,121 @@ caimeijuandeAir:local caimeijuan$ ```
 pip3 install bottle
 ```
 又改用pip安装了一遍，才能在终端下用的。这回用的是python2.7.
+
+
+## 安装web.py
+
+用pip3安装：
+
+```
+pip3 install web.py
+```
+.py后缀名不可少。 
+
+给出提示：
+
+```
+  import utils, db, net, wsgi, http, webapi, httpserver, debugerror
+    ModuleNotFoundError: No module named 'utils'
+    
+    ----------------------------------------
+
+```
+于是又安装utils，虽然不知道是干啥的。
+
+```
+ pip3 install utils
+```
+秒装完，又提示：  
+
+```
+  import utils, db, net, wsgi, http, webapi, httpserver, debugerror
+    ModuleNotFoundError: No module named 'db'
+```
+接着来：
+
+```
+pip3 install db
+```
+再试发现一个搞笑的反馈：  
+
+```
+ Using cached https://files.pythonhosted.org/packages/fc/58/21649fc1849b1f688f3d42e25e79615cc573469ea57eaa9e6af70b1e3b87/web.py-0.39.tar.gz
+    Complete output from command python setup.py egg_info:
+    Traceback (most recent call last):
+      File "<string>", line 1, in <module>
+      File "/private/var/folders/ll/hf0rtrgx4qb0vffp086qfkx80000gn/T/pip-install-_eb7s830/web.py/setup.py", line 6, in <module>
+        from web import __version__
+      File "/private/var/folders/ll/hf0rtrgx4qb0vffp086qfkx80000gn/T/pip-install-_eb7s830/web.py/web/__init__.py", line 14, in <module>
+        import utils, db, net, wsgi, http, webapi, httpserver, debugerror
+      File "/Users/caimeijuan/anaconda/envs/python35/lib/python3.7/site-packages/db/__init__.py", line 69
+        print "var", var
+                  ^
+    SyntaxError: Missing parentheses in call to 'print'. Did you mean print("var", var)?
+    
+
+```
+这又不是我写的，我怎知道它不用python3？于是进去手动改了。下一个没装的库来了：  
+
+```
+     import urlparse
+    ModuleNotFoundError: No module named 'urlparse'
+    
+
+```
+仔细看了一下，又是db文件里，继续手动改至`from urllib.parse import urlparse`。
+
+下一个库：  
+
+```
+  import utils, db, net, wsgi, http, webapi, httpserver, debugerror
+    ModuleNotFoundError: No module named 'net'
+```
+
+看到这里，觉得bottle真是天使啊！
+
+这个net，直接安装不了，搜索出来的都是nets。
+
+然后发现这个：  
+
+[python 3.x中安装web.py - 注意积累 - CSDN博客](https://blog.csdn.net/u012046327/article/details/78861525)
+
+好，那我也按照这个来吧，
+
+```
+pip3 install web.py==0.40.dev0
+
+```
+
+结果成功了。
+
+```
+Installing collected packages: web.py
+Successfully installed web.py-0.40.dev0
+```
+
+## 安装 libxml2dom
+
+```
+pip3 install libxml2dom
+```
+秒装。
+
+不料，装完意想不到的一幕出现了。import了一下，出现了这个：  
+
+```
+>>> import libxml2dom
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/caimeijuan/anaconda/envs/python35/lib/python3.7/site-packages/libxml2dom/__init__.py", line 151
+    raise KeyError, name
+                  ^
+SyntaxError: invalid syntax
+```
+看到这里（[python-Ubuntu系统Pycharm安装Scrapy相关的包libxml2dom时报了个错SyntaxError: invalid syntax——CSDN问答频道](https://ask.csdn.net/questions/754517)）一兄弟也是这样的情况，果断卸载了。
+
+```
+pip3 uninstall libxml2dom
+```
 
 
