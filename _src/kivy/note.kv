@@ -1,0 +1,63 @@
+MyForm:
+<MyForm>:
+    text_input: text_box
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding:20
+        spacing:10
+
+        TextInput:
+            id:text_box
+            font_name:'STHeiti Medium.ttc'
+
+        Button:
+            text:'Button A'
+            size_hint:1,.2
+            on_press:root.buttona_act()
+
+        Button:
+            text:'Button B'
+            size_hint:1,.2
+            on_press:root.my_callback()
+
+        Label:
+            text:root.label_text1
+            text_size:self.size
+            canvas.before:
+                Color:
+                    rgb:255,0,255
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+            halign:'left'
+            valign:'top'
+            font_name:'STHeiti Medium.ttc'
+
+        Button:
+            text:'Start'
+            size_hint:1,.2
+            on_press:root.buttonb_act()
+
+        Label:
+            id:time_counter
+            text:'00:00:00'
+            font_size:50
+            text_size:self.size
+            canvas.before:
+                Color:
+                    rgb:0,0,255
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+            halign:'center'
+            valign:'middle'
+            font_name:'STHeiti Medium.ttc'
+
+        Slider:
+            id:time_slider
+            size_hint:1,.2
+            min:0
+            max:90
+            value:0
+            on_value: time_counter.text = '%02d:%02d.%02d' % (time_slider.value//60, int(time_slider.value%60), int(time_slider.value%1*100))
