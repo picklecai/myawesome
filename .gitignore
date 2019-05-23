@@ -32,3 +32,5 @@ _src/yazhitieba/yazhi.xlsx
 *.pdf
 
 _src/sae/pickle/
+
+_src/kivy/python-for-android/
