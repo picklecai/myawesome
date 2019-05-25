@@ -524,3 +524,74 @@ if __name__ == '__main__':
 现在可以得到鲜蓝色了。
 
 
+### 3.9 背景图像  
+
+在时钟中，想给时间区域加个背景图像，发现只要在rectangle中加入source就可以了。不过在原来的canvas下加，背景颜色就没有了。解决办法是新增一个rectangle，不需要其他gridLayout，在新增中加source。
+
+```
+            canvas.before:
+                Color:
+                    rgba:1,1,0,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size           
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+                    source:'wheel.gif'
+```
+觉得比例不对，但是rectangle不支持size_hint，于是把size写死，写成（300，300）
+
+下一步是觉得字覆盖在图片上不好看。于是调整为字体靠上，但是有padding。padding只能是元组或list，不是4个，是两个。
+
+```
+            halign:'center'
+            valign:'top'
+            padding:(10,100)
+```
+现在界面就很和谐了。
+
+### 3.10 动画
+
+但是，原本是个gif的图片，到这里也不动了。想必要让gif动起来，不能让它做背景图片。
+
+查到了`anim_delay `是控制动画播放速度的，它是Image的属性。于是直接在rectangle后加了个image，错误提示：  
+
+```
+You can add only graphics Instruction in canvas.
+```
+于是把它挪出了canvas，马上就动起来了。太帅了，虽然‘偏安于一隅’。
+
+```
+            canvas.before:
+                Color:
+                    rgba:1,1,0,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size           
+                Rectangle:
+                    pos:self.pos
+                    size:300,300
+                    source:'wheel.gif'
+            Image:
+                pos:self.pos
+                size:self.size
+                source:'wheel.gif'
+                anim_delay:1/20
+```
+接下来就只是布局问题了。改成这样就行了：  
+
+```
+            canvas.before:
+                Color:
+                    rgba:1,1,0,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+            Image:
+                pos:self.pos
+                size:300,300
+                source:'wheel.gif'
+                anim_delay:1/20
+```
+
