@@ -1,0 +1,52 @@
+MyForm:
+<MyForm>:
+    BoxLayout:
+        orientation:'vertical'
+        padding:10
+        spacing:10
+
+        Slider:
+            id:time_slider
+            size_hint:1,.2
+            min:0
+            max:120
+            on_value:time_counter.text = '%02d:%02d.%02d' % (time_slider.value//60, int(time_slider.value%60), int(time_slider.value%1*100))
+
+        Button:
+            text:'Start'
+            size_hint:1,.1
+            background_normal:''
+            background_color:0,0,1,1
+            font_size:24
+            bold:True
+            on_press:root.start()
+
+        Label:
+
+            GridLayout:
+                size_hint:1,1
+                cols:1
+                Label:
+                    id:time_counter
+                    text:'00:00.00'
+                    size_hint:1,1
+                    font_size:50
+                    text_size:self.size
+                    color:0,0,0,1
+                    halign:'center'
+                    valign:'middle'
+                    font_name:'STHeiti Medium.ttc'        
+                    canvas.before:
+                        Color:
+                            rgba:1,1,0,1
+                        Rectangle:
+                            pos:self.pos
+                            size:self.size           
+                Label:
+                    canvas.before:
+                        Color:
+                            rgba:1,1,0,1
+                        Rectangle:
+                            pos:self.pos
+                            size:self.size
+                            source:'wheel.gif'
