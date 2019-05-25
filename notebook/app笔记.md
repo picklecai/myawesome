@@ -140,6 +140,93 @@ MyForm:
 
 ```
 
+备份一下Box布局：  
+
+```
+# note.kv
+
+MyForm:
+<MyForm>:
+    text_input: text_box
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding:20
+        spacing:10
+        Label:
+            text:'INPUT:'
+            text_size:self.size
+            bold:True
+            font_size:18
+            size_hint:1,.05
+            color:1,1,1,1
+            canvas.before:
+                Color:
+                    rgba:0,0,0,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+            halign:'left'
+            valign:'middle'
+            font_name:'STHeiti Medium.ttc'
+
+        TextInput:
+            id:text_box
+            font_name:'STHeiti Medium.ttc'
+            size_hint:1,.2
+
+        Button:
+            text:'Save It'
+            size_hint:1,.1
+            background_normal:''
+            background_color:0,0,1,1
+            on_press:root.save()
+
+        Label:
+            size_hint:1,.05
+
+        Label:
+            text:'HISTORY:'
+            text_size:self.size
+            bold:True
+            font_size:18
+            size_hint:1,.05
+            color:1,1,1,1
+            canvas.before:
+                Color:
+                    rgba:0,0,0,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+            halign:'left'
+            valign:'middle'
+            font_name:'STHeiti Medium.ttc'
+
+        Button:
+            text:'Print History'
+            size_hint:1,.1
+            on_press:root.print_history()
+
+        Button:
+            text:'Clear'
+            size_hint:1,.1
+            on_press:root.clear() 
+
+        Label:
+            text:root.label_text
+            text_size:self.size
+            color:1,0,0,1
+            canvas.before:
+                Color:
+                    rgba:1,1,0,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+            halign:'left'
+            valign:'top'
+            font_name:'STHeiti Medium.ttc'            
+```
+
 ### 3.3 动作设置在哪个类里？  
 
 ```
@@ -344,5 +431,96 @@ class MyForm(BoxLayout):
 [4.5事件和属性 · Kivy官方文档中文翻译（基于Kivy1.9.1） · 看云](https://www.kancloud.cn/gthank/kivydoc/127813)
 
 
+### 3.7 窗口尺寸
+
+想把窗口设置成手机大小。没成功，不过其中全屏成功了：  
+
+```
+
+#!/usr/bin/env python
+# _*_coding:utf-8_*_
+
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.properties import ObjectProperty, StringProperty
+from kivy.core.window import Window
+
+
+class MyForm(BoxLayout):
+    text_input = ObjectProperty()
+    label_text = StringProperty()
+
+    def buttona_act(self):
+        print(self.text_input.text)
+        self.label_text = self.text_input.text
+
+
+class TextApp(App):
+
+    def build(self):
+        Window.fullscreen = 'auto'
+        Window.size = (750, 1206)
+        self.title = 'Text Output'
+        return MyForm()
+
+if __name__ == '__main__':
+    TextApp().run()
+```
+试了几次，明白了。是750*1206这一对数字中，1206超出了我的电脑的高度尺寸。设置小尺寸就可以了。
+
+### 3.8 颜色
+
+颜色的事情总算搞明白了，原来1等于255:  
+
+```
+        Label:
+            text:root.label_text
+            text_size:self.size
+            color:0,0,1,1
+            canvas.before:
+                Color:
+                    rgba:1,0,0,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+            halign:'left'
+            valign:'top'
+            font_name:'STHeiti Medium.ttc'
+```
+
+无论是rgb还是color，0就是0，而1就是255，所以只能表达6种纯色，表达不了其他颜色。
+
+在上面的代码中，canvas代表标签背景色（蒙上了一层彩色布），color那里代表了字体颜色。
+
+以上是标签的颜色，以下是按钮的颜色：  
+
+```
+        Button:
+            text:'Save It'
+            size_hint:1,.1
+            background_color:0,0,1,1
+            on_press:root.save()
+
+```
+
+如果也用canvas，before只能留一条边，after则会覆盖整个按钮，让它无法工作。所以要用background_color。
+
+以上代码存在这样的问题：
+
+[在Kivy中更改Button的背景颜色 | landcareweb.com](http://landcareweb.com/questions/39055/zai-kivyzhong-geng-gai-buttonde-bei-jing-yan-se)
+
+> 啊，这是一个常见的混乱。问题是 Button.background_color 真的是作为一种 着色，而不仅仅是块颜色。由于默认背景是灰色图像（如果你制作一个没有样式的按钮，你通常会看到的图像），你最终看到的是那个灰色图像的红色 - 它是你观察到的暗红色。
+
+更改：  
+
+```
+        Button:
+            text:'Save It'
+            size_hint:1,.1
+            background_normal:''
+            background_color:0,0,1,1
+            on_press:root.save()
+```
+现在可以得到鲜蓝色了。
 
 

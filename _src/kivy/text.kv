@@ -1,0 +1,94 @@
+MyForm:
+<MyForm>:
+    text_input: text_box
+
+    BoxLayout:
+        orientation:'vertical'
+        padding:10
+        spacing:10 
+       
+        Label:
+            text:'INPUT:'
+            size_hint:1,.05
+            text_size:self.size
+            bold:True
+            font_size:18
+
+            color:1,1,1,1
+            canvas.before:
+                Color:
+                    rgba:0,0,0,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+            halign:'left'
+            valign:'middle'
+            font_name:'STHeiti Medium.ttc'
+
+        TextInput:
+            id:text_box
+            font_name:'STHeiti Medium.ttc'
+            size_hint:1,.1
+
+        Button:
+            text:'Save It'
+            size_hint:1,.05
+            background_normal:''
+            background_color:0,0,1,1
+            on_press:root.save()
+
+        Label:
+            text:'HISTORY:'
+            text_size:self.size
+            bold:True
+            font_size:18
+            size_hint:1,.05
+            color:1,1,1,1
+            canvas.before:
+                Color:
+                    rgba:0,0,0,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+            halign:'left'
+            valign:'middle'
+            font_name:'STHeiti Medium.ttc'
+
+        GridLayout:
+            rows:1
+            size_hint:1,.05  
+
+            Button:
+                text:'Print History'
+                size_hint:1,.05
+                on_press:root.print_history()
+
+            Button:
+                text:'Clear'
+                size_hint:1,.05
+                on_press:root.clear() 
+        GridLayout:
+            rows:1
+
+            Label:
+                text:root.label_text
+                text_size:self.size
+                color:1,0,0,1
+                canvas.before:
+                    Color:
+                        rgba:1,1,0,1
+                    Rectangle:
+                        pos:self.pos
+                        size:self.size
+                halign:'left'
+                valign:'top'
+                font_name:'STHeiti Medium.ttc' 
+
+            ScrollView:
+                size_hint:None,1
+                width:20
+                GridLayout:
+                    cols:1
+                    size_hint_y:None
+                    minimum_height:self.height
+                    Button
