@@ -595,3 +595,59 @@ You can add only graphics Instruction in canvas.
                 anim_delay:1/20
 ```
 
+### 3.11 倒计时  
+
+#### 问题1: 不停止循环
+
+```
+class MyForm(BoxLayout):
+    label_text = StringProperty()
+    global num
+    num = 10
+
+    def countback(self, *argv):
+        global num
+        self.label_text = str(num)
+        num = num - 1
+        self.update()
+        if num <= 0:
+            print('Byebye.')
+            # Clock.unschedule(self.countback)
+            return False
+
+    def update(self):
+        Clock.schedule_interval(self.countback, 1)
+```
+
+退出循环，如果只依靠`return False`，则不会停止，会一直执行这个print。加上注释的这句`Clock.unschedule`，马上就好了，会停在1。
+
+#### 问题2: 不是依次递减1
+
+以上代码，在运行时，不依次递减。但是循环停止了后，如果继续按按钮，则会递减1。
+
+按照时钟那个程序的样式，不用schedule_interval，还用schedule_once，是可以实现的：  
+
+```
+class MyForm(BoxLayout):
+    label_text = StringProperty()
+    global num
+    num = 10
+
+    def countback(self):
+        global num
+        self.update()
+
+    def update(self):
+        Clock.schedule_once(self.callback, 1)
+
+    def callback(self, *argv):
+        global num
+        self.label_text = str(num)
+        num = num - 1
+        self.update()
+        if num < 0:
+            print('Byebye.')
+            Clock.unschedule(self.callback)
+            return False
+```
+

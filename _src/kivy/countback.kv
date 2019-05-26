@@ -1,0 +1,26 @@
+MyForm:
+<MyForm>:
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding:10
+        spacing:10
+
+        Button:
+            text:'Count Back'
+            size_hint:1,.2
+            on_press:root.countback()
+
+        Label:
+            text:root.label_text
+            text_size:self.size
+            font_size:36
+            halign:'center'
+            valign:'middle'
+            font_name:'STHeiti Medium.ttc'
+            canvas.before:
+                Color:
+                    rgba:1,0,1,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
