@@ -12,7 +12,7 @@ MyForm:
             size_hint:1,.05
             text_size:self.size
             bold:True
-            font_size:18
+            font_size:24
 
             color:1,1,1,1
             canvas.before:
@@ -32,7 +32,9 @@ MyForm:
 
         Button:
             text:'Save It'
-            size_hint:1,.05
+            size_hint:1,.1
+            # bold:True
+            font_size:20
             background_normal:''
             background_color:0,0,1,1
             on_press:root.save()
@@ -41,7 +43,7 @@ MyForm:
             text:'HISTORY:'
             text_size:self.size
             bold:True
-            font_size:18
+            font_size:24
             size_hint:1,.05
             color:1,1,1,1
             canvas.before:
@@ -56,39 +58,44 @@ MyForm:
 
         GridLayout:
             rows:1
-            size_hint:1,.05  
+            size_hint:1,.1  
 
             Button:
                 text:'Print History'
                 size_hint:1,.05
                 on_press:root.print_history()
+                # bold:True
+                font_size:20 
 
             Button:
                 text:'Clear'
                 size_hint:1,.05
+                # bold:True
+                font_size:20                 
                 on_press:root.clear() 
-        GridLayout:
-            rows:1
 
-            Label:
-                text:root.label_text
-                text_size:self.size
-                color:1,0,0,1
-                canvas.before:
-                    Color:
-                        rgba:1,1,0,1
-                    Rectangle:
-                        pos:self.pos
-                        size:self.size
-                halign:'left'
-                valign:'top'
-                font_name:'STHeiti Medium.ttc' 
-
-            ScrollView:
-                size_hint:None,1
-                width:20
-                GridLayout:
-                    cols:1
-                    size_hint_y:None
-                    minimum_height:self.height
-                    Button
+        ScrollView:
+            size_hint:1,None
+            height:400
+            # do_scroll_y:True
+            scroll_type:['content', 'bars']
+            bar_width:10
+            GridLayout:
+                cols:1
+                minimum_height:self.height
+                size_hint:.95,None
+                # width:300
+                height:1400
+                Label:
+                    text:root.label_text
+                    text_size:self.size   
+                    color:1,0,0,1
+                    canvas.before:
+                        Color:
+                            rgba:1,1,0,1
+                        Rectangle:
+                            pos:self.pos
+                            size:self.size
+                    halign:'left'
+                    valign:'top'
+                    font_name:'STHeiti Medium.ttc' 

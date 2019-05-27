@@ -5,6 +5,10 @@
 
 [如何Python写一个安卓APP-又耳笔记-51CTO博客](https://blog.51cto.com/youerning/1733534)
 
+放在开头：  
+
+kv文件的注释符号也是‘#’  
+
 ## 1. 第一个kivy应用  
 
 两个文件：一个是python，一个是kivy
@@ -42,7 +46,7 @@ Label:
 
 未遂待续
 
-## 3. 第二个应用
+## 3. 知识点学习
 
 参考：[kivy学习笔记－基础篇 - cloveses的专栏 - CSDN博客](https://blog.csdn.net/cloveses/article/details/80369764)
 
@@ -805,4 +809,493 @@ class MyForm(BoxLayout):
 
 在上面的代码中试了一下，唯一的感觉就是快。
 
+
+### 3.12 滚动条
+
+改了半天，突然发现早就有滚动条了，不过太细了，完全没看见。还以为是屏幕被键盘垫子压出来的印痕。
+
+完整代码是这样：  
+
+```
+# kv文件  
+
+        ScrollView:
+            size_hint:1,None
+            height:400
+            do_scroll_y:True
+            scroll_type:['bars']
+            GridLayout:
+                cols:1
+                minimum_height:self.height
+                size_hint:None,None
+                width:280
+                height:700              
+                Label:
+                    text:root.label_text
+                    text_size:self.size   
+                    color:1,0,0,1
+                    canvas.before:
+                        Color:
+                            rgba:1,1,0,1
+                        Rectangle:
+                            pos:self.pos
+                            size:self.size
+                    halign:'left'
+                    valign:'top'
+                    font_name:'STHeiti Medium.ttc' 
+```
+
+基本结构是：ScrollView套GridLayout，GridLayout套内容（这里是标签）。  
+
+```
+                size_hint:None,None
+                width:280
+                height:700 
+```
+
+这部分，设置高度要超过整体，一定要放在Layout这一层，不能是Label这层。
+
+另外发现，height设置值要尽量大。现在设置为700，则之下就看不到了。不过太大，下面没有内容了，还在拖动，不会很奇怪吗？
+
+[ScrollView — Kivy 1.10.1 documentation](https://kivy.org/doc/stable/api-kivy.uix.scrollview.html?highlight=scroll#module-kivy.uix.scrollview)
+
+> bar_width
+> 
+> Width of the horizontal / vertical scroll bar. The width is interpreted as a height for the horizontal bar.
+> 
+> bar_width is a NumericProperty and defaults to 2.
+
+怪不得看不见，默认宽是2。马上改成10，就很显眼了。
+
+为了操作方便，把content也加上，这样就算滚动条抓不住，也可以滑动。
+
+### 3.13 时钟的暂停  
+
+想给时钟加一个pause功能。一开始想重新写dtime和time数值给部件，后来一想，只要让循环停下来就可以了。
+
+```
+            Clock.unschedule(self.callback)
+            self.ids['bg_image'].source = 'giphy.png'
+```
+试了一下，果然停下来了。
+
+能不能还从这里继续呢？  
+
+哈，加个全局变量switch就行了，默认值为1，每次都取相反数，这不是前段时间学到的吗？于是这个按钮就是这样了：  
+
+```
+    def pause(self, *argv):
+        global switch
+        switch = switch * (-1)
+        if switch == -1:
+            Clock.unschedule(self.callback)
+            self.ids['bg_image'].source = 'giphy.png'
+        else:
+            Clock.schedule_interval(self.callback, 0.1)
+            self.ids['bg_image'].source = 'giphy.gif'
+```
+
+运行了果然灵验。
+
+## 4. 代码备份  
+
+目前为止有三对程序：  
+
+### 4.1 记事本  
+
+py文件：  
+
+```
+# text.py
+#!/usr/bin/env python
+# _*_coding:utf-8_*_
+
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.properties import ObjectProperty, StringProperty
+from kivy.core.window import Window
+from os.path import exists
+import time
+
+
+class MyForm(BoxLayout):
+    text_input = ObjectProperty()
+    label_text = StringProperty()
+
+    def print_history(self):
+        if exists('tempfile.txt'):
+            with open('tempfile.txt') as f:
+                txt = f.read()
+            self.label_text = txt
+        else:
+            self.label_text = '程序第一次运行，还没有历史记录。请录入新内容。'
+
+    def save(self):
+        with open('tempfile.txt', 'a') as f:
+            content = self.text_input.text
+            if content != '':
+                f.write(time.strftime('%Y/%m/%d %H:%M:%S' + '\n'))
+                f.write(content + '\n' + '\n' + '=' * 27 + '\n' + '\n')
+            else:
+                return
+
+    def clear(self):
+        self.label_text = ''
+
+
+class TextApp(App):
+
+    def build(self):
+        Window.fullscreen = 1
+        Window.size = (320, 640)
+        self.title = 'NOTEBOOK-PICKLECAI'
+        return MyForm()
+
+if __name__ == '__main__':
+    TextApp().run()
+
+```
+
+kv文件：  
+
+```
+# text.kv
+
+MyForm:
+<MyForm>:
+    text_input: text_box
+
+    BoxLayout:
+        orientation:'vertical'
+        padding:10
+        spacing:10 
+       
+        Label:
+            text:'INPUT:'
+            size_hint:1,.05
+            text_size:self.size
+            bold:True
+            font_size:24
+
+            color:1,1,1,1
+            canvas.before:
+                Color:
+                    rgba:0,0,0,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+            halign:'left'
+            valign:'middle'
+            font_name:'STHeiti Medium.ttc'
+
+        TextInput:
+            id:text_box
+            font_name:'STHeiti Medium.ttc'
+            size_hint:1,.1
+
+        Button:
+            text:'Save It'
+            size_hint:1,.1
+            # bold:True
+            font_size:20
+            background_normal:''
+            background_color:0,0,1,1
+            on_press:root.save()
+
+        Label:
+            text:'HISTORY:'
+            text_size:self.size
+            bold:True
+            font_size:24
+            size_hint:1,.05
+            color:1,1,1,1
+            canvas.before:
+                Color:
+                    rgba:0,0,0,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+            halign:'left'
+            valign:'middle'
+            font_name:'STHeiti Medium.ttc'
+
+        GridLayout:
+            rows:1
+            size_hint:1,.1  
+
+            Button:
+                text:'Print History'
+                size_hint:1,.05
+                on_press:root.print_history()
+                # bold:True
+                font_size:20 
+
+            Button:
+                text:'Clear'
+                size_hint:1,.05
+                # bold:True
+                font_size:20                 
+                on_press:root.clear() 
+
+        ScrollView:
+            size_hint:1,None
+            height:400
+            # do_scroll_y:True
+            scroll_type:['content', 'bars']
+            bar_width:10
+            GridLayout:
+                cols:1
+                minimum_height:self.height
+                size_hint:.95,None
+                # width:300
+                height:1400
+                Label:
+                    text:root.label_text
+                    text_size:self.size   
+                    color:1,0,0,1
+                    canvas.before:
+                        Color:
+                            rgba:1,1,0,1
+                        Rectangle:
+                            pos:self.pos
+                            size:self.size
+                    halign:'left'
+                    valign:'top'
+                    font_name:'STHeiti Medium.ttc' 
+
+```
+
+### 4.2 倒计时数字  
+
+py文件：  
+
+```
+# countback.py
+#!/usr/bin/env python
+# _*_coding:utf-8_*_
+
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.properties import StringProperty
+from kivy.clock import Clock
+from kivy.core.window import Window
+
+
+class MyForm(BoxLayout):
+    label_text = StringProperty()
+    '''
+    def countback(self):
+        global num
+        num = 10
+        Clock.schedule_once(self.callback, -1)
+
+    def callback(self, *argv):
+        global num
+        print(num)
+        self.label_text = str(num)
+        num = num - 1
+        Clock.schedule_once(self.callback, -1)
+        if num < 0:
+            print('Byebye.')
+            Clock.unschedule(self.callback)
+    '''
+    def countback(self):
+        global num
+        num = 10
+        Clock.schedule_interval(self.callback, -1)
+
+    def callback(self, *argv):
+        global num
+        print(num)
+        self.label_text = str(num)
+        num = num - 1
+        if num < 0:
+            print('Byebye')
+            # self.label_text = 'Byebye'
+            return False
+
+
+class CountbackApp(App):
+
+    def build(self):
+        Window.fullscreen = 1
+        Window.size = (320, 320)
+        self.title = 'Count Back - PICKLECAI'
+        return MyForm()
+
+if __name__ == '__main__':
+    CountbackApp().run()
+
+```
+
+kv文件：  
+
+```
+# countback.kv
+
+MyForm:
+<MyForm>:
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding:10
+        spacing:10
+
+        Button:
+            text:'Count Back'
+            size_hint:1,.2
+            on_press:root.countback()
+
+        Label:
+            text:root.label_text
+            text_size:self.size
+            font_size:50
+            halign:'center'
+            valign:'middle'
+            font_name:'STHeiti Medium.ttc'
+            canvas.before:
+                Color:
+                    rgba:0,1,1,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+
+```
+
+
+### 4.3 倒计时时钟  
+
+py文件：  
+
+```
+# clock.py
+#!/usr/bin/env python
+# _*_coding:utf-8_*_
+
+from kivy.app import App
+from kivy.core.window import Window
+from kivy.uix.boxlayout import BoxLayout
+from kivy.clock import Clock
+import time
+
+
+class MyForm(BoxLayout):
+    global switch
+    switch = 1
+
+    def start(self):
+        global stime, dtime
+        stime = time.time()
+        dtime = self.ids['time_slider'].value
+        self.ids['bg_image'].source = 'giphy.gif'
+        Clock.schedule_interval(self.callback, 0.1)
+
+    def callback(self, *argv):
+        global stime, dtime
+        if stime + dtime < time.time():
+            self.ids['time_slider'].value = 0
+            self.ids['time_counter'].text = '00:00.00'
+            return False
+        self.ids['time_slider'].value = dtime + stime - time.time()
+
+    def pause(self, *argv):
+        global switch
+        switch = switch * (-1)
+        if switch == -1:
+            Clock.unschedule(self.callback)
+            self.ids['bg_image'].source = 'giphy.png'
+        else:
+            Clock.schedule_interval(self.callback, 0.1)
+            self.ids['bg_image'].source = 'giphy.gif'
+
+    def stop(self):
+        self.ids['time_slider'].value = 0
+        self.ids['time_counter'].text = '00:00.00'
+        self.ids['bg_image'].source = 'giphy.png'
+        Clock.unschedule(self.callback)
+
+
+class ClockApp(App):
+
+    def build(self):
+        Window.fullscreen = 1
+        Window.size = (320, 640)
+        self.title = 'Countdown Clock -PICKLECAI'
+        return MyForm()
+
+if __name__ == '__main__':
+    ClockApp().run()
+
+```
+
+kv文件：  
+
+```
+# clock.kv
+
+MyForm:
+<MyForm>:
+    BoxLayout:
+        orientation:'vertical'
+        padding:10
+        spacing:10
+
+        Slider:
+            id:time_slider
+            size_hint:1,.1
+            min:0
+            max:120
+            on_value:time_counter.text = '%02d:%02d.%02d' % (time_slider.value//60, int(time_slider.value%60), int(time_slider.value%1*100))
+
+        Button:
+            text:'Start'
+            size_hint:1,.1
+            background_normal:''
+            background_color:0,0,1,1
+            font_size:24
+            bold:True
+            on_press:root.start()
+
+        GridLayout:
+            rows:1
+            size_hint:1,.1
+
+            Button:
+                text:'Pause/Continue'
+                size_hint:1,.1
+                font_size:18
+                bold:True
+                on_press:root.pause()
+
+            Button:
+                text:'Stop'
+                size_hint:1,.1
+                font_size:24
+                bold:True
+                on_press:root.stop()
+
+        Label:
+            id:time_counter
+            text:'00:00.00'
+            font_size:50
+            text_size:self.size
+            color:0,0,0,1
+            halign:'center'
+            valign:'top'
+            padding:(10,100)
+            font_name:'STHeiti Medium.ttc'
+            canvas.before:
+                Color:
+                    rgba:1,1,0,1
+                Rectangle:
+                    pos:self.pos
+                    size:self.size
+            Image:
+                id:bg_image
+                pos:self.pos
+                size:300,300
+                source:'giphy.png'
+                anim_delay:0.001
+
+```
 
