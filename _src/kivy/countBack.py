@@ -10,24 +10,35 @@ from kivy.core.window import Window
 
 class MyForm(BoxLayout):
     label_text = StringProperty()
-    global num
-    num = 10
-
+    '''
     def countback(self):
         global num
-        self.update()
-
-    def update(self):
-        Clock.schedule_once(self.callback, 1)
+        num = 10
+        Clock.schedule_once(self.callback, -1)
 
     def callback(self, *argv):
         global num
+        print(num)
         self.label_text = str(num)
         num = num - 1
-        self.update()
+        Clock.schedule_once(self.callback, -1)
         if num < 0:
             print('Byebye.')
             Clock.unschedule(self.callback)
+    '''
+    def countback(self):
+        global num
+        num = 10
+        Clock.schedule_interval(self.callback, -1)
+
+    def callback(self, *argv):
+        global num
+        print(num)
+        self.label_text = str(num)
+        num = num - 1
+        if num < 0:
+            print('Byebye')
+            # self.label_text = 'Byebye'
             return False
 
 

@@ -630,7 +630,7 @@ class MyForm(BoxLayout):
 ```
 class MyForm(BoxLayout):
     label_text = StringProperty()
-    global num
+    global num   # 如果没有这个，countback中的num就没有初始值
     num = 10
 
     def countback(self):
@@ -650,4 +650,109 @@ class MyForm(BoxLayout):
             Clock.unschedule(self.callback)
             return False
 ```
+
+用schedule_interval，先打印在命令行，也是可以的：  
+
+```
+    def countback(dt):
+        global num
+        print(num)
+        num = num - 1
+        if num < 0:
+            print('Byebye')
+            return False
+
+    Clock.schedule_interval(countback, 1)
+```
+
+转为界面上：  
+
+```
+    def countback(self):
+        global num
+        Clock.schedule_interval(self.callback, 1)
+
+    def callback(self, *argv):
+        global num
+        self.label_text = str(num)
+        num = num - 1
+        if num < 0:
+            # print('Byebye')
+            return False
+```
+
+由于在两个函数之前已经写了一遍：
+```
+global num
+num = 10
+```
+所以感觉countback中的global num好像没有什么用。忽然意识到，这个定义全局并赋初值的过程应该在countback中进行。这样无论什么时候按这个按钮，都是从10开始倒数的。否则运行完第一遍，再按按钮，就是从-1往下数了。
+
+所以应该是这样的：  
+```
+class MyForm(BoxLayout):
+    label_text = StringProperty()
+    # global num  # 如果没有这个，countback中的num就没有初始值
+    # num = 10
+
+    def countback(self):
+        global num
+        num = 10
+        Clock.schedule_interval(self.callback, 1)
+
+    def callback(self, *argv):
+        global num
+        # print(num)
+        self.label_text = str(num)
+        num = num - 1
+        if num < 0:
+            print('Byebye')
+            # self.label_text = 'Byebye'
+            return False
+```
+countback的作用就是通过按钮提供入口，定义初始全局变量，不停地调用callback。  
+callback的作用就是接收全局变量的初始值，并对它进行计算且输出计算结果，规定停止运行的条件。  
+
+分工明确，简洁明了。
+
+对于schedule_once那一段同理，根本不需要预先规定num数值，而是应该放在countback中。这样就总是会从10往下倒数。
+改进后的schedule_once:  
+```
+class MyForm(BoxLayout):
+    label_text = StringProperty()
+    # global num  # 如果没有这个，countback中的num就没有初始值
+    # num = 10
+
+    def countback(self):
+        global num
+        num = 10
+        Clock.schedule_once(self.callback, 1)
+
+    def callback(self, *argv):
+        global num
+        # print(num)
+        self.label_text = str(num)
+        num = num - 1
+        Clock.schedule_once(self.callback, 1)
+        if num < 0:
+            print('Byebye.')
+            Clock.unschedule(self.callback)
+            return False
+```
+
+同样，countback的作用是定义全局变量并赋初值，但是只调用了一次callback。   
+那么，为什么也能实现连续倒数的效果呢？原因是callback内部，在接收全局变量并计算输出后，它自己又调用了一次自己。由于递归作用，就导致进入了循环。
+
+在once中，无法使用`return False`停止运行。只能通过unschedule实现。这就是之前无法停止运行的原因。为什么呢？**还不理解**  
+
+#### callback中的秒数
+
+> callback()函数将会在1秒后执行。1秒参数是在执行该程序前等待的时间，以秒为单位。但是你可以使用特殊的值作为时间参数得到一切其它结果：   
+	•	如果X > 0，则回调函数会在X秒后执行。   
+	•	如果X = 0, 则回调函数会在下一帧执行。   
+	•	如果x = -1，则回调函数在在下一帧之前执行。   
+其中 x = -1最为常用。   
+
+在上面的代码中试了一下，唯一的感觉就是快。
+
 
