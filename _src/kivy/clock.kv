@@ -21,12 +21,23 @@ MyForm:
             bold:True
             on_press:root.start()
 
-        Button:
-            text:'Stop'
+        GridLayout:
+            rows:1
             size_hint:1,.1
-            font_size:24
-            bold:True
-            on_press:root.stop()
+
+            Button:
+                text:'Pause/Continue'
+                size_hint:1,.1
+                font_size:18
+                bold:True
+                on_press:root.pause()
+
+            Button:
+                text:'Stop'
+                size_hint:1,.1
+                font_size:24
+                bold:True
+                on_press:root.stop()
 
         Label:
             id:time_counter
