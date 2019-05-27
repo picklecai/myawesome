@@ -21,6 +21,13 @@ MyForm:
             bold:True
             on_press:root.start()
 
+        Button:
+            text:'Stop'
+            size_hint:1,.1
+            font_size:24
+            bold:True
+            on_press:root.stop()
+
         Label:
             id:time_counter
             text:'00:00.00'
@@ -38,7 +45,8 @@ MyForm:
                     pos:self.pos
                     size:self.size
             Image:
+                id:bg_image
                 pos:self.pos
                 size:300,300
-                source:'giphy.gif'
-                anim_delay:1/20
+                source:'giphy.png'
+                anim_delay:0.001

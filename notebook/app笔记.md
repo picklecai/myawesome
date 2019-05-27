@@ -595,6 +595,56 @@ You can add only graphics Instruction in canvas.
                 anim_delay:1/20
 ```
 
+过了一天，对动画又有了新的想法。能不能让它只有在倒计时的时候才动呢？昨天想的是这个动画本身，只要载入了就会一直运动，无法控制的。今天想，在初始时载入静态，start后载入动态，stop后仍然改为静态，不就可以解决问题了？  
+
+顺着这个想法，本来打算是不是要在python文件中去导入Image，导入什么样的image？灵感突来，不是应该使用id吗？  
+
+这才理解到：self.ids['']，意思就是所有的id都在一个列表中。引用出来后，它的属性随便改。
+
+那就这样了：  
+
+```
+# kv文件
+
+            Image:
+                id:bg_image
+                pos:self.pos
+                size:300,300
+                source:'giphy.png'
+                anim_delay:0.001
+```
+
+```
+# py文件  
+
+class MyForm(BoxLayout):
+    def start(self):
+        global stime, dtime
+        stime = time.time()
+        dtime = self.ids['time_slider'].value
+        self.ids['bg_image'].source = 'giphy.gif'
+        Clock.schedule_interval(self.callback, 0.1)
+
+    def callback(self, *argv):
+        global stime, dtime
+        if stime + dtime < time.time():
+            self.ids['time_slider'].value = 0
+            self.ids['time_counter'].text = '00:00.00'
+            return False
+        self.ids['time_slider'].value = dtime + stime - time.time()
+
+    def stop(self):
+        self.ids['time_slider'].value = 0
+        self.ids['time_counter'].text = '00:00.00'
+        self.ids['bg_image'].source = 'giphy.png'
+        Clock.unschedule(self.callback)
+
+```
+分别在start中和stop中更改source就行了。  
+
+至于png文件从哪儿来，只要使用图像编辑软件把gif另存为png就万事大吉了。（一开始我强改扩展名，无效，🤦‍♀️）
+
+
 ### 3.11 倒计时  
 
 #### 问题1: 不停止循环

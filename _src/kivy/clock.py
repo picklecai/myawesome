@@ -13,20 +13,22 @@ class MyForm(BoxLayout):
         global stime, dtime
         stime = time.time()
         dtime = self.ids['time_slider'].value
-        self.on_update()
-
-    def on_update(self):
-        Clock.schedule_once(self.callback, 0.1)
+        self.ids['bg_image'].source = 'giphy.gif'
+        Clock.schedule_interval(self.callback, 0.1)
 
     def callback(self, *argv):
         global stime, dtime
         if stime + dtime < time.time():
             self.ids['time_slider'].value = 0
             self.ids['time_counter'].text = '00:00.00'
-            Clock.unschedule(self.callback)
             return False
         self.ids['time_slider'].value = dtime + stime - time.time()
-        self.on_update()
+
+    def stop(self):
+        self.ids['time_slider'].value = 0
+        self.ids['time_counter'].text = '00:00.00'
+        self.ids['bg_image'].source = 'giphy.png'
+        Clock.unschedule(self.callback)
 
 
 class ClockApp(App):
