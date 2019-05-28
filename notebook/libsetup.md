@@ -294,4 +294,10 @@ SyntaxError: invalid syntax
 pip3 uninstall libxml2dom
 ```
 
+### 安装word文档模块：python-docx
+
+没有进入python3环境时，`pip3 install python-docx`失败，`pip install python-docx`却成功了。
+
+进入了python3环境，pip3成功了。
+
 
