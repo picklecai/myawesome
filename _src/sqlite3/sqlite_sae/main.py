@@ -41,7 +41,7 @@ def print_history():
 
 if __name__ == '__main__':
     global HOST, PORT, ROOT
-    HOST = '127.0.0.1'
-    PORT = 65432
+    HOST = '0.0.0.0'
+    PORT = 5050
     ROOT = os.getcwd()
     run(host=HOST, port=PORT, debug=True, reloader=True)

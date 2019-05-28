@@ -3,6 +3,7 @@
 import sqlite3
 import os
 import time
+import pprint
 
 
 def inputnew():
@@ -25,7 +26,7 @@ def print_history():
         notelist = cur.fetchall()
         cur.close()
         conn.commit()
-        print(notelist)
+        pprint.pprint(notelist)
 
 if __name__ == '__main__':
     global ROOT

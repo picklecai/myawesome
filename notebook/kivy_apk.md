@@ -326,3 +326,9 @@ Successfully installed MarkupSafe-1.1.1 appdirs-1.4.3 colorama-0.4.1 jinja2-2.10
 
 于是在项目文件夹下运行`git clone http://github.com/picklecai/python-for-android `
 
+### 2.6 虚拟机路线  
+
+不知道这里[The Kivy Android Virtual Machine — Kivy 1.10.1 documentation](https://kivy.org/doc/stable/guide/packaging-android-vm.html)有虚拟机如何安装使用的说明。只是下了虚拟机，然后使用vmware打开，结果说需要操作系统，又费了几天劲下载了一个win7系统。但是运行不起来。
+
+
+
