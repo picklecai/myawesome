@@ -29,7 +29,7 @@ class MyForm(BoxLayout):
     def countback(self):
         global num
         num = 10
-        Clock.schedule_interval(self.callback, -1)
+        Clock.schedule_interval(self.callback, 1)
 
     def callback(self, *argv):
         global num

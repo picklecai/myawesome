@@ -21,3 +21,5 @@ AttributeError: __enter__
 
 > Connector/Python cursors cannot act as a context manager
 
+暂时把with拿掉，可以运行。
+
