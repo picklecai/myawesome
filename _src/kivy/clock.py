@@ -6,6 +6,7 @@ from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
 import time
+import subprocess
 
 
 class MyForm(BoxLayout):
@@ -24,6 +25,8 @@ class MyForm(BoxLayout):
         if stime + dtime < time.time():
             self.ids['time_slider'].value = 0
             self.ids['time_counter'].text = '00:00.00'
+            self.ids['bg_image'].source = 'giphy.png'
+            subprocess.Popen(['open', 'alarm.wav'])
             return False
         self.ids['time_slider'].value = dtime + stime - time.time()
 
