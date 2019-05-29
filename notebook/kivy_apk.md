@@ -330,5 +330,6 @@ Successfully installed MarkupSafe-1.1.1 appdirs-1.4.3 colorama-0.4.1 jinja2-2.10
 
 不知道这里[The Kivy Android Virtual Machine — Kivy 1.10.1 documentation](https://kivy.org/doc/stable/guide/packaging-android-vm.html)有虚拟机如何安装使用的说明。只是下了虚拟机，然后使用vmware打开，结果说需要操作系统，又费了几天劲下载了一个win7系统。但是运行不起来。
 
+安装了virtual box后，很快就启动了。不过需要一个密码。这个密码是什么呢？
 
 
