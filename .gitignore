@@ -36,3 +36,7 @@ _src/sae/pickle/
 _src/kivy/python-for-android/
 
 *.docx
+
+*.csv
+
+*.tsv
