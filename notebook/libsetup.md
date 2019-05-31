@@ -1,5 +1,7 @@
 # 安装库
 
+突然觉得，知道pip3是我的运气吧。作者在书末也提到了pip3。在他看来，有些模块只能通过pip3来安装。
+
 使用pip3安装了几个库：  
 
 
@@ -308,4 +310,14 @@ pip3 uninstall libxml2dom
 
 各安装一遍。后者是py3环境下。
 
+### 安装pyautogui
+
+在python3环境下，运行	`pip3 install pyautogui`就成了，没有遇到作者写的那些模块。不过还是安装一下保险吧。  
+
+```
+pip3 install pyobjc-framework-Quartz
+pip3 install pyobjc-core
+pip3 install pyobjc
+```
+安装pyobjc-core这个时，说已经有了。其他两个都正常安装。
 
