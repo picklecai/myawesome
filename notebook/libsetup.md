@@ -301,3 +301,11 @@ pip3 uninstall libxml2dom
 进入了python3环境，pip3成功了。
 
 
+### 安装twilio
+
+`pip install twilio`
+`pip3 install twilio` 
+
+各安装一遍。后者是py3环境下。
+
+

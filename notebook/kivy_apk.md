@@ -332,4 +332,37 @@ Successfully installed MarkupSafe-1.1.1 appdirs-1.4.3 colorama-0.4.1 jinja2-2.10
 
 安装了virtual box后，很快就启动了。不过需要一个密码。这个密码是什么呢？
 
+[kivy学习资料 | XX到此一游](https://clz.me/kivy-resources/)
+
+这个人说用户名和密码相同，于是试了kivy，成功了。
+
+[Kivy-CN/21-Kivy-VMS.md at master · Kivy-CN/Kivy-CN](https://github.com/Kivy-CN/Kivy-CN/blob/master/21-Kivy-VMS.md)
+
+这里说“防呆指南”，真的是不错，我茫然无措的时候就是发呆啊。。。
+
+#### 移动文件  
+
+虚拟机上可以设置共享粘贴板。
+
+在设置中，共享文件夹选项可以设置文件夹，我预先在mac中设置了共享的。常规-高级里可以设置共享粘贴板。
+
+现在共享粘贴和共享文件夹都设置了，但系统提示需要安装增强功能。找了很久，最后发现是在打开的ubuntu系统里，顶部有菜单，如果没有，就是刚才vbox设置里的用户界面，所有都勾选上。application里还有一串小图标，都是在ubuntu界面都右下角的。网上人们说的host键，在我的mac上，是左command。
+
+直接点击菜单的`设备-安装增强功能`不行，提示找不到文件。看来这个虚拟机没有上网。看了一下文件名，到vbox官网去下载了，只有80M。[Index of http://download.virtualbox.org/virtualbox/6.0.8](http://download.virtualbox.org/virtualbox/6.0.8/)  
+
+下载好了，按照系统提示的去存储添加虚拟光驱，无论如何无法添加，是灰色的。绝望之际，看到了这个：[Oracle VM VirtualBox怎么添加ISO文件或物理光盘_百度知道](https://zhidao.baidu.com/question/518688283450395245.html?qbl=relate_question_0)，里面最关键的一句话就是关机。关机后，添加虚拟光驱马上就可以工作了。
+
+但是，虚拟光驱文件都是上锁只读的，没法安装。
+
+[14.04 - Unable to Install Guest Additions CD Image on Virtual Box - Ask Ubuntu](https://askubuntu.com/questions/573596/unable-to-install-guest-additions-cd-image-on-virtual-box)
+
+这里有说宿主是macos，虚拟机是ubuntu的话很容易出现这样的情况。可他们提的试了也不行。
+
+这个命令先记着：  `sudo apt-get install virtualbox-guest-utils`
+
+我运行不成功，可能是因为我的ubuntu不能上网。
+
+没想到网络设置也是要在关机下进行的。方法是按照这里来的。[用virtualbox虚拟机无法上网的解决方法 - 一叶梧桐 - CSDN博客](https://blog.csdn.net/huangyabin001/article/details/28636733)
+
+选择的是连接到网络地址转换NAT，不是下面那个NAT网络。
 
