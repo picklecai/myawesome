@@ -6,10 +6,10 @@ import time
 
 
 def filler():
-    nameField = (558, 290)
+    nameField = (183, 294)
     # submitButton = (562, 636)
     # submitButtonColor = (0, 104, 239)
-    submitAnotherLink = (570, 268)
+    submitAnotherLink = (205, 272)
 
     formData = [{'name': 'Alice', 'fear': 'eavesdroppers', 'source': 'wand',
                  'robocop': 4, 'comments': 'Tell Bob I said hi.'},
@@ -32,13 +32,13 @@ def filler():
         pyautogui.typewrite(person['fear'] + '\t')
 
         if person['source'] == 'wand':
-            pyautogui.typewrite(['enter', 'down', 'enter', '\t'])
+            pyautogui.typewrite(['enter', 'down', 'enter', '\t'], 0.25)
         elif person['source'] == 'amulet':
-            pyautogui.typewrite(['enter', 'down', 'down', 'enter', '\t'])
+            pyautogui.typewrite(['enter', 'down', 'down', 'enter', '\t'], 0.25)
         elif person['source'] == 'crystal ball':
-            pyautogui.typewrite(['enter', 'down', 'down', 'down', 'enter', '\t'])
+            pyautogui.typewrite(['enter', 'down', 'down', 'down', 'enter', '\t'], 0.25)
         elif person['source'] == 'money':
-            pyautogui.typewrite(['enter', 'down', 'down', 'down', 'down', 'enter', '\t'])
+            pyautogui.typewrite(['enter', 'down', 'down', 'down', 'down', 'enter', '\t'], 0.25)
 
         if person['robocop'] == 1:
             pyautogui.typewrite([' ', '\t'])
@@ -51,7 +51,7 @@ def filler():
         elif person['robocop'] == 5:
             pyautogui.typewrite(['right', 'right', 'right', 'right', '\t'])
 
-        pyautogui.typewrite(person['comments'] + '\t')
+        pyautogui.typewrite(person['comments'] + '\t', 0.25)
         pyautogui.press('enter')
 
         print('Clicked Submit.')
