@@ -321,3 +321,16 @@ pip3 install pyobjc
 ```
 安装pyobjc-core这个时，说已经有了。其他两个都正常安装。
 
+### 安装opencv
+
+这个模块名称既不是opencv，也不是cv2，而是opencv-python
+
+用pip3安装：  
+
+```
+pip3 install opencv-python
+```
+需要numpy>=1.11.1
+
+
+
