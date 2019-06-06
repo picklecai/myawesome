@@ -75,3 +75,40 @@
 >                (?=(">)) 表示 匹配以(">)结尾的字符串，并且捕获(存储)到分组中
 
 
+# 《精通正则表达式》  
+
+[Jeffrey Friedl's Web Sites](http://regex.info/)，一本号称精通的书，还是余晟翻译的。几年前我就打算读，并读了几页纸，此后一直躺在豆瓣‘在读’列表中，现在又想起来读着试试看。
+
+## egrep
+
+[哪里可以获得egrep](http://regex.info/egrep.html)
+
+在mac下运行`egrep --version`，是有输出的：  
+
+```
+egrep (BSD grep) 2.5.1-FreeBSD
+```
+不是作者说的GNU egrep，而是FreeBSD的。
+
+[Macos下如何实现grep的非贪婪模式 | Recording](https://www.jibing57.com/2018/02/09/non-greedy-match-in-grep-on-macos/)
+
+> 
+> 在Terminal中敲击man egrep, 在man page的Description中可以看到有如下一行描述
+>  ```
+grep is used for simple patterns and basic regular expressions (BREs); 
+egrep can handle extended regular expressions (EREs).
+```
+> 
+> 可以看到Mac默认的grep只支持基本政策表达式，而egrep支持扩展正则表达式
+>
+
+## 新知  
+
+\<和\>，说是单词版读开头和结尾（^$），但是在python3中，试验没有成功。  
+\1代表第一组，那个间谍替换名字的案例就是用了这一点。也可以用来找重复，只要用括号划分出组来。  
+
+可以在程序要求用户输入时使用正则表达式来验证输入是否有问题，类似那天用的isdecimal函数。   
+
+`()`表示捕获和分组，`(?:)`表示只分组不捕获，这个在python中也是支持的。
+
+
