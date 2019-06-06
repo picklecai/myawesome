@@ -333,4 +333,39 @@ pip3 install opencv-python
 需要numpy>=1.11.1
 
 
+## 安装graphics
+
+并不知道为什么要安装它。但是它的确与众不同。  
+在python3环境下，`pip3 install graphics.py`才可以。
+
+## 安装gfx
+
+[GFX 文件扩展名： 它是什么以及如何打开它？](https://www.solvusoft.com/zh-cn/file-extensions/file-extension-gfx/)
+
+> GFX 是视频游戏中的动画文件。它包含矢量和栅格图形，也可能包括的Act ionScript交互操作。
+
+[如何在python中使用gfx模块 - VoidCC](http://cn.voidcc.com/question/p-egepgpsi-bhp.html)
+
+[How to use gfx module in python - Stack Overflow](https://stackoverflow.com/questions/24081759/how-to-use-gfx-module-in-python)
+
+```
+wget http://www.swftools.org/swftools-2013-04-09-1007.tar.gz 
+tar -xzvf swftools-2013-04-09-1007.tar.gz 
+cd swftools-2013-04-09-1007/ 
+./configure 
+make 
+sudo make install 
+sudo cp lib/python/*.so /usr/lib/python2.7/site-packages/ 
+
+```
+
+这里的每一句都照做了，最后一句说要换成自己的路径。换成了这个：  
+
+```
+sudo cp /Users/caimeijuan/anaconda/lib/python2.7/site-packages
+
+```
+
+然而在python2中进去import无效。
+
 
