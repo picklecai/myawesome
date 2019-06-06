@@ -44,3 +44,5 @@ _src/kivy/python-for-android/
 *.wav
 
 *.db
+
+*.gfx
