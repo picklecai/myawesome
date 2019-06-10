@@ -314,12 +314,12 @@ while listNumber!=[]:
 ```
 这样谁都不能在已经下过的位置再下棋了。
 
-## 色彩代码获取 
+## 13. 色彩代码获取 
 
 [HTML颜色代码](https://htmlcolorcodes.com/zh/)
 
 
-## 超级时钟  
+## 14. 超级时钟  
 
 ```
 data = time.time(),2
@@ -328,4 +328,12 @@ data = time.time(),2
 这里尽管没有写括号，但是data实际上是一个元组，跟写了括号是一样的。怪不得昨天的sqlite3各程序中可以直接给data这样赋值。  
 
 为什么知道呢？无意中写错了发现的。round函数没有去干净，留下了一个`,2`小尾巴，导致程序后面总是提醒我浮点数和元组不能相减。
+
+## 15. random  
+
+`random.shuffle()`
+
+[Python shuffle() 函数 | 菜鸟教程](https://www.runoob.com/python/func-number-shuffle.html)
+
+作用是列表随意打乱顺序。
 
