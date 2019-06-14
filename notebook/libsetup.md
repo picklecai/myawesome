@@ -369,3 +369,17 @@ sudo cp /Users/caimeijuan/anaconda/lib/python2.7/site-packages
 然而在python2中进去import无效。
 
 
+## 安装Django
+
+python2下安装：`pip install Django`
+```
+Successfully installed Django-1.11.21
+```
+
+python3下安装：`pip3 install Django`
+
+```
+Successfully installed Django-2.2.2 sqlparse-0.3.0
+```
+
+
