@@ -19,6 +19,6 @@ from django.urls import path
 
 '''urlpatterns = [url(r'^$', view.hello), url(r'^index/$', view.hello),
                url(r'^hi/$', view.hello), ]'''
-urlpatterns = [path('', view.index), path('history.html', view.history),
+urlpatterns = [path('', view.index), path('history.html', view.saveinfo, name='info'),
                path('email.html', view.email), path('baby.html', view.baby, name='check'),
-               path('camera.html', view.camera), path('baby2.html', view.savebaby) ]
+               path('camera.html', view.camera), path('baby2.html', view.savebaby, name='check')]

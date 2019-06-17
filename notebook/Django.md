@@ -159,3 +159,59 @@ def hello(request):
 可以嵌套for循环，但是不能在变量中继续引用列表子项。
 
 
+## 存取数据
+
+[Django中SQLite3的使用 - qq_34485436的博客 - CSDN博客](https://blog.csdn.net/qq_34485436/article/details/72805908)
+[Django 模型 | 菜鸟教程](https://www.runoob.com/django/django-model.html)
+
+和数据库关联，需要另外创建一个app。好在我安装的这个，默认就是采用了sqlite3数据库。
+settings.py下：
+
+```
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+```
+以上内容，ENGINE表示使用SQLite3数据库，NAME表示创建了一个名字为db.sqlite3的数据库。 
+
+
+在项目根目录下命令行输入：  
+
+```
+django-admin startapp TestModel
+```
+根目录下就多了一个文件夹TestModel，其中有一大堆文件。
+
+修改 TestModel/models.py 文件，代码如下：
+```
+HelloWorld/TestModel/models.py: 文件代码：
+# models.py
+from django.db import models
+ 
+class babyinfo(models.Model):
+    name = models.CharField(max_length=20)
+    gender = models.CharField(max_length=2, default='男')
+    birthtime = models.DateField(default='2015-01-01')
+
+```
+
+在settings.py中找到INSTALLED_APPS这一项，
+```
+INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'TestModel',               # 添加此项
+)
+
+```
+
+在命令行中输入`命令python3 manage.py makemigrations `
+
+

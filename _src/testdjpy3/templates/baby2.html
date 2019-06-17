@@ -110,20 +110,25 @@
     
 	<div class="labeltitle">宝宝信息：</div>
 
-	<div style="width:100%;padding:30px;padding-bottom:80px;">
-		<span class="labelrecord">宝宝姓名：</span>
-		{{name}}		
-		</br></br>
-		<span class="labelrecord">宝宝性别：</span>
-		{{gender}}
-		</br></br>
-		<span class="labelrecord">宝宝出生日期：</span>
-		{{birthtime}}
-		</br></br>
-	  	<span class="labelrecord">妈妈邮箱：</span>
-		{{momemail}}
-		<br /><br />
-	</div>
+	<form method="POST" action="{% url 'check' %} ">
+		{%csrf_token%}
+		<div style="width:100%;padding:30px;padding-bottom:80px;">
+			<span class="labelrecord">宝宝姓名：</span>
+			{{name}}		
+			</br></br>
+			<span class="labelrecord">宝宝性别：</span>
+			{{gender}}
+			</br></br>
+			<span class="labelrecord">宝宝出生日期：</span>
+			{{birthtime}}
+			</br></br>
+		  	<span class="labelrecord">妈妈邮箱：</span>
+			{{momemail}}
+			<br /><br />
+			<input type="submit" align="left" value="保存" name="savebaby" />
+			<br /><br />
+		</div>
 		<br />	 
+	</form>
 	</body>
 </html>
