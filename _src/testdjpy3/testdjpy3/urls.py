@@ -14,11 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from . import view
-# from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls import url
 from django.urls import path
+from django.views.static import serve
 
-'''urlpatterns = [url(r'^$', view.hello), url(r'^index/$', view.hello),
-               url(r'^hi/$', view.hello), ]'''
-urlpatterns = [path('', view.index), path('history.html', view.saveinfo, name='info'),
+urlpatterns = [url(r'^$', view.index), url(r'^history.html/$', view.saveinfo,name='info'),
+               url(r'^email.html/$', view.email), url(r'^camera.html/$', view.camera),
+               url(r'^baby.html/$', view.baby, name='check'),url(r'^baby2.html/$', view.savebaby, name='check'),
+               url(r'^static/(?P<path>.*)$',serve,{'document_root': settings.STATIC_ROOT})]
+'''urlpatterns = [path('', view.index), path('history.html', view.saveinfo, name='info'),
                path('email.html', view.email), path('baby.html', view.baby, name='check'),
-               path('camera.html', view.camera), path('baby2.html', view.savebaby, name='check')]
+               path('camera.html', view.camera), path('baby2.html', view.savebaby, name='check')
+               ]'''
+# path('/static/main.css', serve, {'document_root':settings.STATIC_ROOT})

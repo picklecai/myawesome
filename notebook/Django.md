@@ -215,3 +215,10 @@ INSTALLED_APPS = (
 在命令行中输入`命令python3 manage.py makemigrations `
 
 
+## 静态文件
+
+[django 项目的html加载css文件 - 小青蛙 - CSDN博客](https://blog.csdn.net/xm_csdn/article/details/74556319)
+[Django项目中Html文件链接css文件 - wait_me的博客 - CSDN博客](https://blog.csdn.net/qq_37549042/article/details/85696919)
+[在Django中使用css，js等静态文件 - 时光匆匆独白 的博客 - CSDN博客](https://blog.csdn.net/dong_W_/article/details/78767573)
+[编写你的第一个 Django 应用，第 6 部分 | Django 文档 | Django](https://docs.djangoproject.com/zh-hans/2.2/intro/tutorial06/)
+
