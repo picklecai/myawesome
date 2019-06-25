@@ -1,49 +1,16 @@
 <!DOCTYPE html>
-{% load staticfiles %}
 <html>
-	<head>
-		<META http-equiv=Content-Type content=text/html; charset=utf-8>
-		<link rel="stylesheet" type="text/css" href="{% static '/styles/main.css' %}">
-		<title>babyrecord</title>
-		<meta name="description" content="">
-		<meta name="keywords" content="">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<meta name="renderer" content="webkit">
-		<meta http-equiv="Cache-Control" content="no-siteapp" />
-	</head>
-
-	<body topmargin=2 leftmargin=2 bgcolor=#ffffff>
-
-	<div class="get">
-	  <div >
-	    <div >
-	      <h1 class="get-title">我在长大</h1>
-	    </div>
-	  </div>
-	</div>
-
-	<div class="nav" align="center"  >
-	    <div class="nav_li" align="center" >
-	      <ul>
-	        <li><a href="/">开始记录</a></li>
-	        <li><a href="./history.html">查看历史</a></li>
-	        <li><a href="./baby.html">宝宝信息</a></li>
-	        <li><a href="./email.html">发送邮箱</a></li>
-	        <li><a href="./camera.html">宝宝拍照</a></li>
-	        </li>
-	      </ul>
-	    </div>
-	  </div>
-    <div >{{tips}} </div>
-    </br>
-
+	{% extends 'nav.html' %}
+	{% block title %} Baby History {% endblock %}
+	{% block description %}您为宝宝记载的历史记录都在这里。{% endblock %}
+	{% block content %}
 	<div class="labeltitle">历史记录：</div>
 	{% for i in historylabel %}
-		 <div class="labelrecord"> 现在时间是：{{i.0}}</div>
-		 <div class="labelrecord"> 宝宝今天{{i.1}}天</div>
-		 <div class="labelrecord"> 宝宝今天的表现是：{{i.2}}</div>
-		{# <div class="labelrecord"> {{i}}</div> #}
+		{# <div class="labelrecord"> 现在时间是：{{i.0}}</div>#}
+		{# <div class="labelrecord"> 宝宝今天{{i.1}}天</div>#}
+		{# <div class="labelrecord"> 宝宝今天的表现是：{{i.2}}</div>#}
+		 <div class="labelrecord"> {{i}}</div> 
     {% endfor %}		
    	</div>
-	</body>
+    {% endblock %}
 </html>

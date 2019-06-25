@@ -1,44 +1,12 @@
 <!DOCTYPE html>
-{% load staticfiles %}
 <html>
-	<head>
-		<META http-equiv=Content-Type content=text/html; charset=utf-8>
-		<link rel="stylesheet" type="text/css" href="{% static '/styles/main.css' %}">
-		<title>babyrecord</title>
-		<meta name="description" content="">
-		<meta name="keywords" content="">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<meta name="renderer" content="webkit">
-		<meta http-equiv="Cache-Control" content="no-siteapp" />
-	</head>
-
-	<body topmargin=2 leftmargin=2 bgcolor=#ffffff>
-
-	<div class="get">
-	  <div >
-	    <div >
-	      <h1 class="get-title">我在长大</h1>
-	    </div>
-	  </div>
-	</div>
-
-	<div class="nav" align="center"  >
-	    <div class="nav_li" align="center" >
-	      <ul>
-	        <li><a href="/">开始记录</a></li>
-	        <li><a href="./history.html">查看历史</a></li>
-	        <li><a href="./baby.html">宝宝信息</a></li>
-	        <li><a href="./email.html">发送邮箱</a></li>
-	        <li><a href="./camera.html">宝宝拍照</a></li>
-	        </li>
-	      </ul>
-	    </div>
-	  </div>
-    </br>
-    
+	{% extends 'nav.html' %}
+	{% block title %} Send Email {% endblock %}
+	{% block description %}邮件发送成功。{% endblock %}
+	{% block content %}   
 	<div class="labeltitle">系统提示：</div>
 	</br>
 	<div class="labelrecord">您宝宝的记录已经发送成功发送到邮箱{{momemail}}中。</div>
    	</div>
-	</body>
+    {% endblock %}
 </html>

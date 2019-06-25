@@ -334,7 +334,7 @@ t.render(Context({'var': 'hello'}))
 
 #### 3.2.1 创建模板对象
 
-创建一个 Template 对象最简单的方法就是直接实例化它。 Template 类就在 django.template 模块中，构造函数接受一个参数。
+创建一个 Template 对象最简单的方法就是直接实例化它。 Template 类就在 django.template 模块中，构造函数接收一个参数。
 
 ```
 python manage.py shell
@@ -432,6 +432,88 @@ def hello(request):
 ```
 现在打开hello路径，就可以看到h1形式的hello world。
 
+### 3.3 使用include、block等节省html重复代码量
+
+#### 3.3.1 include
+
+`{% include '模板名称'%}`可以加载完全重复的部分，例如相同的header、footer等。
+
+> 每当在多个模板中出现相同的代码时， 就应该考虑是否要使用 {% include %} 来减少重复。 
+
+
+如果使用了静态文件，`{% load staticfiles %}`要放在被include的共同部分（主要是head部分）
+```
+# index.html
+
+<!DOCTYPE html>
+<html>
+	{% include 'nav.html' %}
+	<form action="{% url 'info' %} " method="POST">
+	……
+```
+```
+# nav.html
+
+    <head>
+        {% load staticfiles %}
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="{% static '/styles/main.css' %}">
+        <title>babyrecord</title>
+        <meta name="description" content="">
+     ……
+```
+由于我在这个nav中还包含了body部分的内容，所以nav中使用了完整的`<body></body>`对。index中反而不需要`<body></body>`了。
+
+#### 3.3.2 block
+
+block和include的区别是：include是完全相同的代码，而block则允许定制某些变量。
+
+nav.html改成了以下：
+
+```
+# nav.html
+
+<head>
+        {% load staticfiles %}
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="{% static '/styles/main.css' %}">
+        <title> {% block title %} {% endblock %} </title>
+        <meta name="description" content="{% block description %}{% endblock %}">
+     …………   
+{% block content %}{%  endblock %}
+```
+这里使用了三个block变量：title，description，content
+
+在index页面中，依次定义这三个变量即可。注意：开头的include改为了extends。  
+content可以把每个页面不同的模块都包进去。否则页面只显示nav的内容。
+
+```
+# index.html
+
+<!DOCTYPE html>
+<html>
+	{% extends 'nav.html' %}
+	{% block title %} Baby Record {% endblock %}
+	{% block description %}宝宝成长记录是一款专用于儿童信息记录的软件。{% endblock %}
+	{% block content %}
+	<form action="{% url 'info' %} " method="POST">
+		{%csrf_token%}
+		<div class="labeltitle">
+		请记录宝宝今天的表现吧:
+        </div>
+		</br>    
+		<div align="center" style="width:100%;padding:30px;padding-bottom:80px;">
+		    <textarea name="newline" rows="6" cols="50" style="width:80%;float:left;"/>开始记录宝宝表现……</textarea>	    	
+	    </div>
+	    </br>
+		<div align="left" style="padding:30px;">
+		    <input value="保存" type="submit" style="width:20%;padding:5px;padding-bottom:10px;float:left;" name="saveinfo" />
+		</div>
+    </form>	
+    {% endblock %}	
+
+</html>
+```
 
 ## 4. 静态文件
 
@@ -552,7 +634,204 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), '/var/www/static/', ]
 
 ps.试过根目录下使用这个命令`python manage.py collectstatic`，真没管用。
 
-## 5. 存取数据
+## 5. 能读取和写入数据
+
+### 5.1 删除重复页面
+
+原来的文件写了两个baby页面，一个是baby.html，一个是baby2.html。它们之间的区别只在于有没有隐藏模块。思量着合二为一。
+
+现有能工作的代码暂存：  
+
+```
+# view.py
+
+def savebaby(request):
+    context = {}
+    if request.method == 'POST':
+        context['name'] = request.POST.get('name')
+        context['gender'] = request.POST.get('gender')
+        context['birthtime'] = str(datetime.date(int(request.POST.get('year')), int(request.POST.get('month')), int(request.POST.get('date'))))
+        context['momemail'] = request.POST.get('email')
+        context['settingtime'] = time.strftime("%d/%m/%Y %H:%M:%S")
+        context['tips'] = "宝宝：%s" % context['name']
+    file = open('./babyinfo.txt', 'w')
+    file.write(context['name'] + '\n')
+    file.write(context['gender'] + '\n')
+    file.write(context['birthtime'] + '\n')
+    file.write(context['momemail'] + '\n')
+    file.write('宝宝信息最近更新时间：' + context['settingtime'] + '\n')
+    file.close()
+    return render(request, 'baby.html', context)
+
+
+def baby(request):
+    context = {}
+    filename = './babyinfo.txt'
+    if os.path.exists(filename):
+        data = open(filename, 'r').readlines()
+        context['tips'] = data[0]
+        context['name'] = context['tips']
+        context['gender'] = data[1]
+        context['birthtime'] = data[2]
+        context['momemail'] = data[3]
+    else:
+        context['name'] = "未设置"
+        context['gender'] = "未设置"
+        context['birthtime'] = "未设置"
+        context['momemail'] = "未设置"
+        context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
+    return render(request, 'baby.html', context)
+
+```
+
+```
+# urls.py
+
+from . import view
+from django.conf import settings
+from django.conf.urls.static import static
+from django.conf.urls import url
+
+urlpatterns = [url(r'^$', view.index),
+               url(r'^baby.html/$', view.baby, name='check'),
+               url(r'^baby2.html/$', view.savebaby, name='check'),
+               url(r'^history.html/$', view.saveinfo, name='info'),
+               url(r'^email.html/$', view.email),
+               url(r'^camera.html/$', view.camera),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+```
+
+修改思路：  
+
+view里的两个函数合二为一，如果是post方法，则写入。如果不是，则读取。
+
+修改成功：  
+
+```
+# view.py
+
+def baby(request):
+    context = {}
+    filename = './babyinfo.txt'
+    if request.method == 'POST':
+        context['name'] = request.POST.get('name')
+        context['gender'] = request.POST.get('gender')
+        context['birthtime'] = str(datetime.date(int(request.POST.get('year')), int(request.POST.get('month')), int(request.POST.get('date'))))
+        context['momemail'] = request.POST.get('email')
+        context['settingtime'] = time.strftime("%d/%m/%Y %H:%M:%S")
+        context['tips'] = "宝宝：%s" % context['name']
+        file = open(filename, 'w')
+        file.write(context['name'] + '\n')
+        file.write(context['gender'] + '\n')
+        file.write(context['birthtime'] + '\n')
+        file.write(context['momemail'] + '\n')
+        file.write('宝宝信息最近更新时间：' + context['settingtime'] + '\n')
+        file.close()
+        return render(request, 'baby.html', context)
+    else:
+        if os.path.exists(filename):
+            data = open(filename, 'r').readlines()
+            context['tips'] = data[0]
+            context['name'] = context['tips']
+            context['gender'] = data[1]
+            context['birthtime'] = data[2]
+            context['momemail'] = data[3]
+        else:
+            context['name'] = "未设置"
+            context['gender'] = "未设置"
+            context['birthtime'] = "未设置"
+            context['momemail'] = "未设置"
+            context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
+        return render(request, 'baby.html', context)
+```
+
+```
+# urls.py
+
+from . import view
+from django.conf import settings
+from django.conf.urls.static import static
+from django.conf.urls import url
+
+urlpatterns = [url(r'^$', view.index),
+               url(r'^baby.html/$', view.baby, name='check'),
+               url(r'^history.html/$', view.saveinfo, name='info'),
+               url(r'^email.html/$', view.email),
+               url(r'^camera.html/$', view.camera),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+```
+
+### 5.2 如何能存取到数据？
+
+#### 5.2.1 urls.py  
+
+在urls.py中，html文件与view里的函数挂钩，多了一个参数name，用来跟html中的表单挂钩。
+```
+ url(r'^baby.html/$', view.baby, name='check'),
+```
+#### 5.2.2 view.py
+
+在view.py中，因为函数需要返回的是baby页面，而baby页面需要一个context，所以先设立一个空context和数据文件名，然后判断页面方法：如果页面方法是POST，函数就实现存储写入数据的功能；如果不是（也就是GET），函数就实现读取数据文件中的数据的功能。无论是读还是写，最终要填入cotext所有内容，页面才不出错。
+
+#### 5.2.3 baby.html 
+
+在baby.html中， 
+ 
+##### 5.2.3.1 页面变量：
+`{{tips}} {{name}}{{gender}}{{birthtime}}{{momemail}}`，这些构成了context的内容，一定要填满。
+
+##### 5.2.3.2 form表单：
+
+其中action中的'check'就是urls.py中的name内容。  
+```
+<form action={% url 'check' %} method="post">    
+
+	{%csrf_token%}
+	…………
+</form>
+```
+
+##### 5.2.3.3 form表单中的文本框（接收用户输入的输入框）
+```
+<input name="name" type="text" /><br /><br />
+<input name="gender" type="text" /><br /><br />
+<input type="number" name="year" min="2005" max="2020" step="1" value="2015">年
+<input type="number" name="month" min="1" max="12" step="1" value="1">月
+<input type="number" name="date" min="1" max="31" step="1" value="15">日<br /><br />
+<input name="email" type="text" /><br /><br />
+<input type="submit" align="left" value="保存" name="savebaby" />
+```
+这些name决定了view中baby函数从哪里接收用户输入：
+
+view.py中是这样接收的，用`request.POST.get('name')`来接收：  
+
+```
+if request.method == 'POST':
+   context['name'] = request.POST.get('name')
+   context['gender'] = request.POST.get('gender')
+   context['birthtime'] = str(datetime.date(int(request.POST.get('year')), int(request.POST.get('month')), int(request.POST.get('date'))))
+   context['momemail'] = request.POST.get('email')
+   context['settingtime'] = time.strftime("%d/%m/%Y %H:%M:%S")
+   context['tips'] = "宝宝：%s" % context['name']
+```
+
+##### 5.2.3.4 输入和输出的显示与隐藏
+
+这个页面同时有输入模块和输出模块，所以用了一个js来调节各自的显示和隐藏。
+
+```
+<input type="button" onclick="showAndHidden1();" align="left" value="更新宝宝信息："/> 
+
+<script type="text/javascript"> 
+	function showAndHidden1(){ 
+		var div1=document.getElementById("div1"); 
+		if(div1.style.display=='none') div1.style.display='block';
+		if(div2.style.display=='block') div2.style.display='none';  
+		} 
+</script>
+```
+
+## 6. 存取数据
 
 [Django中SQLite3的使用 - qq_34485436的博客 - CSDN博客](https://blog.csdn.net/qq_34485436/article/details/72805908)
 [Django 模型 | 菜鸟教程](https://www.runoob.com/django/django-model.html)

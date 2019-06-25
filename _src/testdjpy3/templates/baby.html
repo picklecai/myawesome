@@ -1,59 +1,23 @@
 <!DOCTYPE html>
-{% load staticfiles %}
 <html>
-	<head>
-		<META http-equiv=Content-Type content=text/html; charset=utf-8>
-		<link rel="stylesheet" type="text/css" href="{% static '/styles/main.css' %}">
-		<title>babyrecord</title>
-		<meta name="description" content="">
-		<meta name="keywords" content="">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<meta name="renderer" content="webkit">
-		<meta http-equiv="Cache-Control" content="no-siteapp" />
-	</head>
-
-	<body topmargin=2 leftmargin=2 bgcolor=#ffffff>
-
-	<div class="get">
-	  <div >
-	    <div >
-	      <h1 class="get-title">我在长大</h1>
-	    </div>
-	  </div>
-	</div>
-
-	<div class="nav" align="center"  >
-	    <div class="nav_li" align="center" >
-	      <ul>
-	        <li><a href="/">开始记录</a></li>
-	        <li><a href="./history.html">查看历史</a></li>
-	        <li><a href="./baby.html">宝宝信息</a></li>
-	        <li><a href="./email.html">发送邮箱</a></li>
-	        <li><a href="./camera.html">宝宝拍照</a></li>
-	        </li>
-	      </ul>
-	    </div>
-	  </div>
-    <div >{{tips}} </div>
-    </br>
-	  
-	  <input type="button" onclick="showAndHidden1();" align="left" value="更新宝宝信息："/> 
-	  <form action={% url 'check' %} method="post">
-	  	{%csrf_token%}
+	{% extends 'nav.html' %}
+	{% block title %} Baby Info {% endblock %}
+	{% block description %}这里是宝宝基本信息，包括生日性别等。{% endblock %}
+	{% block content %}
+	<input type="button" onclick="showAndHidden1();" align="left" value="更新宝宝信息："/> 
+	<form action={% url 'check' %} method="post">
+		{%csrf_token%}
 		<div id="div1" align="left" style="width:100%;padding:30px;padding-bottom:80px;display:none;">
-		<span class="labelrecord">宝宝姓名：</span>
-	  		<input name="name" type="text" /><br /><br />
-		<span class="labelrecord">宝宝性别：</span>
-	  		<input name="gender" type="text" /><br /><br />
-		<span class="labelrecord">宝宝出生日期：</span>
-			<input type="number" name="year" min="2005" max="2020" step="1" value="2015">年
-			<input type="number" name="month" min="1" max="12" step="1" value="1">月
-			<input type="number" name="date" min="1" max="31" step="1" value="15">日<br /><br />
-	  	<span class="labelrecord">妈妈邮箱：</span>
-			<input name="email" type="text" />	<br /><br />			
-	  	<input type="submit" align="left" value="保存" name="savebaby" />
-	    </div>
-      </form>	
+			<span class="labelrecord">宝宝姓名：</span><input name="name" type="text" /><br /><br />
+			<span class="labelrecord">宝宝性别：</span><input name="gender" type="text" /><br /><br />
+			<span class="labelrecord">宝宝出生日期：</span>
+				<input type="number" name="year" min="2005" max="2020" step="1" value="2015">年
+				<input type="number" name="month" min="1" max="12" step="1" value="1">月
+				<input type="number" name="date" min="1" max="31" step="1" value="15">日<br /><br />
+		  	<span class="labelrecord">妈妈邮箱：</span><input name="email" type="text" />	<br /><br />			
+		  	<input type="submit" align="left" value="保存" name="savebaby" />
+		</div>
+	</form>	
 
 	<div id="div2" style="width:100%;padding:30px;padding-bottom:80px;display:block">
 	<p class="labeltitle">宝宝信息：</p>
@@ -72,13 +36,12 @@
 	</div>
 		<br />	
 
-		<script type="text/javascript"> 
-			function showAndHidden1(){ 
-				var div1=document.getElementById("div1"); 
-				if(div1.style.display=='none') div1.style.display='block';
-				if(div2.style.display=='block') div2.style.display='none';  
-				} 
-		</script> 
-
-	</body>
+	<script type="text/javascript"> 
+		function showAndHidden1(){ 
+			var div1=document.getElementById("div1"); 
+			if(div1.style.display=='none') div1.style.display='block';
+			if(div2.style.display=='block') div2.style.display='none';  
+			} 
+	</script> 
+    {% endblock %}
 </html>

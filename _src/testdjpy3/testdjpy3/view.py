@@ -32,8 +32,9 @@ def index(request):
         return render(request, 'baby.html', context)
 
 
-def savebaby(request):
+def baby(request):
     context = {}
+    filename = './babyinfo.txt'
     if request.method == 'POST':
         context['name'] = request.POST.get('name')
         context['gender'] = request.POST.get('gender')
@@ -41,55 +42,77 @@ def savebaby(request):
         context['momemail'] = request.POST.get('email')
         context['settingtime'] = time.strftime("%d/%m/%Y %H:%M:%S")
         context['tips'] = "宝宝：%s" % context['name']
-    '''
-    if (context['name'] or context['gender'] or context['birthtime'] or context['momemail']) is None or validateEmail('momemail') == 0:
-        context['name'] = "重新设置"
-        context['gender'] = "重新设置"
-        context['birthtime'] = "重新设置"
-        context['momemail'] = "重新设置"
-        context['tips'] = "请重新设置宝宝信息及妈妈邮箱。"
+        '''
+        if (context['name'] or context['gender'] or context['birthtime'] or context['momemail']) is None or validateEmail('momemail') == 0:
+            context['name'] = "重新设置"
+            context['gender'] = "重新设置"
+            context['birthtime'] = "重新设置"
+            context['momemail'] = "重新设置"
+            context['tips'] = "请重新设置宝宝信息及妈妈邮箱。"
 
-    else:'''
-    # data = context['name'].decode('utf-8'), context['gender'].decode('utf-8'), context['birthtime'], context['momemail'], context['settingtime']
+        else:'''
+        # data = context['name'].decode('utf-8'), context['gender'].decode('utf-8'), context['birthtime'], context['momemail'], context['settingtime']
 
-    '''
-    createbaby(data)
-    readbaby()'''
-    file = open('./babyinfo.txt', 'w')
-    file.write(context['name'] + '\n')
-    file.write(context['gender'] + '\n')
-    file.write(context['birthtime'] + '\n')
-    file.write(context['momemail'] + '\n')
-    file.write(context['settingtime'] + '\n')
-    file.close()
-    return render(request, 'baby.html', context)
-
-
-def saveinfo(request):
-    context = {}
-    name = open('./babyinfo.txt').readlines()[0]
-    context['tips'] = u"宝宝：%s" % name
-    with open('./babynote.txt', 'a') as file:
-        if request.method == 'POST':
-            content = request.POST.get('newline')
-            settingtime = time.strftime("%d/%m/%Y %H:%M:%S")
-            file.write(settingtime + '\n')
-            file.write(content + '\n\n')
-    if os.path.exists('babynote.txt'):
-        with open('./babynote.txt', 'r') as file:
-            context['historylabel'] = file.readlines()
-            return render(request, 'history.html', context)
+        '''
+        createbaby(data)
+        readbaby()'''
+        file = open(filename, 'w')
+        file.write(context['name'] + '\n')
+        file.write(context['gender'] + '\n')
+        file.write(context['birthtime'] + '\n')
+        file.write(context['momemail'] + '\n')
+        file.write('宝宝信息最近更新时间：' + context['settingtime'] + '\n')
+        file.close()
+        return render(request, 'baby.html', context)
     else:
-        if os.path.exists('babyinfo.txt'):
-            context['historylabel'] = ['尚无宝宝记录，先去添加吧。']
-            return render(request, 'history.html', context)
+        if os.path.exists(filename):
+            data = open(filename, 'r').readlines()
+            context['tips'] = u"宝宝：%s" % data[0]
+            context['name'] = data[0]
+            context['gender'] = data[1]
+            context['birthtime'] = data[2]
+            context['momemail'] = data[3]
         else:
             context['name'] = "未设置"
             context['gender'] = "未设置"
             context['birthtime'] = "未设置"
             context['momemail'] = "未设置"
             context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
-            return render(request, 'baby.html', context)
+        return render(request, 'baby.html', context)
+
+
+def saveinfo(request):
+    context = {}
+    if not os.path.exists('babyinfo.txt'):
+        context['name'] = "未设置"
+        context['gender'] = "未设置"
+        context['birthtime'] = "未设置"
+        context['momemail'] = "未设置"
+        context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
+        return render(request, 'baby.html', context)
+    else:
+        with open('./babyinfo.txt') as babyfile:
+            name = babyfile.readlines()[0]
+            context['tips'] = u'宝宝：%s' % name
+        if not os.path.exists('babynote.txt'):
+            context['historylabel'] = ['尚无宝宝记录，先去“开始记录”页面添加吧。']
+            with open('./babynote.txt', 'w') as infofile:
+                if request.method == 'POST':
+                    content = request.POST.get('newline')
+                    settingtime = time.strftime('%d/%m/%Y %H:%M:%S')
+                    infofile.write(settingtime + '\n')
+                    infofile.write(content + '\n\n')
+                    context['historylabel'] = [settingtime + '\n', content + '\n\n']
+        else:
+            with open('./babynote.txt', 'a') as infofile:
+                if request.method == 'POST':
+                    content = request.POST.get('newline')
+                    settingtime = time.strftime('%d/%m/%Y %H:%M:%S')
+                    infofile.write(settingtime + '\n')
+                    infofile.write(content + '\n\n')
+            with open('./babynote.txt') as infofile:
+                context['historylabel'] = infofile.readlines()
+        return render(request, 'history.html', context)
 
 
 def createbaby(data):
@@ -136,25 +159,6 @@ def history(request):
             context['momemail'] = "未设置"
             context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
             return render(request, 'baby.html', context)
-
-
-def baby(request):
-    context = {}
-    filename = './babyinfo.txt'
-    if os.path.exists(filename):
-        data = open(filename, 'r').readlines()
-        context['tips'] = data[0]
-        context['name'] = context['tips']
-        context['gender'] = data[1]
-        context['birthtime'] = data[2]
-        context['momemail'] = data[3]
-    else:
-        context['name'] = "未设置"
-        context['gender'] = "未设置"
-        context['birthtime'] = "未设置"
-        context['momemail'] = "未设置"
-        context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
-    return render(request, 'baby.html', context)
 
 
 def email(request):

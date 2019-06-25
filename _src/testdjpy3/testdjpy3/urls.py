@@ -21,15 +21,13 @@ from django.conf.urls import url
 
 
 urlpatterns = [url(r'^$', view.index),
+               url(r'^baby.html/$', view.baby, name='check'),
                url(r'^history.html/$', view.saveinfo, name='info'),
                url(r'^email.html/$', view.email),
                url(r'^camera.html/$', view.camera),
-               url(r'^baby.html/$', view.baby, name='check'),
-               url(r'^baby2.html/$', view.savebaby, name='check'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 '''urlpatterns = [path('', view.index), path('history.html', view.saveinfo, name='info'),
                path('email.html', view.email), path('baby.html', view.baby, name='check'),
                path('camera.html', view.camera), path('baby2.html', view.savebaby, name='check')
                ]'''
-# path('/static/main.css', serve, {'document_root':settings.STATIC_ROOT})
