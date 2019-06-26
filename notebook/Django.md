@@ -831,10 +831,12 @@ if request.method == 'POST':
 </script>
 ```
 
-## 6. 存取数据
+## 6. SQL数据库
 
 [Django中SQLite3的使用 - qq_34485436的博客 - CSDN博客](https://blog.csdn.net/qq_34485436/article/details/72805908)
 [Django 模型 | 菜鸟教程](https://www.runoob.com/django/django-model.html)
+
+### 6.1 配置数据库
 
 和数据库关联，需要另外创建一个app。好在我安装的这个，默认就是采用了sqlite3数据库。
 settings.py下：
@@ -849,6 +851,26 @@ DATABASES = {
 ```
 以上内容，ENGINE表示使用SQLite3数据库，NAME表示创建了一个名字为db.sqlite3的数据库。 
 
+检验数据库配置是否有问题的代码：  
+
+在命令行输入`python manage.py shell`后，
+
+```
+>>> from django.db import connection
+>>> cursor = connection.cursor()
+
+```
+如果没有出错信息，则数据库配置正确。
+
+### 6.2 创建app
+
+#### 6.2.1 了解project 和 app 之间的区别
+
+> project 和 app 之间到底有什么不同呢?它们的区别就是一个是配置另一个是代码: 一个project包含很多个Django app以及对它们的配置。 
+> project的作用是提供配置文件，比方说哪里定义数据库连接信息, 安装 的app列表， TEMPLATE_DIRS ，等等。 
+> 一个app是一套Django功能的集合，通常包括模型和视图，按Python的包结构的方 式存在。 
+
+#### 6.2.2 创建数据库的app
 
 在项目根目录下命令行输入：  
 
@@ -856,19 +878,6 @@ DATABASES = {
 django-admin startapp TestModel
 ```
 根目录下就多了一个文件夹TestModel，其中有一大堆文件。
-
-修改 TestModel/models.py 文件，代码如下：
-```
-HelloWorld/TestModel/models.py: 文件代码：
-# models.py
-from django.db import models
- 
-class babyinfo(models.Model):
-    name = models.CharField(max_length=20)
-    gender = models.CharField(max_length=2, default='男')
-    birthtime = models.DateField(default='2015-01-01')
-
-```
 
 在settings.py中找到INSTALLED_APPS这一项，
 ```
@@ -883,8 +892,31 @@ INSTALLED_APPS = (
 )
 
 ```
+#### 6.2.3 验证模型是否有效
 
-在命令行中输入`命令python3 manage.py makemigrations `
+在命令行使用 `python manage.py check`，注意不是书上的check。
+
+[在Django中使用数据库遇到的问题 - yy_menghuanjie的博客 - CSDN博客](https://blog.csdn.net/yy_menghuanjie/article/details/51332075)
+ 
+#### 6.2.4 创建数据库的数据表
+
+修改 TestModel/models.py 文件，代码如下：
+```
+HelloWorld/TestModel/models.py: 文件代码：
+# models.py
+from django.db import models
+ 
+class babyinfo(models.Model):
+    name = models.CharField(max_length=20)
+    gender = models.CharField(max_length=2, default='男')
+    birthtime = models.DateField(default='2015-01-01')
+
+```
+需要几个表，就在models.py表中写几个类。
+
+常见的数据类型：  
+CharField, DateField, URLField, EmailField, ImageField, IntegerField  
+在命令行中输入命令`python manage.py makemigrations `
 
 
 
