@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'testdjpy3.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'babyinfo.db'),
+        'NAME': os.path.join(BASE_DIR, 'BabyInfo.db'),
     }
 }
 

@@ -835,6 +835,7 @@ if request.method == 'POST':
 
 [Django中SQLite3的使用 - qq_34485436的博客 - CSDN博客](https://blog.csdn.net/qq_34485436/article/details/72805908)
 [Django 模型 | 菜鸟教程](https://www.runoob.com/django/django-model.html)
+[Django数据库的使用(sqlite) - - ITeye博客](https://2914905399.iteye.com/blog/2321530)
 
 ### 6.1 配置数据库
 
@@ -918,6 +919,172 @@ class babyinfo(models.Model):
 CharField, DateField, URLField, EmailField, ImageField, IntegerField  
 在命令行中输入命令`python manage.py makemigrations `
 
+没有理解这句话，还是下面这个人[Django 模型 | 菜鸟教程](https://www.runoob.com/django/django-model.html)、[在Django中使用数据库遇到的问题 - yy_menghuanjie的博客 - CSDN博客](https://blog.csdn.net/yy_menghuanjie/article/details/51332075)讲得比较好：
 
+```
+python manage.py makemigrations books    #用来检测数据库变更和生成数据库迁移文件
+python manage.py migrate     #用来迁移数据库
+python manage.py sqlmigrate books 0001 # 用来把数据库迁移文件转换成数据库语言
+```
+
+但是为什么我执行了几次，都说TestModel没有发生变化呢？migrations文件夹下已有的0001等文件删掉，再依次执行这三行，就又生成了新的initial文件，命令行的反馈也不再是多少个apply没有applying了。
+
+#### 6.2.5 查看数据表内容
+
+根据[Django 模型 | 菜鸟教程](https://www.runoob.com/django/django-model.html)这里，和manage.py并列添加了一个testdb.py，也根据它的内容修改了urls.py：
+
+```
+# testdb.py
+
+#!/usr/bin/env python
+# _*_coding:utf-8_*_
+
+from django.http import HttpResponse
+from TestModel.models import NoteRecord, BabyInfo
+
+
+def testdb(request):
+    test1 = NoteRecord(time='2019-06-26', age='6', record='今天第一次')
+    test2 = BabyInfo(name='damao', gender='男', birthtime='2013-11-13',
+                     momemail='pickle.ahcai@163.com', settingtime='2019-06-27')
+    test1.save()
+    test2.save()
+    return HttpResponse('<p>数据添加成功</p>')
+```
+urls改成：
+
+```
+# urls.py
+
+from . import view, testdb
+from django.conf import settings
+from django.conf.urls.static import static
+from django.conf.urls import url
+
+urlpatterns = [url(r'^$', view.index),
+               url(r'^baby.html/$', view.baby, name='check'),
+               url(r'^history.html/$', view.saveinfo, name='info'),
+               url(r'^email.html/$', view.email),
+               url(r'^camera.html/$', view.camera),
+               url(r'^testdb/$', testdb.testdb)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+```
+按道理这时运行host+testdb/应该输出数据添加成功的字样。
+
+但是反复提示：没有noterecord表，babyinfo表没有momemail字段。
+
+使用shell（发现这个shell是个ipython），发现根目录下的babyinfo确实没有momemail结构：
+[python中查看.db文件中表格的名字及表格中的字段 - qq_42281053的博客 - CSDN博客](https://blog.csdn.net/qq_42281053/article/details/80714344)
+
+输入`python manage.py shell`，进入终端：  
+```
+import sqlite3
+conn = sqlite3.connect("./babyinfo.db")
+cursor = conn.cursor()
+sql = """select name from sqlite_master where type='table' order by name"""
+cursor.execute(sql)
+result = cursor.fetchall()
+print result
+print type(result)
+conn.close()
+```
+输出结果为：
+```
+[
+('TestModel_babyinfo',), 
+('auth_group',), 
+('auth_group_permissions',), 
+('auth_permission',), 
+('auth_user',), 
+('auth_user_groups',), 
+('auth_user_user_permissions',), 
+('django_admin_log',), 
+('django_content_type',), 
+('django_migrations',), 
+('django_session',), 
+('sqlite_sequence',)]
+```
+我完全不知道这些是啥，哪来这么多Table（数据表）。
+
+```
+import sqlite3
+conn = sqlite3.connect("./babyinfo.db")
+cursor = conn.cursor()
+sql = """pragma table_info(TestModel_babyinfo)"""
+cursor.execute(sql)
+result = cursor.fetchall()
+print(result)
+conn.close()
+
+```
+输出为：
+
+```
+[
+(0, 'id', 'integer', 1, None, 1), 
+(1, 'name', 'varchar(20)', 1, None, 0), 
+(2, 'birthtime', 'date', 1, None, 0), 
+(3, 'gender', 'varchar(2)', 1, None, 0)
+]
+```
+
+根据这个结果，改testdb文件： 
+
+```
+# testdb.py
+
+#!/usr/bin/env python
+# _*_coding:utf-8_*_
+
+from django.http import HttpResponse
+from TestModel.models import BabyInfo
+
+
+def testdb(request):
+    test2 = BabyInfo(name='damao', gender='男', birthtime='2013-11-13')
+    test2.save()
+    return HttpResponse('<p>数据添加成功</p>')
+```
+
+结果仍然反馈说`table TestModel_babyinfo has no column named momemail`
+
+删掉原先的initial，在models中删掉momemail和settings两个字段。在命令行重新运行以下两个命令：  
+
+```
+python manage.py makemigrations TestModel
+python manage.py migrate
+
+```
+再在浏览器端运行`http://127.0.0.1:5050/testdb/`，显示数据添加成功。
+
+再次进入shell，运行以下：  
+
+```
+In [1]: import sqlite3                                                                     
+
+In [2]: with sqlite3.connect('./babyinfo.db') as conn: 
+   ...:     cursor = conn.cursor() 
+   ...:     sql = '''pragma table_info(TestModel_babyinfo)''' 
+   ...:     cursor.execute(sql) 
+   ...:     result = cursor.fetchall() 
+   ...:     print(result) 
+```
+输出：
+
+```
+[
+(0, 'id', 'integer', 1, None, 1), 
+(1, 'name', 'varchar(20)', 1, None, 0), 
+(2, 'birthtime', 'date', 1, None, 0), 
+(3, 'gender', 'varchar(2)', 1, None, 0)
+]
+```
+和上面的结果没有区别。
+
+看了还得找到查看表记录的语句看看才行。
+
+#### 6.2.6 和页面结合
+
+[Django简单项目示例，数据库使用自带的sqlite3 - xuerba的博客 - CSDN博客](https://blog.csdn.net/qq_31489933/article/details/84848784)，这里有个结合页面的实例。
 
 
