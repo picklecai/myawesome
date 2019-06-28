@@ -1,0 +1,39 @@
+    <head>
+        {% load staticfiles %}
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="{% static '/styles/main.css' %}">
+        <title> {% block title %} {% endblock %} </title>
+        <meta name="description" content="{% block description %}{% endblock %}">
+        <meta name="keywords" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="Cache-Control" content="no-siteapp" />
+    </head>
+
+    <body topmargin=2 leftmargin=2 bgcolor=#ffffff>
+    <div class="get">
+      <div >
+        <div >
+          <h1 class="get-title">我在长大</h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav" align="center"  >
+        <div class="nav_li" align="center" >
+          <ul>
+            <li><a href="/">开始记录</a></li>
+            <li><a href="../history.html">查看历史</a></li>
+            <li><a href="../baby.html">宝宝信息</a></li>
+            <li><a href="../email.html">发送邮箱</a></li>
+            <li><a href="../camera.html">宝宝拍照</a></li>
+            </li>
+          </ul>
+        </div>
+      </div>
+    <div >{{tips}} </div>
+    </br>
+
+    {% block content %}{%  endblock %}
+
+    </body>

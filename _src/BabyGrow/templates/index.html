@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	{% extends 'nav.html' %}
+	{% block title %} Baby Record {% endblock %}
+	{% block description %}宝宝成长记录是一款专用于儿童信息记录的软件。{% endblock %}
+	{% block content %}
+	<form action="{% url 'info' %} " method="POST">
+		{%csrf_token%}
+		<div class="labeltitle">
+		请记录宝宝今天的表现吧:
+        </div>
+		</br>    
+		<div align="center" style="width:100%;padding:30px;padding-bottom:80px;">
+		    <textarea name="newline" rows="6" cols="50" style="width:80%;float:left;"/>开始记录宝宝表现……</textarea>	    	
+	    </div>
+	    </br>
+		<div align="left" style="padding:30px;">
+		    <input value="保存" type="submit" style="width:20%;padding:5px;padding-bottom:10px;float:left;" name="saveinfo" />
+		</div>
+    </form>	
+    {% endblock %}	
+
+</html>

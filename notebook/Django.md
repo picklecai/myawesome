@@ -141,7 +141,7 @@ urlpatterns = [
 ```
 from django.conf.urls.defaults import patterns  
 ```
-注意，url函数的正则表达式中，**^后面不能再加`/`**，直接加路径名称（比如time）。
+注意，url函数的正则表达式中，**`^`后面不能再加`/`**，直接加路径名称（比如time）。
 
 ### 2.6 时间显示小函数
 
@@ -263,7 +263,9 @@ from django.template import Template, Context
 import datetime d = datetime.date(1993, 5, 2) d.year 
 （输出）1993 d.month （输出）5 d.day （输出）2 t = Template('The month is {{ date.month }} and the year is {{ date.year }}.') >>> c = Context({'date': d}) t.render(c)
 ```
+
 输出：
+
 ``` 'The month is 5 and the year is 1993.' 
 ```
 
@@ -852,6 +854,8 @@ DATABASES = {
 ```
 以上内容，ENGINE表示使用SQLite3数据库，NAME表示创建了一个名字为db.sqlite3的数据库。 
 
+startproject之后，要赶紧到settings里去改数据库文件名（上面的`'db.sqlite3'`），否则等到runserver后这个文件就建立起来了。
+
 检验数据库配置是否有问题的代码：  
 
 在命令行输入`python manage.py shell`后，
@@ -895,9 +899,15 @@ INSTALLED_APPS = (
 ```
 #### 6.2.3 验证模型是否有效
 
-在命令行使用 `python manage.py check`，注意不是书上的check。
+在命令行使用 `python manage.py check`，注意不是书上的validate。
 
 [在Django中使用数据库遇到的问题 - yy_menghuanjie的博客 - CSDN博客](https://blog.csdn.net/yy_menghuanjie/article/details/51332075)
+
+不知道这个输出代表什么：
+
+```
+System check identified no issues (0 silenced).
+```
  
 #### 6.2.4 创建数据库的数据表
 
@@ -927,7 +937,12 @@ python manage.py migrate     #用来迁移数据库
 python manage.py sqlmigrate books 0001 # 用来把数据库迁移文件转换成数据库语言
 ```
 
-但是为什么我执行了几次，都说TestModel没有发生变化呢？migrations文件夹下已有的0001等文件删掉，再依次执行这三行，就又生成了新的initial文件，命令行的反馈也不再是多少个apply没有applying了。
+但是为什么我执行了几次，都说TestModel没有发生变化呢？migrations文件夹下已有的0001等文件删掉，再依次执行这两行，就又生成了新的initial文件，命令行的反馈也不再是多少个apply没有applying了。
+
+```
+python manage.py makemigrations
+python manage.py migrate
+```
 
 #### 6.2.5 查看数据表内容
 
@@ -988,6 +1003,19 @@ print result
 print type(result)
 conn.close()
 ```
+以上也可以用with写成一大段：
+```
+In [1]: import sqlite3                                                          
+
+In [2]: 
+with sqlite3.connect('./babygrow.db') as conn: 
+	cursor = conn.cursor() 
+	sql = '''select name from sqlite_master where type='table' order by name''' 
+	cursor.execute(sql) 
+	result = cursor.fetchall() 
+	print(result)   
+```
+
 输出结果为：
 ```
 [
@@ -1062,12 +1090,13 @@ python manage.py migrate
 ```
 In [1]: import sqlite3                                                                     
 
-In [2]: with sqlite3.connect('./babyinfo.db') as conn: 
-   ...:     cursor = conn.cursor() 
-   ...:     sql = '''pragma table_info(TestModel_babyinfo)''' 
-   ...:     cursor.execute(sql) 
-   ...:     result = cursor.fetchall() 
-   ...:     print(result) 
+In [2]: 
+with sqlite3.connect('./babyinfo.db') as conn: 
+	cursor = conn.cursor() 
+	sql = '''pragma table_info(TestModel_babyinfo)''' 
+	cursor.execute(sql) 
+	result = cursor.fetchall() 
+	print(result) 
 ```
 输出：
 
@@ -1082,6 +1111,187 @@ In [2]: with sqlite3.connect('./babyinfo.db') as conn:
 和上面的结果没有区别。
 
 看了还得找到查看表记录的语句看看才行。
+
+##### 6.2.5.1 完整的数据库表建立过程
+
+- 1. 新起了一个项目BabyGrow
+
+在打算建立项目的/_src路径下，命令行输入：
+
+```
+django-admin.py startproject BabyGrow
+
+```
+
+- 2. 此时这个项目已经建立好了，settings文件中默认给了一个db.sqlite3的文件，在此时改这个文件名为我想要的babygrow.db：
+
+```
+# settings.py
+
+# Database
+# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'babygrow.db'),
+    }
+}
+```
+
+- 3. 启动服务以创建这个数据库
+
+进入BabyGrow根目录，运行`python manage.py runserver 65432`，空数据库'babygrow.db'就出现在manage.py所在的文件夹下。  
+
+- 4. 退出runserver，运行`python manage.py shell`，检查数据库配置是否正确：   
+
+```
+from django.db import connection                                        
+cursor = connection.cursor()    
+```
+
+无报错信息，输入exit退出shell。 
+
+- 5. 构建模型
+
+仍然在BabyGrow根目录下（与manage.py同一目录），运行`django-admin startapp BabyGrowModel`构建app。 
+
+- 6. 到settings中去添加这个app：
+
+```
+# settings.py
+
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'BabyGrowModel'
+]
+```
+
+- 7. 在根目录命令行下验证模型是否有效：
+
+```
+python manage.py check
+```
+
+- 8. 添加表结构  
+
+从根目录转向刚才建立的模型目录：`./BabyGrowModel/`，到models.py中添加表：
+
+```
+# models.py
+
+from django.db import models
+
+# Create your models here.
+
+
+class BabyInfo(models.Model):
+    name = models.CharField(max_length=20)
+    gender = models.CharField(max_length=2, default='男')
+    birthtime = models.CharField(max_length=15)
+    momemail = models.CharField(max_length=40)
+    settingtime = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+
+
+class NoteRecord(models.Model):
+    time = models.CharField(max_length=20)
+    age = models.CharField(max_length=5)
+    record = models.CharField(max_length=150)
+
+    def __str__(self):
+        return self.record
+
+
+```
+
+- 9. 创建表
+
+然后回到根目录下（其实命令行一直在根目录），运行以下两句按照models的要求创建表：
+
+```
+python manage.py makemigrations
+python manage.py migrate
+```
+
+根据输出，表格是创建好了。此时可以看到`./BabyGrowModel/migrations`下生成了一个0001_initial.py文件，其中是创建表的过程。这两个表都在babygrow.db数据库中。
+
+- 10. 检查表格是否创建成功
+
+运行`python manage.py shell`进入shell，检查数据库中是否存在这两个表，表的字段是否如0001_initial.py所述：
+
+```
+# 检查有哪些表
+In [1]: import sqlite3                                                          
+
+In [2]: 
+with sqlite3.connect('./babygrow.db') as conn: 
+    cursor = conn.cursor() 
+    sql = '''select name from sqlite_master where type='table' order by name''' 
+    cursor.execute(sql) 
+    result = cursor.fetchall() 
+    print(result) 
+```
+输出：
+
+```
+[
+('BabyGrowModel_babyinfo',), 
+('BabyGrowModel_noterecord',), 
+('auth_group',), 
+('auth_group_permissions',), 
+('auth_permission',), 
+('auth_user',), 
+('auth_user_groups',), 
+('auth_user_user_permissions',), 
+('django_admin_log',), 
+('django_content_type',), 
+('django_migrations',), 
+('django_session',), 
+('sqlite_sequence',)
+]
+```
+果然依旧是模型名加类名构成的table名称。
+
+```
+# 检查表头内容（字段）
+
+In [5]: 
+with sqlite3.connect('./babygrow.db') as conn:   
+    cursor = conn.cursor()   
+    sql = '''pragma table_info(BabyGrowModel_babyinfo)'''   
+    cursor.execute(sql)   
+    result = cursor.fetchall()   
+    print(result) 
+
+In [6]: 
+with sqlite3.connect('./babygrow.db') as conn:   
+    cursor = conn.cursor()   
+    sql = '''pragma table_info(BabyGrowModel_noterecord)'''   
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    print(result) 
+
+```
+
+结果分别输出：
+
+```
+[(0, 'id', 'integer', 1, None, 1), (1, 'name', 'varchar(20)', 1, None, 0), (2, 'gender', 'varchar(2)', 1, None, 0), (3, 'birthtime', 'varchar(15)', 1, None, 0), (4, 'momemail', 'varchar(40)', 1, None, 0), (5, 'settingtime', 'varchar(20)', 1, None, 0)]
+
+[(0, 'id', 'integer', 1, None, 1), (1, 'time', 'varchar(20)', 1, None, 0), (2, 'age', 'varchar(5)', 1, None, 0), (3, 'record', 'varchar(150)', 1, None, 0)]
+```
+
+和models里的class一致。
 
 #### 6.2.6 和页面结合
 

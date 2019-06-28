@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+	{% extends 'nav.html' %}
+	{% block title %} Send Email {% endblock %}
+	{% block description %}邮件发送成功。{% endblock %}
+	{% block content %}   
+	<div class="labeltitle">系统提示：</div>
+	</br>
+	<div class="labelrecord">您宝宝的记录已经发送成功发送到邮箱{{momemail}}中。</div>
+   	</div>
+    {% endblock %}
+</html>
