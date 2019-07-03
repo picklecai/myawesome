@@ -6,9 +6,10 @@
 	{% block content %}
 	<div class="labeltitle">历史记录：</div>
 	{% for i in historylabel %}
-		<div class="labelrecord"> 现在时间是：{{i.0}}</div>
-		<div class="labelrecord"> 宝宝今天{{i.1}}天</div>
-		<div class="labelrecord"> 宝宝今天的表现是：{{i.2}}</div>
+		<div class="labelrecord"> 现在时间是：{{i.1}}</div>
+		<div class="labelrecord"> 宝宝今天{{i.2}}天</div>
+		<div class="labelrecord"> 宝宝今天的表现是：{{i.3}}</div>
+        <div class="labelrecord"><br> </div>
 		{#<div class="labelrecord"> {{i}}</div> #}
     {% endfor %}		
    	</div>

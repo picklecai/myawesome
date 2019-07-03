@@ -12,16 +12,10 @@ from BabyGrowModel.models import BabyInfo, NoteRecord
 
 def index(request):
     filename = './babygrow.db'
-    # filename = './babyinfo.txt'
     context = {}
     if os.path.exists(filename):
-        with sqlite3.connect(filename) as conn:
-            cursor = conn.cursor()
-            sql = '''select name from BabyGrowModel_babyinfo order by settingtime desc limit 0,1'''
-            cursor.execute(sql)
-            name = cursor.fetchall()
-            context['tips'] = u"宝宝：%s" % name
-            return render(request, 'index.html', context)
+        context['tips'] = u"宝宝：%s" % (readBaby()['name'])
+        return render(request, 'index.html', context)
     else:
         context['name'] = "未设置"
         context['gender'] = "未设置"
@@ -33,13 +27,15 @@ def index(request):
 
 def baby(request):
     context = {}
-    filename = './babygrow.db'
     if request.method == 'POST':
         context['name'] = request.POST.get('name')
         context['gender'] = request.POST.get('gender')
-        context['birthtime'] = str(datetime.date(int(request.POST.get('year')), int(request.POST.get('month')), int(request.POST.get('date'))))
+        context['birthtime'] = str(datetime.date(
+            int(request.POST.get('year')),
+            int(request.POST.get('month')),
+            int(request.POST.get('date'))))
         context['momemail'] = request.POST.get('email')
-        context['settingtime'] = time.strftime("%d/%m/%Y %H:%M:%S")
+        context['settingtime'] = str(time.strftime("%Y/%m/%d %H:%M:%S"))
         context['tips'] = "宝宝：%s" % context['name']
         baby = BabyInfo(name=context['name'],
                         gender=context['gender'],
@@ -49,33 +45,23 @@ def baby(request):
         baby.save()
         return render(request, 'baby.html', context)
     else:
-        with sqlite3.connect(filename) as conn:
-            cursor = conn.cursor()
-            cursor.execute('''select name from BabyGrowModel_babyinfo''')
-            name = cursor.fetchall()
-            context['name'] = name
-            context['tips'] = u"宝宝：%s" % name
-            cursor.execute('''select gender from BabyGrowModel_babyinfo''')
-            context['gender'] = cursor.fetchall()
-            cursor.execute('''select birthtime from BabyGrowModel_babyinfo''')
-            context['birthtime'] = cursor.fetchall()
-            cursor.execute('''select momemail from BabyGrowModel_babyinfo''')
-            context['momemail'] = cursor.fetchall()
-            return render(request, 'index.html', context)
+        context['name'] = readBaby()['name']
+        context['tips'] = u"宝宝：%s" % (readBaby()['name'])
+        context['gender'] = readBaby()['gender']
+        context['birthtime'] = readBaby()['birthtime']
+        context['momemail'] = readBaby()['momemail']
+        return render(request, 'baby.html', context)
 
 
 def saveinfo(request):
     context = {}
     filename = './babygrow.db'
+    context['tips'] = u"宝宝：%s" % (readBaby()['name'])
     with sqlite3.connect(filename) as conn:
         cursor = conn.cursor()
-        sql = '''select name from BabyGrowModel_babyinfo order by settingtime desc limit 0,1'''
-        cursor.execute(sql)
-        name = cursor.fetchall()
-        context['tips'] = u"宝宝：%s" % name
         if request.method == 'POST':
-            settingtime = time.strftime('%d/%m/%Y %H:%M:%S')
-            age = 5
+            settingtime = time.strftime('%Y/%m/%d %H:%M:%S')
+            age = readBaby()['age']
             record = request.POST.get('newline')
             note = NoteRecord(time=settingtime,
                               age=age,
@@ -106,7 +92,7 @@ def history(request):
 
 def email(request):
     context = {}
-    context['momemail'] = 'pickle.ahcai@163.com'
+    context['momemail'] = readBaby()['momemail']
     return render(request, 'email.html', context)
 
 
@@ -115,3 +101,47 @@ def camera(request):
     context['photoid'] = '3'
     context['photoname'] = ['2013-11-13, 0岁.jpg', '2015-11-13, 2岁.jpg', '2016-11-13, 3岁.jpg']
     return render(request, 'camera.html', context)
+
+
+def readBaby():
+    filename = './babygrow.db'
+    if os.path.exists(filename):
+        with sqlite3.connect(filename) as conn:
+            cursor = conn.cursor()
+            sql1 = '''
+                    select name from BabyGrowModel_babyinfo
+                    order by settingtime desc
+                    limit 0,1
+                  '''
+            cursor.execute(sql1)
+            name = str(cursor.fetchall())[3:-4]
+            sql2 = '''
+                    select gender from BabyGrowModel_babyinfo
+                    order by settingtime desc
+                    limit 0,1
+                  '''
+            cursor.execute(sql2)
+            gender = str(cursor.fetchall())[3:-4]
+            sql3 = '''
+                    select birthtime from BabyGrowModel_babyinfo
+                    order by settingtime desc
+                    limit 0,1
+                    '''
+            cursor.execute(sql3)
+            birthtime = str(cursor.fetchall())
+            birthdate = datetime.datetime(int(birthtime[3:7]),
+                                          int(birthtime[8:10]),
+                                          int(birthtime[11:13]))
+            age = (datetime.datetime.now() - birthdate).days
+            birthtime = birthtime[3:-4]
+            sql4 = '''
+                    select momemail from BabyGrowModel_babyinfo
+                    order by settingtime desc
+                    limit 0,1
+                    '''
+            cursor.execute(sql4)
+            momEmail = str(cursor.fetchall())[3:-4]
+            babyDict = dict(zip(
+                ['name', 'gender', 'birthtime', 'age', 'momemail'],
+                [name, gender, birthtime, age, momEmail]))
+            return babyDict

@@ -11,7 +11,6 @@
 
 ```
 django-admin.py startproject testdj
-
 ```
 可以建立一个新项目，文件夹下会发现testdj的文件夹，其中已有若干文件：  
 
@@ -22,7 +21,6 @@ manage.py
 	settings.py
 	urls.py
 	wsgi.py
-
 ```
 进入testdj下运行manage.py即可启动服务器（注意第二个参数是runserver）。
 ```
@@ -69,7 +67,6 @@ from django.conf.urls import url
 from . import view
 
 urlpatterns = [url(r'^$', view.hello), ]
-
 ```
 这个urlpatterns一看就是个正则表达式匹配，但是r字符串表示空行。request参数如何传入呢？
 
@@ -86,7 +83,6 @@ from . import view
 from django.urls import path
 
 urlpatterns = [path('hello/', view.hello), ]
-
 ```
 但是这两个不能同时。urlpatterns是固定变量，改名了就不工作了。
 
@@ -99,7 +95,6 @@ from . import view
 from django.urls import path
 
 urlpatterns = [path('hello/', view.hello), path('world', view.hello),]
-
 ```
 这样写，world路径下也能看到helloworld。根目录在path函数中是用空字符串表示：  
 
@@ -130,7 +125,6 @@ from . import view
 from django.urls import path
 from django.conf.urls import url
 
-
 urlpatterns = [
     path('admin/', admin.site.urls), url(r'^time/$', view.clock)
 ]
@@ -139,12 +133,11 @@ urlpatterns = [
 但是这个从Django1.6后不能用了：  
 
 ```
-from django.conf.urls.defaults import patterns  
+from django.conf.urls.defaults import patterns 
 ```
 注意，url函数的正则表达式中，**`^`后面不能再加`/`**，直接加路径名称（比如time）。
 
 ### 2.6 时间显示小函数
-
 
 ```
 # view.py
@@ -156,7 +149,6 @@ def clock(request):
     now = time.strftime('%Y-%m-%d %H:%M:%S')
     html = '<html><body>It is now: %s.</body></html>' % now
     return HttpResponse(html)
-
 ```
 在view.py文件中的函数被称为视图函数（view function）。
 
@@ -178,10 +170,10 @@ TIME_ZONE = 'Etc/GMT-8'
 
 ```
 # urls.py
+
 from . import view
 from django.urls import path
 from django.conf.urls import url
-
 
 urlpatterns = [
     path('admin/', admin.site.urls), url(r'^time/$', view.clock),
@@ -199,7 +191,6 @@ def timeAhead(request, offset):
     dt = datetime.datetime.now() + datetime.timedelta(hours=offset)
     html = '<html><body>In %d hours, it\'ll be : %s.</body></html>' % (offset, dt)
     return HttpResponse(html)
-
 ```
 
 使用offset这个参数捕获urls正则表达式中的分组。
@@ -242,65 +233,104 @@ if 标签是用来执行逻辑判断的，检测 某变量值 是否为 True 。
 **句点可用于访问列表索引** 
 
 例如:
+
 ```
-from django.template import Template, Context t = Template('Item 2 is {{ items.2 }}.') c = Context({'items': ['apples', 'bananas', 'carrots']}) >>> t.render(c) ```
+from django.template import Template, Context    
+
+t = Template('Item 2 is {{ items.2 }}.')  
+c = Context({'items': ['apples', 'bananas', 'carrots']}) 
+
+t.render(c)
+```
 
 不允许使用负数列表索引。像 {{ items.-1 }} 这样的模板变量将会引发TemplateSyntaxError 异常。 
 
 假设你要向模板传递一个 Python 字典。要**通过字典键访问该字典的值**，可使用一个句点:
+
 ```
-from django.template import Template, Context person = {'name': 'Sally', 'age': '43'} t = Template('{{ person.name }} is {{ person.age }} years old.') 
+from django.template import Template, Context    
+
+person = {'name': 'Sally', 'age': '43'}   
+t = Template('{{ person.name }} is {{ person.age }} years old.') 
 c = Context({'person': person}) t.render(c)
 ```
-输出：  
-``` 'Sally is 43 years old.' 
+
+输出：
+  
 ```
+ 'Sally is 43 years old.' 
+```
+
 同样，也可以通过句点来**访问对象的属性**。
 
 比方说， Python 的 datetime.date 对象有 year 、 month 和 day 几个属性，你同样可以在模板中使用句点来访问这些属性: 
+
 ```
 from django.template import Template, Context 
-import datetime d = datetime.date(1993, 5, 2) d.year 
-（输出）1993 d.month （输出）5 d.day （输出）2 t = Template('The month is {{ date.month }} and the year is {{ date.year }}.') >>> c = Context({'date': d}) t.render(c)
+import datetime
+
+ d = datetime.date(1993, 5, 2) d.year    
+（输出）1993 
+  d.month   
+（输出）5   
+ d.day     
+（输出）2    
+ t = Template('The month is {{ date.month }} and the year is {{ date.year }}.') >>> c = Context({'date': d}) t.render(c)
 ```
 
 输出：
 
-``` 'The month is 5 and the year is 1993.' 
+```
+ 'The month is 5 and the year is 1993.' 
 ```
 
 下例使用了一个自定义类:
+
 ```
 from django.template import Template, Context 
+
 class Person(object): 
     def __init__(self, first_name, last_name):
         self.first_name, self.last_name = first_name, last_name
     t = Template('Hello, {{person.firs_name}} {{person.last_name}}.')     c = Context({'person': Person('John', 'Smith')})
     t.render(c)
 ```
-输出：  
+
+输出： 
+ 
 ```
 'Hello, John Smith.'
-``` 
+```   
+
 句点还用于**调用对象的方法**。
 
 例如，每个 Python 字符串都有 upper() 和 isdigit() 方法， 你在模板中可以使用同样的句点语法来调用它们: 
 ```
-from django.template import Template, Context t = Template('{{ var }} -- {{ var.upper }} -- {{ var.isdigit }}') 
+from django.template import Template, Context
+
+ t = Template('{{ var }} -- {{ var.upper }} -- {{ var.isdigit }}') 
 t.render(Context({'var': 'hello'}))
 ```
+
 输出：
-``` 'hello -- HELLO -- False'
+
+``` 
+'hello -- HELLO -- False'
 ```
 
-``` t.render(Context({'var': '123'}))
+如果是：
+
 ```
+ t.render(Context({'var': '123'}))
+```
+
 输出：  
-``` '123 -- 123 -- True' 
+
+```
+ '123 -- 123 -- True' 
 ```
 
-注意你不能在方法调用中使用圆括号。而且也无法给该方法传递参数;你只能调用不需参数
-的方法。
+注意你不能在方法调用中使用圆括号。而且也无法给该方法传递参数;你只能调用不需参数的方法。
 
 句点查找规则可概括为:
 
@@ -372,9 +402,12 @@ print(t)
 > 一旦你创建一个 Template 对象，你可以用 context 来传递数据给它。一个context是一系列 变量和它们值的集合。模板使用它来赋值模板变量标签和执行块标签。 context在Django里表现为 Context 类，在 django.template 模块里。它构造是有一个可选参数:一个字典映射变量和它们的值。调用 Template 对象的 render() 方法并传递context来填充模板: 
 
 ```
+
 from django.template import Context, Template 
 
-t = Template("My name is {{ name }}.") c = Context({"name": "Stephane"}) t.render(c) 
+t = Template("My name is {{ name }}.")    
+c = Context({"name": "Stephane"})    
+t.render(c) 
 
 ```
 输出：  
@@ -567,7 +600,8 @@ def hello(request):
 
 `<link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">`，对这个href，我无数次怀疑写错了。。。
 
-**static文件夹的位置**，是和templates并列的，根目录之下。
+**static文件夹的位置**，是和templates并列的，根目录之下。   
+
 
 ### 4.3 urls.py
 
@@ -1296,5 +1330,69 @@ with sqlite3.connect('./babygrow.db') as conn:
 #### 6.2.6 和页面结合
 
 [Django简单项目示例，数据库使用自带的sqlite3 - xuerba的博客 - CSDN博客](https://blog.csdn.net/qq_31489933/article/details/84848784)，这里有个结合页面的实例。
+
+【奇怪的错误】
+
+新建的项目babygrow，忘记在settings里设置模板位置了，于是就什么都找不到了：
+
+```
+TemplateDoesNotExist at /
+```
+每个页面都这样。搜了一下，感觉要回去查看一下settings，果然模板dir那里是空列表。改完至少页面出来了。
+
+又意外发现baby页面居然打开了index内容。这是怎么回事呢？发现在if 方法为post的else中，居然返回index，想想这是写错了吧。于是赶紧改成baby.index，果然页面内容就不错了。一开始还想不管三七二十一先把这个else注释掉再说呢。幸好幸好……
+
+baby页面正常后，就开始添加宝宝信息，居然是可以的。
+
+添加完宝宝信息，再添加历史记录，居然也是可以的。
+
+现在唯一的问题就是历史记录页面读取的内容和宝宝信息页面读取的内容了。真没想到上周抓狂到几乎又要睁眼瞎的问题，竟然是这样两个小问题引起的。
+
+改得差不多了。
+
+```
+# view.py
+
+def baby(request):
+    context = {}
+    filename = './babygrow.db'
+    if request.method == 'POST':
+        context['name'] = request.POST.get('name')
+        context['gender'] = request.POST.get('gender')
+        context['birthtime'] = str(datetime.date(int(request.POST.get('year')), int(request.POST.get('month')), int(request.POST.get('date'))))
+        context['momemail'] = request.POST.get('email')
+        context['settingtime'] = str(time.strftime("%d/%m/%Y %H:%M:%S"))
+        context['tips'] = "宝宝：%s" % context['name']
+        baby = BabyInfo(name=context['name'],
+                        gender=context['gender'],
+                        birthtime=context['birthtime'],
+                        momemail=context['momemail'],
+                        settingtime=context['settingtime'])
+        baby.save()
+        return render(request, 'baby.html', context)
+    else:
+        with sqlite3.connect(filename) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''select name from BabyGrowModel_babyinfo order by settingtime desc limit 0,1''')
+            name = str(cursor.fetchall())[3:-4]
+            context['name'] = name
+            context['tips'] = u"宝宝：%s" % name
+            cursor.execute('''select gender from BabyGrowModel_babyinfo order by settingtime desc limit 0,1''')
+            context['gender'] = str(cursor.fetchall())[3:-4]
+            cursor.execute('''select birthtime from BabyGrowModel_babyinfo order by settingtime desc limit 0,1''')
+            context['birthtime'] = str(cursor.fetchall())[3:-4]
+            cursor.execute('''select momemail from BabyGrowModel_babyinfo order by settingtime desc limit 0,1''')
+            context['momemail'] = str(cursor.fetchall())[3:-4]
+            return render(request, 'baby.html', context)
+
+```
+
+这是很有代表性的一段：输入也在此，输出也在此。还有针对数据表的排序筛选。
+
+#### 6.2.7 在程序中建立数据表
+
+现在的问题是：db文件能否像txt文件一样，是由程序创建的，而不是先创建好数据库再写程序呢？
+
+试了一下拿掉已经建立好的database文件，首页可以允许无宝宝信息时的状态，其他页面不行。试着在首页新建宝宝信息，会返回无此表的提示。因为只是建立了一个空数据库文件，数据库中压根没有数据表，更别提字段了。
 
 

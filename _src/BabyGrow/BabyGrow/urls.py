@@ -25,5 +25,5 @@ urlpatterns = [url(r'^$', view.index),
                url(r'^history.html/$', view.saveinfo, name='info'),
                url(r'^email.html/$', view.email),
                url(r'^camera.html/$', view.camera),
-               path('admin/', admin.site.urls),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+               path('admin/', admin.site.urls), ] + static(
+    settings.STATIC_URL, document_root=settings.STATIC_ROOT)
