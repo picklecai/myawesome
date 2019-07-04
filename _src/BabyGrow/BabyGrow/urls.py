@@ -22,7 +22,7 @@ from django.conf.urls import url
 
 urlpatterns = [url(r'^$', view.index),
                url(r'^baby.html/$', view.baby, name='check'),
-               url(r'^history.html/$', view.saveinfo, name='info'),
+               url(r'^history.html/$', view.saveRecord, name='info'),
                url(r'^email.html/$', view.email),
                url(r'^camera.html/$', view.camera),
                path('admin/', admin.site.urls), ] + static(

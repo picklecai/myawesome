@@ -1,75 +1,96 @@
 #!/usr/bin/env python
 # _*_coding:utf-8_*_
 
-# from django.http import HttpResponse
 from django.shortcuts import render
 import os
 import sqlite3
-import datetime
+from datetime import date
 import time
-from BabyGrowModel.models import BabyInfo, NoteRecord
+# from BabyGrowModel.models import BabyInfo, NoteRecord
+
+FILE_NAME = './babygrow.db'
+UPLOAD_TIPS = '请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。'
 
 
 def index(request):
-    filename = './babygrow.db'
     context = {}
-    if os.path.exists(filename):
-        context['tips'] = u"宝宝：%s" % (readBaby()['name'])
-        return render(request, 'index.html', context)
-    else:
-        context['name'] = "未设置"
-        context['gender'] = "未设置"
-        context['birthtime'] = "未设置"
-        context['momemail'] = "未设置"
-        context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
+    if not os.path.exists(FILE_NAME) or readBaby()['name'] == '':
+        context = initBaby()
         return render(request, 'baby.html', context)
+    else:
+        context['tips'] = '%s，今天%s天' % (readBaby()['name'], readBaby()['age'])
+        return render(request, 'index.html', context)
 
 
 def baby(request):
     context = {}
+    if not os.path.exists(FILE_NAME) or readBaby()['name'] == '':
+        context['tips'] = UPLOAD_TIPS
+    else:
+        context['tips'] = '%s，今天%s天' % (readBaby()['name'], readBaby()['age'])
     if request.method == 'POST':
         context['name'] = request.POST.get('name')
         context['gender'] = request.POST.get('gender')
-        context['birthtime'] = str(datetime.date(
-            int(request.POST.get('year')),
-            int(request.POST.get('month')),
-            int(request.POST.get('date'))))
+        year = int(request.POST.get('year'))
+        month = int(request.POST.get('month'))
+        day = int(request.POST.get('day'))
+        context['birthtime'] = str(date(year, month, day))
         context['momemail'] = request.POST.get('email')
         context['settingtime'] = str(time.strftime("%Y/%m/%d %H:%M:%S"))
-        context['tips'] = "宝宝：%s" % context['name']
-        baby = BabyInfo(name=context['name'],
-                        gender=context['gender'],
-                        birthtime=context['birthtime'],
-                        momemail=context['momemail'],
-                        settingtime=context['settingtime'])
-        baby.save()
+        ID = readBaby()['ID'] + 1
+        data = (ID, context['name'], context['gender'], context['birthtime'],
+                context['momemail'], context['settingtime'])
+        createBaby(data)
+        age = (date.today() - date(year, month, day)).days
+        context['tips'] = '%s，今天%s天' % (context['name'], age)
+        '''baby = BabyInfo(
+            name=context['name'], gender=context['gender'],
+            birthtime=context['birthtime'], momemail=context['momemail'],
+            settingtime=context['settingtime'])
+        baby.save()'''
         return render(request, 'baby.html', context)
     else:
-        context['name'] = readBaby()['name']
-        context['tips'] = u"宝宝：%s" % (readBaby()['name'])
-        context['gender'] = readBaby()['gender']
-        context['birthtime'] = readBaby()['birthtime']
-        context['momemail'] = readBaby()['momemail']
+        if not os.path.exists(FILE_NAME) or readBaby()['name'] == '':
+            context = initBaby()
+        else:
+            context['name'] = readBaby()['name']
+            context['tips'] = '%s，今天%s天' % (context['name'], readBaby()['age'])
+            context['gender'] = readBaby()['gender']
+            context['birthtime'] = readBaby()['birthtime']
+            context['momemail'] = readBaby()['momemail']
         return render(request, 'baby.html', context)
 
 
-def saveinfo(request):
+def saveRecord(request):
     context = {}
-    filename = './babygrow.db'
-    context['tips'] = u"宝宝：%s" % (readBaby()['name'])
-    with sqlite3.connect(filename) as conn:
-        cursor = conn.cursor()
+    if not os.path.exists(FILE_NAME) or readBaby()['name'] == '':
+        context = initBaby()
+        return render(request, 'baby.html', context)
+    else:
         if request.method == 'POST':
+            if readRecord() != []:
+                ID = readRecord()[0][0] + 1
+            else:
+                ID = 1
             settingtime = time.strftime('%Y/%m/%d %H:%M:%S')
             age = readBaby()['age']
             record = request.POST.get('newline')
-            note = NoteRecord(time=settingtime,
-                              age=age,
-                              record=record)
-            note.save()
-        cursor.execute('''select * from BabyGrowModel_noterecord''')
-        context['historylabel'] = cursor.fetchall()
-    return render(request, 'history.html', context)
+            data = (ID, settingtime, age, record)
+            createRecord(data)
+            '''note = NoteRecord(time=settingtime, age=age, record=record)
+            note.save()'''
+            context['tips'] = '%s，今天%s天' % (readBaby()['name'], age)
+            context['historylabel'] = readRecord()
+            return render(request, 'history.html', context)
+        elif not os.path.exists(FILE_NAME) or readRecord() == []:
+            context['tips'] = '%s，今天%s天 \n尚无记录，赶快添加吧！' % (
+                readBaby()['name'], readBaby()['age'])
+            return render(request, 'index.html', context)
+        else:
+            context['tips'] = '%s，今天%s天' % (
+                readBaby()['name'], readBaby()['age'])
+            context['historylabel'] = readRecord()
+            return render(request, 'history.html', context)
 
 
 def validateEmail(email):
@@ -80,68 +101,103 @@ def validateEmail(email):
     return 0
 
 
-def history(request):
-    context = {}
-    filename = './babygrow.db'
-    with sqlite3.connect(filename) as conn:
-        cursor = conn.cursor()
-        cursor.execute('''select * from BabyGrowModel_noterecord''')
-        context['historylabel'] = cursor.fetchall()
-        return render(request, 'history.html', context)
-
-
 def email(request):
     context = {}
-    context['momemail'] = readBaby()['momemail']
-    return render(request, 'email.html', context)
+    if not os.path.exists(FILE_NAME) or readBaby()['name'] == '':
+        context = initBaby()
+        return render(request, 'baby.html', context)
+    else:
+        context['tips'] = '%s，今天%s天' % (readBaby()['name'], readBaby()['age'])
+        context['momemail'] = readBaby()['momemail']
+        return render(request, 'email.html', context)
 
 
 def camera(request):
     context = {}
-    context['photoid'] = '3'
-    context['photoname'] = ['2013-11-13, 0岁.jpg', '2015-11-13, 2岁.jpg', '2016-11-13, 3岁.jpg']
-    return render(request, 'camera.html', context)
+    if not os.path.exists(FILE_NAME) or readBaby()['name'] == '':
+        context = initBaby()
+        return render(request, 'baby.html', context)
+    else:
+        context['tips'] = '%s，今天%s天' % (readBaby()['name'], readBaby()['age'])
+        context['photoid'] = len(readRecord())
+        context['photoname'] = readBaby()
+        return render(request, 'camera.html', context)
+
+
+def createBaby(data):
+    with sqlite3.connect(FILE_NAME) as conn:
+        cursor = conn.cursor()
+        sql1 = '''
+        create table if not exists babyinfo (
+        ID num, name text, gender text,
+        birthtime text, momemail text,
+        settingtime text
+        )'''
+        cursor.execute(sql1)
+        sql2 = '''
+        insert into babyinfo (
+        ID, name, gender, birthtime, momemail, settingtime)
+        values (?,?,?,?,?,?) '''
+        cursor.execute(sql2, data)
+
+
+def createRecord(data):
+    with sqlite3.connect(FILE_NAME) as conn:
+        cursor = conn.cursor()
+        sql1 = '''
+        create table if not exists noterecord (
+        ID num, time text, age text, record text
+        )'''
+        cursor.execute(sql1)
+        sql2 = '''
+        insert into noterecord (
+        ID, time, age, record)
+        values (?,?,?,?) '''
+        cursor.execute(sql2, data)
 
 
 def readBaby():
-    filename = './babygrow.db'
-    if os.path.exists(filename):
-        with sqlite3.connect(filename) as conn:
-            cursor = conn.cursor()
-            sql1 = '''
-                    select name from BabyGrowModel_babyinfo
-                    order by settingtime desc
-                    limit 0,1
-                  '''
-            cursor.execute(sql1)
-            name = str(cursor.fetchall())[3:-4]
-            sql2 = '''
-                    select gender from BabyGrowModel_babyinfo
-                    order by settingtime desc
-                    limit 0,1
-                  '''
-            cursor.execute(sql2)
-            gender = str(cursor.fetchall())[3:-4]
-            sql3 = '''
-                    select birthtime from BabyGrowModel_babyinfo
-                    order by settingtime desc
-                    limit 0,1
-                    '''
-            cursor.execute(sql3)
-            birthtime = str(cursor.fetchall())
-            birthdate = datetime.datetime(int(birthtime[3:7]),
-                                          int(birthtime[8:10]),
-                                          int(birthtime[11:13]))
-            age = (datetime.datetime.now() - birthdate).days
-            birthtime = birthtime[3:-4]
-            sql4 = '''
-                    select momemail from BabyGrowModel_babyinfo
-                    order by settingtime desc
-                    limit 0,1
-                    '''
-            cursor.execute(sql4)
-            momEmail = str(cursor.fetchall())[3:-4]
-            babyDict = dict(zip(
-                ['name', 'gender', 'birthtime', 'age', 'momemail'],
-                [name, gender, birthtime, age, momEmail]))
-            return babyDict
+    with sqlite3.connect(FILE_NAME) as conn:
+        cursor = conn.cursor()
+        sql1 = '''
+        create table if not exists babyinfo (
+        ID num, name text, gender text, birthtime text, momemail text,
+        settingtime text)'''
+        cursor.execute(sql1)
+        sql = '''select * from babyinfo order by settingtime desc'''
+        cursor.execute(sql)
+        babyList = cursor.fetchall()
+        if babyList != []:
+            ID, name = babyList[0][0], str(babyList[0][1])
+            gender, birthtime = str(babyList[0][2]), str(babyList[0][3])
+            birthdate = date(
+                int(birthtime[0:4]), int(birthtime[5:7]), int(birthtime[8:10]))
+            age = (date.today() - birthdate).days
+            momEmail = str(babyList[0][4])
+        else:
+            ID = 0
+            name = gender = birthtime = age = momEmail = ''
+        babyDict = dict(zip(
+            ['ID', 'name', 'gender', 'birthtime', 'age', 'momemail'],
+            [ID, name, gender, birthtime, age, momEmail]))
+        return babyDict
+
+
+def readRecord():
+    with sqlite3.connect(FILE_NAME) as conn:
+        cursor = conn.cursor()
+        sql1 = '''create table if not exists noterecord (ID num, time text,
+        age text, record text)'''
+        cursor.execute(sql1)
+        sql = '''select * from noterecord order by time desc'''
+        cursor.execute(sql)
+        historylabel = cursor.fetchall()
+        return historylabel
+
+
+def initBaby():
+    context = {}
+    context['name'] = context['gender'] = "未设置"
+    context['birthtime'] = context['momemail'] = "未设置"
+    context['tips'] = UPLOAD_TIPS
+    return context

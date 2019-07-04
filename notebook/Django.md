@@ -1320,12 +1320,42 @@ with sqlite3.connect('./babygrow.db') as conn:
 结果分别输出：
 
 ```
-[(0, 'id', 'integer', 1, None, 1), (1, 'name', 'varchar(20)', 1, None, 0), (2, 'gender', 'varchar(2)', 1, None, 0), (3, 'birthtime', 'varchar(15)', 1, None, 0), (4, 'momemail', 'varchar(40)', 1, None, 0), (5, 'settingtime', 'varchar(20)', 1, None, 0)]
+[
+(0, 'id', 'integer', 1, None, 1), 
+(1, 'name', 'varchar(20)', 1, None, 0),
+(2, 'gender', 'varchar(2)', 1, None, 0),
+(3, 'birthtime', 'varchar(15)', 1, None, 0),
+(4, 'momemail', 'varchar(40)', 1, None, 0),
+(5, 'settingtime', 'varchar(20)', 1, None, 0)]
 
-[(0, 'id', 'integer', 1, None, 1), (1, 'time', 'varchar(20)', 1, None, 0), (2, 'age', 'varchar(5)', 1, None, 0), (3, 'record', 'varchar(150)', 1, None, 0)]
+[
+(0, 'id', 'integer', 1, None, 1),
+(1, 'time', 'varchar(20)', 1, None, 0),
+(2, 'age', 'varchar(5)', 1, None, 0),
+(3, 'record', 'varchar(150)', 1, None, 0)]
 ```
 
 和models里的class一致。
+
+读取数据表里的记录：
+
+```
+with sqlite3.connect('./babygrow.db') as conn:       
+    cursor = conn.cursor()       
+    sql = '''select * from BabyGrowModel_babyinfo'''       
+    cursor.execute(sql)       
+    result = cursor.fetchall()       
+    print(result)  
+```
+
+删除某表格：
+
+```
+with sqlite3.connect('./babygrow.db') as conn:         
+    cursor = conn.cursor()         
+    sql = '''drop table noterecord'''         
+    cursor.execute(sql) 
+```
 
 #### 6.2.6 和页面结合
 
@@ -1389,10 +1419,502 @@ def baby(request):
 
 这是很有代表性的一段：输入也在此，输出也在此。还有针对数据表的排序筛选。
 
+读取baby信息独立成函数：
+
+```
+def readBaby():
+    filename = './babygrow.db'
+    if os.path.exists(filename):
+        with sqlite3.connect(filename) as conn:
+            cursor = conn.cursor()
+            sql1 = '''
+                    select name from BabyGrowModel_babyinfo
+                    order by settingtime desc
+                    limit 0,1
+                  '''
+            cursor.execute(sql1)
+            name = str(cursor.fetchall())[3:-4]
+            sql2 = '''
+                    select gender from BabyGrowModel_babyinfo
+                    order by settingtime desc
+                    limit 0,1
+                  '''
+            cursor.execute(sql2)
+            gender = str(cursor.fetchall())[3:-4]
+            sql3 = '''
+                    select birthtime from BabyGrowModel_babyinfo
+                    order by settingtime desc
+                    limit 0,1
+                    '''
+            cursor.execute(sql3)
+            birthtime = str(cursor.fetchall())
+            birthdate = datetime.datetime(int(birthtime[3:7]),
+                                          int(birthtime[8:10]),
+                                          int(birthtime[11:13]))
+            age = (datetime.datetime.now() - birthdate).days
+            birthtime = birthtime[3:-4]
+            sql4 = '''
+                    select momemail from BabyGrowModel_babyinfo
+                    order by settingtime desc
+                    limit 0,1
+                    '''
+            cursor.execute(sql4)
+            momEmail = str(cursor.fetchall())[3:-4]
+            babyDict = dict(zip(
+                ['name', 'gender', 'birthtime', 'age', 'momemail'],
+                [name, gender, birthtime, age, momEmail]))
+            return babyDict
+```
+
+感觉有点冗余。
+
+改成了这样：
+
+```
+def readBaby():
+    filename = './babygrow.db'
+    if os.path.exists(filename):
+        with sqlite3.connect(filename) as conn:
+            cursor = conn.cursor()
+            sql = '''
+                    select * from BabyGrowModel_babyinfo
+                    order by settingtime desc
+                  '''
+            cursor.execute(sql)
+            babyList = cursor.fetchall()
+            name = str(babyList[0][1])
+            gender = str(babyList[0][2])
+            birthtime = str(babyList[0][3])
+            birthdate = datetime.datetime(int(birthtime[0:4]),
+                                          int(birthtime[5:7]),
+                                          int(birthtime[8:10]))
+            age = (datetime.datetime.now() - birthdate).days
+            momEmail = str(babyList[0][4])
+            babyDict = dict(zip(
+                ['name', 'gender', 'birthtime', 'age', 'momemail'],
+                [name, gender, birthtime, age, momEmail]))
+            return babyDict
+```
+
+少了多次重复读取数据库的操作，读出来的数据还直接是不带引号的。
+
 #### 6.2.7 在程序中建立数据表
 
 现在的问题是：db文件能否像txt文件一样，是由程序创建的，而不是先创建好数据库再写程序呢？
 
 试了一下拿掉已经建立好的database文件，首页可以允许无宝宝信息时的状态，其他页面不行。试着在首页新建宝宝信息，会返回无此表的提示。因为只是建立了一个空数据库文件，数据库中压根没有数据表，更别提字段了。
 
+直接把models下的class搬到view里来，不管用。
+
+以baby为例：
+
+```
+def baby(request):
+    context = {}
+    if not os.path.exists(filename) or readBaby()['name'] == '':
+        context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
+    else:
+        context['tips'] = '%s，今天%s天' % (readBaby()['name'], readBaby()['age'])
+    if request.method == 'POST':
+        context['name'] = request.POST.get('name')
+        context['gender'] = request.POST.get('gender')
+        context['birthtime'] = str(datetime.date(
+            int(request.POST.get('year')),
+            int(request.POST.get('month')),
+            int(request.POST.get('date'))))
+        context['momemail'] = request.POST.get('email')
+        context['settingtime'] = str(time.strftime("%Y/%m/%d %H:%M:%S"))
+        ID = readBaby()['ID'] + 1
+        data = (ID, context['name'], context['gender'],
+                context['birthtime'], context['momemail'],
+                context['settingtime'])
+        createBaby(data)
+        '''
+        baby = BabyInfo(name=context['name'],
+                        gender=context['gender'],
+                        birthtime=context['birthtime'],
+                        momemail=context['momemail'],
+                        settingtime=context['settingtime'])
+        baby.save()
+        '''
+        return render(request, 'baby.html', context)
+    else:
+        context['name'] = readBaby()['name']
+        context['tips'] = '%s，今天%s天' % (readBaby()['name'], readBaby()['age'])
+        context['gender'] = readBaby()['gender']
+        context['birthtime'] = readBaby()['birthtime']
+        context['momemail'] = readBaby()['momemail']
+        return render(request, 'baby.html', context)
+```
+
+```
+def createBaby(data):
+    with sqlite3.connect(filename) as conn:
+        cursor = conn.cursor()
+        sql1 = '''
+        create table if not exists babyinfo (
+        ID num, name text, gender text,
+        birthtime text, momemail text,
+        settingtime text
+        )'''
+        cursor.execute(sql1)
+        sql2 = '''
+        insert into babyinfo (
+        ID, name, gender, birthtime, momemail, settingtime)
+        values (?,?,?,?,?,?) '''
+        cursor.execute(sql2, data)
+```
+
+```
+def readBaby():
+    with sqlite3.connect(filename) as conn:
+        cursor = conn.cursor()
+        sql1 = '''
+        create table if not exists babyinfo (
+        ID num, name text, gender text,
+        birthtime text, momemail text,
+        settingtime text
+        )'''
+        cursor.execute(sql1)
+        sql = '''
+        select * from babyinfo
+        order by settingtime desc
+        '''
+        cursor.execute(sql)
+        babyList = cursor.fetchall()
+        if babyList != []:
+            ID = babyList[0][0]
+            name = str(babyList[0][1])
+            gender = str(babyList[0][2])
+            birthtime = str(babyList[0][3])
+            birthdate = datetime.datetime(int(birthtime[0:4]),
+                                          int(birthtime[5:7]),
+                                          int(birthtime[8:10]))
+            age = (datetime.datetime.now() - birthdate).days
+            momEmail = str(babyList[0][4])
+        else:
+            ID = 0
+            name = ''
+            gender = ''
+            birthtime = ''
+            age = ''
+            momEmail = ''
+        babyDict = dict(zip(
+            ['ID', 'name', 'gender', 'birthtime', 'age', 'momemail'],
+            [ID, name, gender, birthtime, age, momEmail]))
+        return babyDict
+```
+以上实现了手动建立数据库文件，并改进了以前每个表格新建一个库的做法，在同一个库中新建文件。
+
+在解决历史记录无内容时页面提示“用户添加信息”时，出了问题。
+
+```
+def saveRecord(request):
+    context = {}
+    if not os.path.exists(filename) or readBaby()['name'] == '':
+        context['name'] = "未设置"
+        context['gender'] = "未设置"
+        context['birthtime'] = "未设置"
+        context['momemail'] = "未设置"
+        context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
+        return render(request, 'baby.html', context)
+    else:
+        if request.method == 'POST':
+            if readRecord() != []:
+                ID = readRecord()[0][0] + 1
+            else:
+                ID = 1
+            settingtime = time.strftime('%Y/%m/%d %H:%M:%S')
+            age = readBaby()['age']
+            record = request.POST.get('newline')
+            data = (ID, settingtime, age, record)
+            createRecord(data)
+            '''
+            note = NoteRecord(time=settingtime,
+                              age=age,
+                              record=record)
+            note.save()
+            '''
+            context['tips'] = '%s，今天%s天' % (readBaby()['name'], readBaby()['age'])
+            context['historylabel'] = readRecord()
+            return render(request, 'history.html', context)
+        elif not os.path.exists(filename) or readRecord() == []:
+            context['tips'] = '%s，今天%s天 \n尚无记录，赶快添加吧！' % (readBaby()['name'], readBaby()['age'])
+            return render(request, 'index.html', context)
+        else:
+            context['tips'] = '%s，今天%s天' % (readBaby()['name'], readBaby()['age'])
+            context['historylabel'] = readRecord()
+            return render(request, 'history.html', context)
+```
+
+`if post`这一段，如果if的代码段和elif的代码段互换，就会存不了数据。
+
+另外，事实证明，history函数真的没有用。再次删了。
+
+为了有据可查，到目前为止的完整view.py，备注一下：
+
+```
+# view.py
+
+#!/usr/bin/env python
+# _*_coding:utf-8_*_
+
+from django.shortcuts import render
+import os
+import sqlite3
+import datetime
+import time
+# from BabyGrowModel.models import BabyInfo, NoteRecord
+
+filename = './babygrow.db'
+
+
+def index(request):
+    context = {}
+    if not os.path.exists(filename) or readBaby()['name'] == '':
+        context['name'] = "未设置"
+        context['gender'] = "未设置"
+        context['birthtime'] = "未设置"
+        context['momemail'] = "未设置"
+        context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
+        return render(request, 'baby.html', context)
+    else:
+        context['tips'] = '%s，今天%s天' % (readBaby()['name'], readBaby()['age'])
+        return render(request, 'index.html', context)
+
+
+def baby(request):
+    context = {}
+    if not os.path.exists(filename) or readBaby()['name'] == '':
+        context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
+    else:
+        context['tips'] = '%s，今天%s天' % (readBaby()['name'], readBaby()['age'])
+    if request.method == 'POST':
+        context['name'] = request.POST.get('name')
+        context['gender'] = request.POST.get('gender')
+        context['birthtime'] = str(datetime.date(
+            int(request.POST.get('year')),
+            int(request.POST.get('month')),
+            int(request.POST.get('date'))))
+        context['momemail'] = request.POST.get('email')
+        context['settingtime'] = str(time.strftime("%Y/%m/%d %H:%M:%S"))
+        ID = readBaby()['ID'] + 1
+        data = (ID, context['name'], context['gender'],
+                context['birthtime'], context['momemail'],
+                context['settingtime'])
+        createBaby(data)
+        age = (datetime.datetime.now() - datetime.datetime(
+            int(request.POST.get('year')),
+            int(request.POST.get('month')),
+            int(request.POST.get('date')))).days
+        context['tips'] = '%s，今天%s天' % (context['name'], age)
+        '''
+        baby = BabyInfo(name=context['name'],
+                        gender=context['gender'],
+                        birthtime=context['birthtime'],
+                        momemail=context['momemail'],
+                        settingtime=context['settingtime'])
+        baby.save()
+        '''
+        return render(request, 'baby.html', context)
+    else:
+        if not os.path.exists(filename) or readBaby()['name'] == '':
+            context['name'] = "未设置"
+            context['gender'] = "未设置"
+            context['birthtime'] = "未设置"
+            context['momemail'] = "未设置"
+            context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
+        else:
+            context['name'] = readBaby()['name']
+            context['tips'] = '%s，今天%s天' % (context['name'], readBaby()['age'])
+            context['gender'] = readBaby()['gender']
+            context['birthtime'] = readBaby()['birthtime']
+            context['momemail'] = readBaby()['momemail']
+        return render(request, 'baby.html', context)
+
+
+def saveRecord(request):
+    context = {}
+    if not os.path.exists(filename) or readBaby()['name'] == '':
+        context['name'] = "未设置"
+        context['gender'] = "未设置"
+        context['birthtime'] = "未设置"
+        context['momemail'] = "未设置"
+        context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
+        return render(request, 'baby.html', context)
+    else:
+        if request.method == 'POST':
+            if readRecord() != []:
+                ID = readRecord()[0][0] + 1
+            else:
+                ID = 1
+            settingtime = time.strftime('%Y/%m/%d %H:%M:%S')
+            age = readBaby()['age']
+            record = request.POST.get('newline')
+            data = (ID, settingtime, age, record)
+            createRecord(data)
+            '''
+            note = NoteRecord(time=settingtime,
+                              age=age,
+                              record=record)
+            note.save()
+            '''
+            context['tips'] = '%s，今天%s天' % (readBaby()['name'], age)
+            context['historylabel'] = readRecord()
+            return render(request, 'history.html', context)
+        elif not os.path.exists(filename) or readRecord() == []:
+            context['tips'] = '%s，今天%s天 \n尚无记录，赶快添加吧！' % (
+                readBaby()['name'], readBaby()['age'])
+            return render(request, 'index.html', context)
+        else:
+            context['tips'] = '%s，今天%s天' % (
+                readBaby()['name'], readBaby()['age'])
+            context['historylabel'] = readRecord()
+            return render(request, 'history.html', context)
+
+
+def validateEmail(email):
+    import re
+    if len(email) > 7:
+        if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) is not None:
+            return 1
+    return 0
+
+
+def email(request):
+    context = {}
+    if not os.path.exists(filename) or readBaby()['name'] == '':
+        context['name'] = "未设置"
+        context['gender'] = "未设置"
+        context['birthtime'] = "未设置"
+        context['momemail'] = "未设置"
+        context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
+        return render(request, 'baby.html', context)
+    else:
+        context['tips'] = '%s，今天%s天' % (readBaby()['name'], readBaby()['age'])
+        context['momemail'] = readBaby()['momemail']
+        return render(request, 'email.html', context)
+
+
+def camera(request):
+    context = {}
+    if not os.path.exists(filename) or readBaby()['name'] == '':
+        context['name'] = "未设置"
+        context['gender'] = "未设置"
+        context['birthtime'] = "未设置"
+        context['momemail'] = "未设置"
+        context['tips'] = "请上传您宝宝的基本信息，否则系统无法计算宝宝年龄。"
+        return render(request, 'baby.html', context)
+    else:
+        context['tips'] = '%s，今天%s天' % (readBaby()['name'], readBaby()['age'])
+        context['photoid'] = '3'
+        context['photoname'] = readBaby()
+        return render(request, 'camera.html', context)
+
+
+def createBaby(data):
+    with sqlite3.connect(filename) as conn:
+        cursor = conn.cursor()
+        sql1 = '''
+        create table if not exists babyinfo (
+        ID num, name text, gender text,
+        birthtime text, momemail text,
+        settingtime text
+        )'''
+        cursor.execute(sql1)
+        sql2 = '''
+        insert into babyinfo (
+        ID, name, gender, birthtime, momemail, settingtime)
+        values (?,?,?,?,?,?) '''
+        cursor.execute(sql2, data)
+
+
+def createRecord(data):
+    with sqlite3.connect(filename) as conn:
+        cursor = conn.cursor()
+        sql1 = '''
+        create table if not exists noterecord (
+        ID num, time text, age text, record text
+        )'''
+        cursor.execute(sql1)
+        sql2 = '''
+        insert into noterecord (
+        ID, time, age, record)
+        values (?,?,?,?) '''
+        cursor.execute(sql2, data)
+
+
+def readBaby():
+    with sqlite3.connect(filename) as conn:
+        cursor = conn.cursor()
+        sql1 = '''
+        create table if not exists babyinfo (
+        ID num, name text, gender text,
+        birthtime text, momemail text,
+        settingtime text
+        )'''
+        cursor.execute(sql1)
+        sql = '''
+        select * from babyinfo
+        order by settingtime desc
+        '''
+        cursor.execute(sql)
+        babyList = cursor.fetchall()
+        if babyList != []:
+            ID = babyList[0][0]
+            name = str(babyList[0][1])
+            gender = str(babyList[0][2])
+            birthtime = str(babyList[0][3])
+            birthdate = datetime.datetime(int(birthtime[0:4]),
+                                          int(birthtime[5:7]),
+                                          int(birthtime[8:10]))
+            age = (datetime.datetime.now() - birthdate).days
+            momEmail = str(babyList[0][4])
+        else:
+            ID = 0
+            name = ''
+            gender = ''
+            birthtime = ''
+            age = ''
+            momEmail = ''
+        babyDict = dict(zip(
+            ['ID', 'name', 'gender', 'birthtime', 'age', 'momemail'],
+            [ID, name, gender, birthtime, age, momEmail]))
+        return babyDict
+
+
+def readRecord():
+    with sqlite3.connect(filename) as conn:
+        cursor = conn.cursor()
+        sql1 = '''
+        create table if not exists noterecord (
+        ID num, time text, age text, record text
+        )'''
+        cursor.execute(sql1)
+        sql = '''
+        select * from noterecord
+        order by time desc
+        '''
+        cursor.execute(sql)
+        historylabel = cursor.fetchall()
+        return historylabel
+
+```
+
+有些纯粹是为了不超过79字符转弯的。。。。。
+
+这个版本：  
+
+1. 能从零开始创建数据库及其中表格。无需依赖于models事先创建。
+2. 一个数据库含多个表格，不像15年的版本那样每个表格都占据了一个数据库。
+3. 因为数据库文件是在程序运行起来后创建的，所以有初始状态：包括没有宝宝个人信息时、有宝宝个人信息没有记录内容时。没有宝宝个人信息时，各个页面都指向添加新宝宝这个内容。有个人信息没有记录内容时，历史记录这个页面指向添加新内容这个页面。
+4. 读取数据库的部分，单独成为函数，可以复用。其中也考虑了数据表内容为空的情况。
+5. 保存内容到数据库的部分，单独成为函数。
+6. 依赖于读取数据库的过程是独立的，发送email页面中，email可以读取。虽然目前还没有添加发送功能。
+7. 宝宝信息和记录内容这两个页面，接受用户输入时，除了存数据库之外，也都包含读取数据库内容到页面上来展示的功能。
+8. 注释部分，是使用models创建好的数据库和表格进行操作。不能考虑初始状态。
+
+datetime有两种，一种是datetime.datetime，另一种是datetime.date。前者表达现在是.now()，后者表达今天是.today()
+
+居然还有这种神奇的操作：`name = gender = birthtime = age = momEmail = ''`，真没见过。切记，不能写成`name, gender, birthtime, age, momEmail = ''`，否则需要五个`''`。
 

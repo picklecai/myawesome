@@ -9,8 +9,8 @@
 	<div class="labelrecord">
          /photo文件夹中已经存了{{photoid}}张照片。</br>
     {% for i in photoname %}
-		{# <div class="labelrecord"> 拍照时间：{{i[0]}} 照片名：{{i[1]}}</div> #}
-		<div class="labelrecord"> {{i}}</div>
+		<div class="labelrecord"> 拍照时间：{{i.0}} 照片名：{{i.1}}</div> 
+		{# <div class="labelrecord"> {{i}}</div>#}
     {% endfor %}
 	</div>
    	</div>
