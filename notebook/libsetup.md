@@ -382,4 +382,39 @@ python3下安装：`pip3 install Django`
 Successfully installed Django-2.2.2 sqlparse-0.3.0
 ```
 
+## 安装pandas
+
+进入python3的环境，
+
+```
+pip3 install pandas
+```
+
+运行成功后，提示：
+
+```
+raise ImportError("html5lib not found, please install it")
+```
+
+于是又安装html5lib
+
+```
+pip3 install html5lib
+pip install html5lib
+conda install html5lib
+```
+这三个挨个试了一遍。还是说没有这个库。要哭😢了
+
+```
+~/anaconda/envs/python35/lib/python3.7/site-packages/pandas/io/html.py in _parser_dispatch(flavor)
+    838     if flavor in ('bs4', 'html5lib'):
+    839         if not _HAS_HTML5LIB:
+--> 840             raise ImportError("html5lib not found, please install it")
+    841         if not _HAS_BS4:
+    842             raise ImportError(
+
+ImportError: html5lib not found, please install it
+
+```
+
 
