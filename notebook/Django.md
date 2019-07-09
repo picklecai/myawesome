@@ -1918,3 +1918,13 @@ datetime有两种，一种是datetime.datetime，另一种是datetime.date。前
 
 居然还有这种神奇的操作：`name = gender = birthtime = age = momEmail = ''`，真没见过。切记，不能写成`name, gender, birthtime, age, momEmail = ''`，否则需要五个`''`。
 
+## 7. 实现多宝宝管理
+
+### 7.1 Django模板中的下拉框
+
+用select
+
+[django中 下拉框 - 程序园](http://www.voidcn.com/article/p-rozhutoq-gb.html)
+
+
+

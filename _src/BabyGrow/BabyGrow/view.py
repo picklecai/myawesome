@@ -201,3 +201,13 @@ def initBaby():
     context['birthtime'] = context['momemail'] = "未设置"
     context['tips'] = UPLOAD_TIPS
     return context
+
+
+def selectBaby(request):
+    context = {}
+    with sqlite3.connect(FILE_NAME) as conn:
+        cursor = conn.cursor()
+        sql = '''select * from babyinfo order by settingtime desc'''
+        cursor.execute(sql)
+        context['babyList'] = cursor.fetchall()
+        return render(request, 'index.html', context)
