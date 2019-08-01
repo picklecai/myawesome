@@ -39,6 +39,32 @@ conda deactivate python35
 
 后来发现，`conda deactivate python35`这句话没有用。但是关了终端再重新打开，就回到python2了。
 
+（2019.07.11）偶尔理解了-e和activate的关系：
+
+
+```
+conda info -e
+```
+输出为：
+
+```
+(python35) caimeijuandeMacBook-Air:~ caimeijuan$ conda info -e
+# conda environments:
+#
+base                     /Users/caimeijuan/anaconda
+python35              *  /Users/caimeijuan/anaconda/envs/python35
+```
+
+如果使用`source activate python35`，则进入`python35`环境，也就是python3环境。
+如果使用`conda activate base`，则进入`base`环境，也就是python2环境。
+
+```
+(python35) caimeijuandeMacBook-Air:~ caimeijuan$ conda activate base
+(base) caimeijuandeMacBook-Air:~ caimeijuan$ source activate python35
+(python35) caimeijuandeMacBook-Air:~ caimeijuan$ 
+
+```
+
 ## 2. 在ipython中切换python2和python3  
 
 发现以上操作只是在anaconda中管理两个版本，并没有在ipython中切换。
