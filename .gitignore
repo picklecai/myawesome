@@ -48,3 +48,5 @@ _src/kivy/python-for-android/
 *.gfx
 
 *.pyc
+
+*.epub
