@@ -7,4 +7,6 @@
 
 原来是序数。
 
+[python: 背景图像的URL嵌入在BS4元素的div类中](https://xbuba.com/questions/54933923)
+
 
