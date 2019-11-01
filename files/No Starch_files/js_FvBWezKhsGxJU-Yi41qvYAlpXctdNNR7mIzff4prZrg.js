@@ -1,3 +1,0 @@
-var uc_file_list={};function _uc_file_delete_list_populate(){jQuery('.affected-file-name').empty().append(uc_file_list[jQuery('#edit-recurse-directories').attr('checked')]);}
-jQuery(document).ready(function(){_uc_file_delete_list_populate();});Drupal.behaviors.ucFileDeleteList={attach:function(context,settings){jQuery('#edit-recurse-directories:not(.ucFileDeleteList-processed)',context).addClass('ucFileDeleteList-processed').change(function(){_uc_file_delete_list_populate()});}}
-function uc_file_update_download(id,accessed,limit){if(accessed<limit||limit==-1){var downloads='';downloads+=accessed+1;downloads+='/';downloads+=limit==-1?'Unlimited':limit;jQuery('td#download-'+id).html(downloads);jQuery('td#download-'+id).attr("onclick","");}};
