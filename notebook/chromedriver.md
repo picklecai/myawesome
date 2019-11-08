@@ -71,3 +71,36 @@ URL窗口写着data。
 
 随便扔个地方的方案总算实现了。先用起来再说。
 
+## 重新来过
+
+由于中间重装了ipython，所以以前的chromedriver路径不对了，又重新安装。
+
+这次系统提示的路径是：  
+`~/anaconda3/lib/python3.7/site-packages/selenium/webdriver/remote/webdriver.py 
+`
+
+于是到这个位置放了解压出来的chromedriver：  
+
+`/anaconda3/lib/python3.7/site-packages/selenium/webdriver/chrome/chromedriver`  
+
+本来以为按照以前的过程，现在万无一失了。结果提示是：  
+
+```
+SessionNotCreatedException: Message: session not created: Chrome version must be between 70 and 73
+  (Driver info: chromedriver=73.0.3683.68 (47787ec04b6e38e22703e856e101e840b65afe72),platform=Mac OS X 10.14.6 x86_64)
+
+```
+
+检查了一下我本机的chrome版本：`版本 78.0.3904.70（正式版本） （64 位）`
+
+在这里[mac 搭建selenium与ChromeDriver环境 - 简书](https://www.jianshu.com/p/39716ea15d99)发现一个下载地址：[Downloads - ChromeDriver - WebDriver for Chrome](http://chromedriver.chromium.org/downloads)
+
+对应78版本再下载一个，发布日期是2019-10-21。
+
+成功。  
+
+以前的版本赶紧扔掉。
+
+
+
+
