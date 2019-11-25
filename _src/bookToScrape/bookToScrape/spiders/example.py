@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 import scrapy
+from scrapy import Item, Field
+
+
+class BookItem(Item):
+    name = Field()
+    price = Field()
 
 
 class BooksSpider(scrapy.Spider):
@@ -9,12 +15,19 @@ class BooksSpider(scrapy.Spider):
 
     def parse(self, response):
         for book in response.css('article.product_pod'):
+            '''
             name = book.xpath('./h3/a/@title').extract_first()
             price = book.css('p.price_color::text').extract_first()
             yield {
                 'name': name,
                 'price': price,
             }
+            '''
+            book = BookItem()
+            book['name'] = book.xpath('./h3/a/@title').extract_first()
+            book['price'] = book.css('p.price_color::text').extract_first()
+            yield book
+
         next_url = response.css('ul.pager li.next a::attr(href)').extract_first()
         if next_url:
             next_url = response.urljoin(next_url)
