@@ -141,3 +141,39 @@ xml文档的节点：
 - 属性节点：eg. href
 - 文本节点
 
+**居然不是从0开始计数的，而是从1开始计数的。**
+
+html内容为：  
+
+```
+body = '''
+<html>
+    <head>
+        <base href='http://example.com/' />
+        <title>Example WebSite</title>
+    </head>
+    <body>
+        <div id='images'>
+            <a href='image1.html'>Name: Image 1<br/><img src='image1.jpg' /></a>
+            <a href='image2.html'>Name: Image 2<br/><img src='image2.jpg' /></a>
+            <a href='image3.html'>Name: Image 3<br/><img src='image3.jpg' /></a>
+            <a href='image4.html'>Name: Image 4<br/><img src='image4.jpg' /></a>
+            <a href='image5.html'>Name: Image 5<br/><img src='image5.jpg' /></a>
+        </div>
+    </body>
+</html>
+'''
+```
+
+```
+response.xpath('//a[1]/@*') 
+```
+
+输出为：  
+
+```
+[<Selector xpath='//a[1]/@*' data='image1.html'>]
+
+```
+
+
