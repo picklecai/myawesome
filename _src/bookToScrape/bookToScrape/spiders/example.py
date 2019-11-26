@@ -14,7 +14,7 @@ class BooksSpider(scrapy.Spider):
     start_urls = ['http://books.toscrape.com/']
 
     def parse(self, response):
-        for book in response.css('article.product_pod'):
+        for article in response.css('article.product_pod'):
             '''
             name = book.xpath('./h3/a/@title').extract_first()
             price = book.css('p.price_color::text').extract_first()
@@ -24,8 +24,8 @@ class BooksSpider(scrapy.Spider):
             }
             '''
             book = BookItem()
-            book['name'] = book.xpath('./h3/a/@title').extract_first()
-            book['price'] = book.css('p.price_color::text').extract_first()
+            book['name'] = article.xpath('./h3/a/@title').extract_first()
+            book['price'] = article.css('p.price_color::text').extract_first()
             yield book
 
         next_url = response.css('ul.pager li.next a::attr(href)').extract_first()

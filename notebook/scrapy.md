@@ -57,7 +57,7 @@ Use "scrapy <command> -h" to see more info about a command
 scrapy startproject + 项目名 + 项目路径
 ```
 
-编写好spder的文件后，按照教程运行`scrapy crawl books -o books.csv`居然说没有crawl这个命令。  
+编写好spider的文件后，按照教程运行`scrapy crawl books -o books.csv`居然说没有crawl这个命令。  
 
 从[Python Scrapy 命令行工具 - 简书](https://www.jianshu.com/p/ee56e7b01b3a)发现，scrapy的命令分全局命令和项目命令。
 
@@ -86,11 +86,26 @@ Available templates:
 
 **所谓框架，就是做填空题。**
 
-> 实现一个Spider只需要完成下面4个步骤：  
+Scrapy框架提出以下问题让用户在Spider子类中回答：  
+
+> 爬虫从哪个或哪些页面开始爬取？  
+> 对于一个已下载的页面，提取其中哪些数据？  
+> 爬取完当前页面后，接下来爬取哪个或哪些页面？
+
+实现一个Spider只需要完成下面4个步骤：  
+
 > 步骤1: 继承scrapy.Spider。  
 > 步骤2: 为Spider取名。
 > 步骤3: 设定起始爬取点。  
 > 步骤4:实现页面解析函数。  
+
+response连接url的方法`urljoin()`，如果链接中的下一页是相对地址，可以用它来构造下一页：
+
+```
+response = HtmlResponse(url=url, body=res.text, encoding='utf8')
+response.url
+response.urljoin(nextUrl)
+```
 
 ## 4. selector提取数据
 
@@ -240,6 +255,7 @@ css语法比xpath更简单，但功能不如xpath强大。
 
 
 > 17. `E::text`：选中E元素的文本节点。
+> 18. `E::attr(ATTR)`：选中E元素的ATTR属性值
 
 
 
