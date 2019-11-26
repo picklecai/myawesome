@@ -94,6 +94,8 @@ Available templates:
 
 ## 4. selector提取数据
 
+**css和xpath的语法，这本书讲得最详细。**
+
 ### 4.1 Selector对象
 
 #### 4.1.1 创建对象
@@ -106,6 +108,7 @@ from scrapy.http import HtmlResponse
 response = HtmlResponse(url=url, body=body, encoding='utf8')
 selector = Selector(response=response)
 ```
+原来**Selector也有response参数**，不只是text参数。不过response的值必须由HtmlResponse来。
 
 #### 4.1.2 选中数据
 
@@ -119,6 +122,7 @@ selector.xpath('')
 selector.xpath('').extract()
 selector.xpath('').re('')
 ```
+无须先extract再re，直接re就可以了。
 
 ### 4.2 Response内置Selector
 
@@ -134,12 +138,14 @@ response.css('').extract()
 
 > html属于xml
 
-xml文档的节点：  
+#### 4.3.1 xml文档的节点：  
 
 - 根节点
 - 元素节点：eg. body, html, div, p, a 等
 - 属性节点：eg. href
 - 文本节点
+
+#### 4.3.2 从1开始计数：  
 
 **居然不是从0开始计数的，而是从1开始计数的。**
 
@@ -175,5 +181,66 @@ response.xpath('//a[1]/@*')
 [<Selector xpath='//a[1]/@*' data='image1.html'>]
 
 ```
+
+#### 4.3.3 xpath的常用基本语法：  
+
+> 1. `/`：描述一个从根开始的绝对路径。
+> 2. `E1/E2`：选中E1子节点中的所有E2。
+> 3. `//E`：选中文档中的所有E，无论在什么位置。
+> 4. `E1//E2`：选中E1后代节点中的所有E2，无论在后代中的生命位置。
+> 5. `E/text()`：选中E的文本子节点。
+> 6. `E/*`：选中E的所有元素子节点。
+> 7. `*/E`：选中孙节点中的所有E。
+> 8. `E/@ATTR`：选中E的ATTR属性。
+> 9. `//@ATTR`：选中文档中所有ATTR属性。
+> 10. `E/@*`：选中E的所有属性
+> 11. `.`：选中当前节点，用来描述相对路径。
+> 12. `..`：选中当前节点的父节点，用来描述相对路径。
+> 13. `node[谓语]`：谓语用来查找某个特定的节点或者包含某个特定值的节点。
+
+`string()`默认只给出第一个结果，想要其他的，得加上序号。  
+
+```
+selector.xpath('string(//li)') # 第一个，但是是列表形式。
+selector.xpath('string(//li[4])') # 第四个
+```
+
+`contains()`函数，第一个参数是@ATTR，第二个参数是该属性的值。
+
+### 4.4 css
+
+css语法比xpath更简单，但功能不如xpath强大。
+
+#### 4.4.1 css选择器的常用基本语法： 
+
+> 1. `E`：选中E元素。 
+> 2. `*`：选中所有元素。
+> 3. `E:empty`：选中没有子元素的E元素。  
+
+
+> 4. `E1,E2`：选中E1和E2元素。  
+> 5. `E1 E2`：选中E1后代元素中的E2元素。  
+> 6. `E1>E2`：选中E1子元素中的E2元素。  
+> 7. `E1+E2`：选中E1兄弟元素中的E2元素。  
+
+
+> 8. `[ATTR]`：选中包含ATTR属性的元素。  
+> 9. `[ATTR=VALUE]`：选中包含ATTR属性且值为VALUE的元素。（这里是等于）  
+> 10. `[ATTR~=VALUE]`：选中包含ATTR属性且其值包含VALUE的元素。（这里是包含）  
+
+
+> 11. `E:nth-child(n)`：选中E元素，且该元素必须是其父元素的第n个子元素。
+> 12. `E:nth-last-child(n)`：选中E元素，且该元素必须是其父元素的倒数第n个子元素。
+> 13. `E:first-child`：选中E元素，该元素必须是其父元素的第一个子元素。
+> 14. `E:last-child`：选中E元素，该元素必须是其父元素的倒数第一个子元素。
+
+
+> 15. `.CLASS`：选中class属性包含CLASS的元素。 （这里是包含）
+> 16. `#ID`：选中id属性为ID的元素。 （这里是等于）
+
+
+> 17. `E::text`：选中E元素的文本节点。
+
+
 
 

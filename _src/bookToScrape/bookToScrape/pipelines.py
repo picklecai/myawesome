@@ -12,7 +12,6 @@ class BooktoscrapePipeline(object):
 
 class PriceConverterPipeline(object):
     exchange_rate = 8.5309
-
     def process_item(self, item, spider):
         price = float(item['price'][1:]) * self.exchange_rate
         item['price'] = '¥%.2f' % price
