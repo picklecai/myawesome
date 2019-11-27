@@ -258,5 +258,29 @@ css语法比xpath更简单，但功能不如xpath强大。
 > 18. `E::attr(ATTR)`：选中E元素的ATTR属性值
 
 
+## 5. Item封装
+
+启用ITEM_PIPELINES。  
+在settings里改写如下：  
+
+```
+ITEM_PIPELINES = {
+    'bookToScrape.pipelines.PriceConverterPipeline': 300,
+}
+```
+值是一个0～1000的数字，同时启用多个Item Pipeline时，Scrapy根据这些数值决定各Item Pipeline处理数据的先后次序，数值小的在前。
+
+在pipelines里写上PriceConverterPipeline：  
+
+```
+class PriceConverterPipeline(object):
+    exchange_rate = 8.5309
+    def process_item(self, item, spider):
+        price = float(item['price'][1:]) * self.exchange_rate
+        item['price'] = '¥%.2f' % price
+        return item
+```
+
+## 6. LinkExtactor提取链接
 
 

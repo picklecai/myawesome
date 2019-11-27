@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from scrapy import Item, Field
+from scrapy.linkextractors import LinkExtractor
 
 
 class BookItem(Item):
@@ -28,7 +29,14 @@ class BooksSpider(scrapy.Spider):
             book['price'] = article.css('p.price_color::text').extract_first()
             yield book
 
+        '''
         next_url = response.css('ul.pager li.next a::attr(href)').extract_first()
         if next_url:
             next_url = response.urljoin(next_url)
+            yield scrapy.Request(next_url, callback=self.parse)
+        '''
+        le = LinkExtractor(restrict_css='ul.pager li.next')
+        links = le.extract_links(response)
+        if links:
+            next_url = links[0].url
             yield scrapy.Request(next_url, callback=self.parse)
