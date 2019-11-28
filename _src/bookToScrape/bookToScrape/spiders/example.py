@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from scrapy import Item, Field
 from scrapy.linkextractors import LinkExtractor
-
-
-class BookItem(Item):
-    name = Field()
-    price = Field()
+from ..items import BookItem
 
 
 class BooksSpider(scrapy.Spider):

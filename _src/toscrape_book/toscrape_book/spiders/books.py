@@ -4,7 +4,7 @@
 '''
 import scrapy
 from scrapy.linkextractors import LinkExtractor
-from toscrape_book.items import BookItem
+from ..items import BookItem
 
 
 class BooksSpider(scrapy.Spider):
@@ -12,7 +12,7 @@ class BooksSpider(scrapy.Spider):
     1: 继承scrapy.Spider。
     2: 为Spider取名。
     3: 设定起始爬取点。
-    4:实现页面解析函数。
+    4: 实现页面解析函数。
     '''
     name = 'books'
     allowed_domains = ['books.toscrape.com']
