@@ -147,9 +147,7 @@ class PriceConverterPipeline(object):
 
 写好后，打开`settings.py`，将`ITEM_PIPELINES = {`这一段从注释中放出来，字典的键是`项目名称.pipelines.Pipeline名称`，字典的值在0~1000之间，同时启用多个Item Pipeline时，Scrapy根据这些数值决定各Item Pipeline处理数据的先后次序，数值小的在前。
 
-（才发现这里和导出数据有关，而非处理数据）
-
-此外，如果希望csv文件中的字段名之间有指定排序，也可以在`settings.py`中进行设置。添加这句：  
+（才发现这里和导出数据有关，而非处理数据）此外，如果希望csv文件中的字段名之间有指定排序，也可以在`settings.py`中进行设置。添加这句：  
 
 ```
 FEED_EXPORT_FIELDS = ['upc', 'name', 'price', 'stock', 'review_rating', 'review_num']
@@ -280,7 +278,7 @@ response.xpath('//a[1]/@*')
 > 1. `/`：描述一个从根开始的绝对路径。
 > 2. `E1/E2`：选中E1子节点中的所有E2。
 > 3. `//E`：选中文档中的所有E，无论在什么位置。
-> 4. `E1//E2`：选中E1后代节点中的所有E2，无论在后代中的生命位置。
+> 4. `E1//E2`：选中E1后代节点中的所有E2，无论在后代中的什么位置。
 > 5. `E/text()`：选中E的文本子节点。
 > 6. `E/*`：选中E的所有元素子节点。
 > 7. `*/E`：选中孙节点中的所有E。
@@ -366,9 +364,11 @@ if links:
 
 除了最后一个，其他的可分两类：一类是筛选，一类是排除。排除的方法主要有根据正则表达式和域名两种。而筛选的方式则要多一些，除了正则表达式和域名外，还有xpath、css、tags、attrs几种。
 
+使用LinkExtractor时，它自己把相对地址补全了。
+
 ## 5. 使用Exporter导出数据
 
-scrapy中负责导出数据的组建被称为Exporter（导出器），scrapy内部实现了多个Exporter，每个实现一种数据格式的导出：  
+scrapy中负责导出数据的组件被称为Exporter（导出器），scrapy内部实现了多个Exporter，每个实现一种数据格式的导出：  
 
 - JSON（JsonItemExporter）
 - JSON lines（JsonLinesItemExporter）
@@ -379,7 +379,7 @@ scrapy中负责导出数据的组建被称为Exporter（导出器），scrapy内
 
 前四种是常用的文本数据格式，后两种是python特有的。一般使用这几种就够了，如果是其他数据格式，可以自己写Exporter。
 
-## 5.1 已有类型的Exporter操作
+### 5.1 已有类型的Exporter操作
 
 提供：  
 
@@ -388,7 +388,7 @@ scrapy中负责导出数据的组建被称为Exporter（导出器），scrapy内
 
 既可以通过命令行参数指定，也可以通过配置文件指定。
 
-### 5.1.1 命令行参数指定
+#### 5.1.1 命令行参数指定
 
 前面使用的运行命令就是一个用命令行参数指定的示例：  
 
@@ -408,7 +408,7 @@ scrapy crawl books -t xml -o books3.data
 
 `%(name)s`和`%(time)s`两个可以让文件名中带有spidername和下载时间。
 
-### 5.1.2 配置文件指定
+#### 5.1.2 配置文件指定
 
 - FEED_URI：导出文件路径
 - FEED_FORMAT：导出数据格式
@@ -418,6 +418,45 @@ scrapy crawl books -t xml -o books3.data
 
 （我想知道写在哪里，是settings.py吗？貌似是的，因为上面的例子中，FEED_EXPORT_FIELDS就是写在settings中的。而且观察了一下默认文件和文件夹，似乎也没有其他文件可以写。
 
-## 5.2 添加导出数据格式
+### 5.2 添加导出数据格式
+
+## 6. 另类的试验方式
+
+```
+scrapy shell url
+```
+
+在命令行中试验数据抓取是否正确。  
+
+运行这条命令后，`scrapy shell`会使用url参数构造一个Request对象，并提交给Scrapy引擎，页面下载完成后，程序进入一个python shell当中，在此环境中已经创建好了一些变量（对象和函数）：  
+
+- request：最近一次下载对应的Request对象。
+- response：最近一次下载对应的Response对象。
+- fetch(req_or_url)：该函数用于下载页面，可以传入一个Request对象或url字符串，调用后会更新变量request和response。
+- view(response)：该函数用于在浏览器中显示response中的页面。
+
+此时，在终端中运行：  
+
+```
+view(response)
+```
+
+就可以在浏览器中看到打开的页面了，同时在终端输出`True`。  
+
+在进行**页面分析**时，使用**view**函数**更加可靠**。
+
+注意：虽然已经创建好了response等变量，但是并没有导入相应函数，Selector、LinkExtractor等函数还是要自己导入的。
+
+如果想换一个url又不想退出终端的话，只要用fetch就行了：  
+
+```
+fetch(url)
+```
+这个输出比较简单：时间、网址、debug信息。  
+
+```
+2019-11-29 10:18:56 [scrapy.core.engine] DEBUG: Crawled (200) <GET http://books.toscrape.com> (referer: None)
+```
+此时用`view(response)`会打开新的网址供分析。
 
 
