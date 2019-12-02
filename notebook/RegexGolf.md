@@ -345,8 +345,59 @@ and none of these…
 x重复次数是质数不是合数。
 
 ```
+Match all of these…
+✔xx
+✔xxx
+✔xxxxx
+✔xxxxxxx
+✔xxxxxxxxxxx
+✔xxxxxxxxxxxxx
+✔xx…(17)…xx
+✔xx…(19)…xx
+✔xx…(23)…xx
+✔xx…(29)…xx
+✔xx…(31)…xx
+✔xx…(37)…xx
+✔xx…(41)…xx
+✔xx…(43)…xx
+✔xx…(47)…xx
+✔xx…(53)…xx
+✔xx…(59)…xx
+✔xx…(61)…xx
+✔xx…(67)…xx
+✔xx…(71)…xx
+and none of these…
+✔xxxx (no match)
+✔xxxxxx (no match)
+✔xxxxxxxx (no match)
+✔xxxxxxxxx (no match)
+✔xxxxxxxxxx (no match)
+✔xxxxxxxxxxxx (no match)
+✔xxxxxxxxxxxxxx (no match)
+✔xxxxxxxxxxxxxxx (no match)
+✔xxxxxxxxxxxxxxxx (no match)
+✔xx…(18)…xx (no match)
+✔xx…(20)…xx (no match)
+✔xx…(21)…xx (no match)
+✔xx…(22)…xx (no match)
+✔xx…(24)…xx (no match)
+✔xx…(25)…xx (no match)
+✔xx…(26)…xx (no match)
+✔xx…(27)…xx (no match)
+✔xx…(28)…xx (no match)
+✔xx…(30)…xx (no match)
+✔xx…(32)…xx (no match)
 
 ```
+使用了公式： 
+
+> 对于大于2和3的质数都可以用6n+1或6n-1来表示（n为大于等于1的整数）。但是并不是所有的6n+1或6n-1就是质数，例如`35=6*6-1=5*7`，就不是个质数。
+
+2\3\5\29单独列出来，6n+1或6n+5。当n=4时，6n+1为合数。
+
+答案是：`^(xxx?|x{5}|(xxxxxx){1,3}x(xxxx)?|(xxxxxx){5,}x(xxxx)?|x{29})$`
+
+参照酷壳文章[检查素数的正则表达式 | | 酷 壳 - CoolShell](https://coolshell.cn/articles/2704.html)，答案改为`^(?!(xx+?)\1+$)`
 
 ## 8. Four 
 
@@ -404,4 +455,58 @@ and none of these…
 
 答案是`\w?(\w)\w\1\w\1\w\1\w*`
 
+
+## 9. Order 
+
+Cheat.
+
+```
+Match all of these…
+✔access
+✔accloy
+✔adeem
+✔aflow
+✔aglow
+✔beefin
+✔befist
+✔billot
+✔bossy
+✔certy
+✔chintz
+✔chips
+✔chort
+✔cloop
+✔coost
+✔demos
+✔fitty
+✔flory
+✔flossy
+✔ghost
+✔mopsy
+and none of these…
+✔analyse (no match)
+✔balanism (no match)
+✔baronet (no match)
+✔biddable (no match)
+✔griefless (no match)
+✔harebrain (no match)
+✔jestword (no match)
+✔laicize (no match)
+✔marvelry (no match)
+✔oriole (no match)
+✔pickietar (no match)
+✔preferee (no match)
+✔primness (no match)
+✔pulghere (no match)
+✔rebirth (no match)
+✔scupper (no match)
+✔serigraph (no match)
+✔sororize (no match)
+✔theowman (no match)
+✔unfrayed (no match)
+✔wagonman (no match)
+
+```
+
+没敢下定决心穷举，本来已经放弃了，突然发现别人也是穷举的，于是不要脸地写下来这个答案：`^a*b*c*d*e*f*g*h*i*j*k*l*m*n*o*p*q*r*s*t*u*v*w*x*y*z*$`
 
