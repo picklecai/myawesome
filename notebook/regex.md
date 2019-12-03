@@ -109,7 +109,7 @@ grep is used for simple patterns and basic regular expressions (BREs);
 egrep can handle extended regular expressions (EREs).
 ```
 > 
-> 可以看到Mac默认的grep只支持基本政策表达式，而egrep支持扩展正则表达式
+> 可以看到Mac默认的grep只支持基本正则表达式，而egrep支持扩展正则表达式
 >
 
 ### mac下安装egrep：
@@ -127,11 +127,14 @@ egrep can handle extended regular expressions (EREs).
 
 这句话没有起作用。仍然要用ggrep。
 
+### mac下使用ggrep：  
 
+[Mac 命令学习 - grep | yi's weblog](http://zhengyi.me/2016/06/06/learning-shell-grep/)
 
 ## 新知  
 
-`\<`和`\>`，说是单词版读开头和结尾（`^$`），但是在python3中，试验没有成功。  
+`\<`和`\>`，说是单词版读开头和结尾（`^$`），但是在python3中，试验没有成功。ggrep中可以使用。`\b`在ggrep中也能使用。  
+  
 \1代表第一组，那个间谍替换名字的案例就是用了这一点。也可以用来找重复，只要用括号划分出组来。  
 
 可以在程序要求用户输入时使用正则表达式来验证输入是否有问题，类似那天用的isdecimal函数。   
