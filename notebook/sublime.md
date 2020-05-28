@@ -82,3 +82,16 @@ CTRL+` (ese按键下)，打开sublime命令输入框，将下述代码粘贴到�
 ```
 import urllib.request,os,hashlib; h = '6f4c264a24d933ce70df5dedcf1dcaee' + 'ebe013ee18cced0ef93d5f746d80ef60'; pf = 'Package Control.sublime-package'; ipp  = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try           manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)
 ```
+
+## 5. 卸载/隐藏已安装的
+
+烦死了一直提示，关键还是一些无伤大雅的，例如一定要我给每个函数都写上docstring。docstring一定要大写开头，句号结尾啊。于是寻找卸载隐藏方法：
+
+[去掉Sublime text 3中的框框_python_最后的坚持-CSDN博客](https://blog.csdn.net/cylj102908/article/details/76038051)
+
+> ctrl+shift+p —>pcd—->Package Control:Disable Package—->Pylinter
+> 这样就能取消代码检查的功能。
+
+重启sublime3，就没问题了。
+
+感觉一下子清净了好多。强迫症真是不能忍。
