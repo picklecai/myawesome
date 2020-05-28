@@ -2,10 +2,20 @@
 
 [Django 教程 | 菜鸟教程](https://www.runoob.com/django/django-tutorial.html)
 
+[Django 文档 | Django 文档 | Django](https://docs.djangoproject.com/zh-hans/3.0/)
+
 《The Django Book》（中文版），这是一本教材。感觉有点旧，还是2008年的。
 最新版：[Mastering Django 2 – The Book - Python Django Tutorials](https://djangobook.com/)
 
+看版本：
+
+` python -m django --version`
+
+当前版本是3.0.6
+
 ## 1. 创建新项目  
+
+### 1.1 正常
 
 在命令行指定文件夹下输入：  
 
@@ -39,6 +49,51 @@ python manage.py runserver 127.0.0.1:5050
 本来想用0.0.0.0，结果提示必须要把它加入允许的地址内。
 
 现在有两个Django空页面运行起来了😤
+
+
+
+### 1.2 意外  
+
+在windows下安装了python3.7.6和Django3.0.6后，很高兴地按照上面的方法新建项目，却没有成功。
+
+只启动django-admin.py文档，不建立文件夹和文件。而且sublime还有找不到localhost的错误。以为这个错误很关键，找了好多地方，后来发现这个似乎无关紧要。
+
+于是看是不是Django和python版本不对付，也没有。
+
+然后看Django的路径是不是加入了系统path里，一看都在。
+
+[django-admin.py startproject testdj 失败 没有工程文件夹 - 皎陽 - 博客园](https://www.cnblogs.com/dingjiaoyang/p/10536803.html) 这里提到的似乎没有加。
+
+不过又加了一条进去，保险一点。
+
+```
+>>> import django
+>>> django.get_version()
+'3.0.6'
+>>> import sys
+>>> print(sys.executable)
+C:\ProgramData\Anaconda3\python.exe
+>>> print(django.__file__)
+C:\ProgramData\Anaconda3\lib\site-packages\django\__init__.py
+```
+
+加入了最后一行的路径。但并没有什么用。
+
+起作用的是他的第三种，不写.py：
+
+```
+django-admin.py startproject testdj
+```
+
+改为：
+
+```
+django-admin startproject testdj
+```
+
+这才真正成功。
+
+启动也没有什么幺蛾子，也成功了。
 
 ## 2. 做点什么
 
@@ -155,7 +210,7 @@ def clock(request):
 > 每个视图函数都以一个 HttpRequest 对象为第一个参数，该参数通常命名为 request 。 
 
 该页面运行起来后，发现时间不是本时区的时间，而是0点时间。 
- 
+
 > Django 时区 (Time Zone)Django 包含一个默认为 America/Chicago 的 TIME_ZONE 设置。这可能不是你所居住的时区，因此你可以在 settings.py 文件中修改它。 
 
 看到了settings文件中显示为`TIME_ZONE = 'UTC'`。
@@ -182,6 +237,8 @@ urlpatterns = [
 ```
 
 这个正则表达式中增加了一个分组，该分组可在view文件的timeAhead函数中捕获并运用。
+
+$理论上应该写在括号外面，但这样也可以。
 
 ```
 # view.py
@@ -256,7 +313,7 @@ c = Context({'person': person}) t.render(c)
 ```
 
 输出：
-  
+
 ```
  'Sally is 43 years old.' 
 ```
@@ -297,10 +354,10 @@ class Person(object):
 ```
 
 输出： 
- 
+
 ```
 'Hello, John Smith.'
-```   
+```
 
 句点还用于**调用对象的方法**。
 
@@ -812,7 +869,7 @@ urlpatterns = [url(r'^$', view.index),
 #### 5.2.3 baby.html 
 
 在baby.html中， 
- 
+
 ##### 5.2.3.1 页面变量：
 `{{tips}} {{name}}{{gender}}{{birthtime}}{{momemail}}`，这些构成了context的内容，一定要填满。
 
@@ -942,7 +999,7 @@ INSTALLED_APPS = (
 ```
 System check identified no issues (0 silenced).
 ```
- 
+
 #### 6.2.4 创建数据库的数据表
 
 修改 TestModel/models.py 文件，代码如下：
