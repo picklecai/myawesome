@@ -20,5 +20,4 @@ from . import view
 
 urlpatterns = [
     url(r'^index$', view.index), path('admin/', admin.site.urls),
-    path('time/', view.clock), url(r'^time/plus/(\d{1,2})$', view.timeAhead)
 ]

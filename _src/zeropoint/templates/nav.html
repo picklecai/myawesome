@@ -1,0 +1,25 @@
+<head>
+        {% load static %}
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="{% static '/styles/main.css' %}">
+        <title>ZeroPoint IT</title>
+        <meta name="description" content="">
+</head>
+<body>
+    <div class="banner" style="background-image: url({% static '/images/hills.jpg' %})">
+        <nav class="nav">
+            <a href="/">
+                <img src="{% static '/images/logo.png' %}">
+                <p class="get-title">零点坐标 </p>
+            </a>
+            <ul> 
+                <li><a href="#">首页</li>  
+                <li><a href="#">产品服务</li> 
+                <li><a href="#">解决方案</li>
+                <li><a href="#">应用案例</li>
+                <li><a href="#">新闻资讯</li>
+                <li><a href="#">关于我们</li> 
+            </ul>
+        </nav>
+    </div>
+</body>

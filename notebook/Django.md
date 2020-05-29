@@ -653,7 +653,7 @@ def hello(request):
     </body>
 </html>
 ```
-在整个html文件的顶部，`<html>`标签之外，加上这一句：`{% load static %}`，也有写作`{% load staticfiles %}`的，亲试无影响。
+在整个html文件的顶部，`<html>`标签之外，加上这一句：`{% load static %}`，也有写作`{% load staticfiles %}`的，亲试无影响。（在windows里安装3.0.6后，多了files就不行了。）
 
 `<link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">`，对这个href，我无数次怀疑写错了。。。
 
@@ -726,6 +726,14 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), '/var/www/static/', ]
 在静态文件根目录下，添加了styles文件夹，css文件是在这个文件夹里的。那就在static文件夹下增加这个文件夹，再把已有的main.css拖进去就完事了。
 
 ps.试过根目录下使用这个命令`python manage.py collectstatic`，真没管用。
+
+### 4.6 图片
+
+    ```
+<img src="{% static '/images/logo.png' %}" />
+    ```
+
+html文件中的img写法，和css文件一样，增加`{% static %}`外壳。
 
 ## 5. 能读取和写入数据
 
