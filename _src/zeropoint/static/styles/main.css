@@ -28,7 +28,7 @@ img{
 
 nav{
     position: absolute;
-    top:2%;
+    top: 2%;
     left: 5%;
 }
 
@@ -57,4 +57,19 @@ nav ul li a:active{
     background-color: #cf0;
     color:#000;
 }
- 
+
+.img-item {
+    font-weight: bold;
+    color: #fff;
+    font-size:1.5em;
+    padding: 100%;
+    display: inline-block;
+    vertical-align: middle;
+    position: absolute;
+
+}
+
+.img-item a {
+    color:#fff;
+    text-decoration: none;
+}

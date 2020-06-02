@@ -6,7 +6,9 @@
         <meta name="description" content="">
 </head>
 <body>
-    <div class="banner" style="background-image: url({% static '/images/hills.jpg' %})">
+    <!--<div class="banner" style="background-image: url({% static '/images/hills.jpg' %})">-->
+    <div>
+        <img id="placeholder" src="{% static '/images/hills.jpg' %} " class="banner" />
         <nav class="nav">
             <a href="/">
                 <img src="{% static '/images/logo.png' %}">
@@ -19,8 +21,15 @@
                 <li><a href="#">应用案例</li>
                 <li><a href="#">新闻资讯</li>
                 <li><a href="#">关于我们</li> 
+                <li></li>
             </ul>
+            <ul>
+                <li><a href="{% static '/images/hills.jpg' %}" onclick="showPic(this); return false;" class="img-item">·</a></li>
+                <li><a href="{% static '/images/stone.jpg' %}" onclick="showPic(this); return false;" class="img-item">·</a></li>
+                <li><a href="{% static '/images/sea.jpg' %}" onclick="showPic(this); return false;" class="img-item">·</a></li>
+            </ul>
+
         </nav>
     </div>
-    <script src="{% static '/scripts/banner.js' %}"></script>
+    <script type="text/javascript"  src="{% static '/scripts/banner.js' %}"></script>
 </body>
