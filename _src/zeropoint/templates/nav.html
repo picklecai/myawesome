@@ -7,7 +7,7 @@
 </head>
 <body>
     <!--<div class="banner" style="background-image: url({% static '/images/hills.jpg' %})">-->
-    <div>
+    <div class="banner">
         <img id="placeholder" src="{% static '/images/hills.jpg' %} " class="banner" />
         <nav class="nav">
             <a href="/">
@@ -15,21 +15,30 @@
                 <p class="get-title">零点坐标 </p>
             </a>
             <ul> 
-                <li><a href="#">首页</li>  
+                <li><a href="/">首页</li>  
                 <li><a href="#">产品服务</li> 
                 <li><a href="#">解决方案</li>
                 <li><a href="#">应用案例</li>
                 <li><a href="#">新闻资讯</li>
-                <li><a href="#">关于我们</li> 
-                <li></li>
+                <li><a href="#">关于我们</li>
             </ul>
-            <ul>
-                <li><a href="{% static '/images/hills.jpg' %}" onclick="showPic(this); return false;" class="img-item">·</a></li>
-                <li><a href="{% static '/images/stone.jpg' %}" onclick="showPic(this); return false;" class="img-item">·</a></li>
-                <li><a href="{% static '/images/sea.jpg' %}" onclick="showPic(this); return false;" class="img-item">·</a></li>
-            </ul>
-
         </nav>
+        <div class="tel">
+            <img src="{% static '/images/tel.png' %}">186-8888-6666</img>
+            <p>工作时间：9:00-17:30</p>
+
+        </div>
+        <div class="img-item">
+            <a href="{% static '/images/hills.jpg' %}" onmouseover="showPic(this); return false;" >·</a></li>
+            <a href="{% static '/images/stone.jpg' %}" onmouseover="showPic(this); return false;" >·</a></li>
+            <a href="{% static '/images/sea.jpg' %}"   onmouseover="showPic(this); return false;" >·</a></li>
+        </div>
+    </div>
+    <div id="content">
+    </div>
+    <div id="foot">
+        <p>Copyright 2020-2022 © 苏州零点坐标信息技术有限公司</p>
+        <p>All Rights Reserved   苏ICP备08000108号</p>
     </div>
     <script type="text/javascript"  src="{% static '/scripts/banner.js' %}"></script>
 </body>
