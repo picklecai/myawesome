@@ -1,4 +1,9 @@
 <!DOCTYPE html>
 <html>
-    {% include 'nav.html' %}
+    {% extends 'nav.html' %}
+    {% block title %}Home-Zeropoint IT{% endblock %}
+    {% block description %}我们在美丽的太湖之滨。{% endblock %}
+    {% block content %}
+    <div id="content"></div>
+    {% endblock %}
 </html>

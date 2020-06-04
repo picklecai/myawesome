@@ -2,8 +2,8 @@
         {% load static %}
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" type="text/css" href="{% static '/styles/main.css' %}">
-        <title>ZeroPoint IT</title>
-        <meta name="description" content="">
+        <title>{% block title %}{% endblock %}</title>
+        <meta name="description" content="{% block description %}{% endblock %}">
 </head>
 <body>
     <!--<div class="banner" style="background-image: url({% static '/images/hills.jpg' %})">-->
@@ -16,7 +16,7 @@
             </a>
             <ul> 
                 <li><a href="/">首页</li>  
-                <li><a href="#">产品服务</li> 
+                <li><a href="/product">产品服务</li> 
                 <li><a href="#">解决方案</li>
                 <li><a href="#">应用案例</li>
                 <li><a href="#">新闻资讯</li>
@@ -34,8 +34,7 @@
             <a href="{% static '/images/sea.jpg' %}"   onmouseover="showPic(this); return false;" >·</a></li>
         </div>
     </div>
-    <div id="content">
-    </div>
+    {% block content %}{% endblock %}
     <div id="foot">
         <p>Copyright 2020-2022 © 苏州零点坐标信息技术有限公司</p>
         <p>All Rights Reserved   苏ICP备08000108号</p>

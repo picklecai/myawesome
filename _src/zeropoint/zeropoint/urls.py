@@ -20,5 +20,5 @@ from . import view
 
 urlpatterns = [
     url(r'^index$', view.index), path('admin/', admin.site.urls),
-    url(r'^$', view.index),
+    url(r'^$', view.index), url(r'^product$', view.product)
 ]
