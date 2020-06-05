@@ -735,6 +735,31 @@ ps.试过根目录下使用这个命令`python manage.py collectstatic`，真没
 
 html文件中的img写法，和css文件一样，增加`{% static %}`外壳。
 
+### 4.7 icon
+
+[Django添加favicon.ico图标_<sdffdsfsdfdfs>sfsfsfsdfsdffds</sdfsDS>Fsd-CSDN博客](https://blog.csdn.net/Px01Ih8/article/details/82322022)
+
+首先先制作一个ico文件，使用PS或者某些在线生成ico的网站即可，我是在下面的网站生成的，当然，你也可以用其他网站！
+
+http://www.bitbug.net/
+
+下载后将此文件命名为“favicon.ico”后放在static//images/下
+
+这个办法成功了！
+
+方法一、在url.py中添加：
+
+```
+from Django.views.generic.base import RedirectView
+urlpatterns=[
+    ...
+    # favicon.cio
+    url(r'^favicon\.ico$', RedirectView.as_view(url=r'static/blog/img/favicon.ico')),     
+]
+```
+
+把请求”/favicon.ico”，指向static/blog/img/favicon.ico 这个文件，重新部署一下项目就可以看到你想要的效果。
+
 ## 5. 能读取和写入数据
 
 ### 5.1 删除重复页面

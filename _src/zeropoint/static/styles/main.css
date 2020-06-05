@@ -2,8 +2,9 @@
 /* CSS Document */
 
 body{
-    background-color:#ddd;
+    background-color:#06c;
     margin: 0;
+    padding: 0;
 }
 
 img{
@@ -32,9 +33,17 @@ a{
     text-align: center;
 }
 
+.daohang{
+    width: 100%;
+    height: 100px;
+    position: relative;
+    background-position: center;
+    text-align: center;
+}
+
 nav{
     position: absolute;
-    top: 2%;
+    top: 0.5em;
     left: 5%;
 }
 
@@ -53,14 +62,14 @@ nav ul li{
 
 nav ul li a:active{
     text-decoration:none;
-    background-color: #cf0;
+    background-color: #06c;
     color:#000;
 }
 
 .tel{
     display: inline-block;
     position: absolute;
-    top:3%;
+    top:0.5em;
     right: 3%;
     padding: 0.8em 0.8em 0.1em;
     background-color: rgba(190, 190, 190, 0.6);
@@ -82,17 +91,68 @@ nav ul li a:active{
 
 #content {
     width: 100%;
-    height: 1500px;
+    /*height: 800px;*/
     position: relative;
     background-position: center;
-    text-align: center;
     background:#fff;
+    color:#000;
+    text-align: center;
+    overflow: hidden;
 }
 #foot {
     width: 100%;
-    height: 100px;
+    height: 80px;
     position: relative;
     background-position: center;
+    padding-top:0.5em;
     text-align: center;
     background:#ccc;
+    color:#000;
+}
+
+.title{
+    position: relative;
+    left:3%;
+    font-size: 2em;
+    text-align: left;
+    padding:1em;
+    color:#555;
+}
+
+.zhengwen{
+    position: relative;
+    left:5%;
+    color:#555; 
+    text-align: left; 
+    text-indent: 2em;  
+    width: 90%;
+}
+
+.office{
+    position: relative;
+}
+
+#dituContent{
+    position: relative;
+    width:700px;
+    height:550px;
+    margin: auto;
+    padding: 1%;
+    border:#ccc solid 1px;
+}
+
+.iw_poi_title {
+    color:#CC5522;
+    font-size:14px;
+    font-weight:bold;
+    overflow:hidden;
+    padding-right:13px;
+    white-space:nowrap
+}
+.iw_poi_content {
+    font:12px arial,sans-serif;
+    overflow:visible;
+    padding-top:4px;
+    white-space:-moz-pre-wrap;
+    word-wrap:break-word
 }

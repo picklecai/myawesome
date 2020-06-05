@@ -1,9 +1,22 @@
 <!DOCTYPE html>
 <html>
-    {% extends 'nav.html' %}
+    {% extends 'frame.html' %}
+    {% load static %}
     {% block title %}Home-Zeropoint IT{% endblock %}
     {% block description %}我们在美丽的太湖之滨。{% endblock %}
-    {% block content %}
-    <div id="content"></div>
-    {% endblock %}
+    <body>
+        {% block content %}
+        <div class="banner">
+            <img id="placeholder" src="{% static '/images/hills.jpg' %} " class="banner" />
+            {% include 'nav.html' %}
+            <div class="img-item">
+                <a href="{% static '/images/hills.jpg' %}" onmouseover="showPic(this); return false;" onclick="return false;" >·</a></li>
+                <a href="{% static '/images/stone.jpg' %}" onmouseover="showPic(this); return false;" onclick="return false;" >·</a></li>
+                <a href="{% static '/images/sea.jpg' %}"   onmouseover="showPic(this); return false;" onclick="return false;" >·</a></li>
+            </div>            
+        </div>
+        <div id="content"></div>
+        <script type="text/javascript"  src="{% static '/scripts/banner.js' %}"></script>
+        {% endblock %}
+    </body>
 </html>

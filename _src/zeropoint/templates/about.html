@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    {% extends 'frame.html' %}
+    {% load static %}
+    {% block title %}About Me-Zeropoint IT{% endblock %}
+    {% block description %}关于零点坐标。{% endblock %}
+    <body>
+        {% block content %}
+        <div class="daohang">
+            {% include 'nav.html' %}
+        </div>        
+        <div id="content">
+            <p class="title">公司简介</p>
+            <p class="zhengwen">
+                苏州零点坐标信息技术有限公司成立于2017年，是国内优秀的无人机应用服务及电子沙盘提供商。我们将多年来在无人机和三维GIS领域积累的丰富经验应用于乡镇级单位，为乡镇管理者提供无人机数据采集、制图建模、平台服务等一整套电子沙盘服务，解决了乡镇工作人手少、数据旧、资料散、无平台等痛点问题，让用户对辖区内各项业务能更轻松地“看全局、抓细节”。我们将持续推动无人机服务市场下沉，为更多用户提供可靠的服务和稳定好用的平台。
+            </p>
+            <img src="{% static '/images/office.jpg' %}" class="office">
+            <p class="title">我们在哪里</p>            
+            <!--百度地图容器-->
+            <div id="dituContent"></div>
+        </div>        
+        {% endblock %}
+        <script type="text/javascript"  src="{% static '/scripts/map.js' %}"></script>
+        <script type="text/javascript" src="http://api.map.baidu.com/api?key=&v=1.1&services=true"></script>
+    </body>
+</html>

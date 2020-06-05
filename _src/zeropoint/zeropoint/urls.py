@@ -16,9 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url
 from django.urls import path
+from django.views.generic.base import RedirectView
 from . import view
+
 
 urlpatterns = [
     url(r'^index$', view.index), path('admin/', admin.site.urls),
-    url(r'^$', view.index), url(r'^product$', view.product)
+    url(r'^$', view.index), url(r'^product$', view.product),
+    url(r'^solution$', view.solution), url(r'^case$', view.case),
+    url(r'^news$', view.news), url(r'^about$', view.about),
+    url(r'^favicon.ico$', RedirectView.as_view(url=r'static/images/favicon.ico')),
 ]
