@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^$', view.index), url(r'^product$', view.product),
     url(r'^solution$', view.solution), url(r'^case$', view.case),
     url(r'^news$', view.news), url(r'^about$', view.about),
+    url(r'^map.html$', view.map),
     url(r'^favicon.ico$', RedirectView.as_view(url=r'static/images/favicon.ico')),
 ]

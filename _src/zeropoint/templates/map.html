@@ -2,13 +2,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="keywords" content="百度地图API" />
-<meta name="description" content="^" />
-<title>百度地图API自定义</title>
+<meta name="keywords" content="百度地图" />
+<meta name="description" content="百度地图API自定义地图，帮助用户在可视化操作下生成百度地图" />
+<title>百度地图API自定义地图</title>
 <!--引用百度地图API-->
 <style type="text/css">
     html,body{margin:0;padding:0;}
-    .iw_poi_title {color:#CC55cc;font-size:14px;font-weight:bold;overflow:hidden;padding-right:13px;white-space:nowrap}
+    .iw_poi_title {color:#0000CD;font-size:14px;font-weight:bold;overflow:hidden;padding-right:13px;white-space:nowrap}
     .iw_poi_content {font:12px arial,sans-serif;overflow:visible;padding-top:4px;white-space:-moz-pre-wrap;word-wrap:break-word}
 </style>
 <script type="text/javascript" src="http://api.map.baidu.com/api?key=&v=1.1&services=true"></script>
@@ -16,8 +16,7 @@
 
 <body>
   <!--百度地图容器-->
-  <div style="width:700px;height:500px;border:#c6c solid 5px;" id="dituContent"></div>
-</body>
+  <div style="width:700px;height:450px;border:#ccc solid 1px;" id="dituContent"></div>
 <script type="text/javascript">
     //创建和初始化地图函数：
     function initMap(){
@@ -57,7 +56,7 @@
     }
     
     //标注点数组
-    var markerArr = [{title:"苏州零点坐标信息技术有限公司",content:"科发路101号503室。<br/>电话：18688886666",point:"120.43027|31.344273",isOpen:1,icon:{w:21,h:21,l:0,t:0,x:6,lb:5}}
+    var markerArr = [{title:"苏州零点坐标信息技术有限公司",content:"科发路101号503室<br/>电话：18688886666",point:"120.43027|31.344258",isOpen:0,icon:{w:21,h:21,l:0,t:0,x:6,lb:5}}
          ];
     //创建marker
     function addMarker(){
@@ -109,10 +108,12 @@
     }
     //创建一个Icon
     function createIcon(json){
-        var icon = new BMap.Icon("http://bpic.588ku.com/element_origin_min_pic/09/03/20/1656df8a80aefee.jpg", new BMap.Size(json.w,json.h),{imageOffset: new BMap.Size(-json.l,-json.t),infoWindowOffset:new BMap.Size(json.lb+5,1),offset:new BMap.Size(json.x,json.h)})
+        var icon = new BMap.Icon("http://map.baidu.com/image/us_mk_icon.png", new BMap.Size(json.w,json.h),{imageOffset: new BMap.Size(-json.l,-json.t),infoWindowOffset:new BMap.Size(json.lb+5,1),offset:new BMap.Size(json.x,json.h)})
         return icon;
     }
     
     initMap();//创建和初始化地图
 </script>
+
+</body>
 </html>

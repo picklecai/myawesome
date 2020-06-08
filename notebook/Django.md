@@ -760,6 +760,70 @@ urlpatterns=[
 
 把请求”/favicon.ico”，指向static/blog/img/favicon.ico 这个文件，重新部署一下项目就可以看到你想要的效果。
 
+
+
+### 4.8 地图嵌入页面
+
+1. 获取地图代码
+
+[创建地图-百度地图生成器](http://api.map.baidu.com/lbsapi/creatmap/)
+
+这个页面默认的是gb-2312，在我的网站里显示为乱码，因此改成了万能的utf-8。
+
+2. 嵌入页面
+
+   原计划是把这一堆html、css、js分别拆开，放到现有页面中去。但是试了好几天，哪怕独立显示没有任何问题，一进django的页面，马上就不显示了。这么简单的问题，搜半天也没见到一样问题的。
+
+   突然见到了使用iframe的。于是改方案。
+
+3. iframe嵌入
+
+   首先代码存为独立页面map.html.
+
+   然后在url.py和view.py中让它活：
+
+   ```
+   # view.py
+   def map(request):
+       context = {}
+       return render(request, 'map.html', context)
+   
+   # url.py
+       url(r'^map.html$', view.map),
+   ```
+
+   这样独立的map.html能访问了。
+
+   加入iframe：
+
+   [网页中插入百度地图的方法_安科网](https://www.ancii.com/abd8uald/)
+
+   ```
+   <iframe src="map.html" width="700" height="550" frameborder="0" scrolling="no"></iframe>
+   ```
+
+   做到这一步，iframe位置报错：
+
+   > 127.0.0.1 拒绝了我们的连接请求
+
+   [django解决frame拒绝问题_weixin_42886895的博客-CSDN博客_djangox-frame-options](https://blog.csdn.net/weixin_42886895/article/details/88970578)
+
+   按这里说的，在settings.py中加入：  
+
+   ```
+   X_FRAME_OPTIONS = 'ALLOWALL url'        # 这个是将值改变为可以响应  url指定地址
+   ```
+
+   就成功显示了。
+
+   
+
+   [调用百度地图为什么出现乱码 图标不显示-百度经验](https://jingyan.baidu.com/article/a24b33cd1685fd19fe002b89.html)
+
+   这里能解决图标不显示的问题。
+
+   
+
 ## 5. 能读取和写入数据
 
 ### 5.1 删除重复页面

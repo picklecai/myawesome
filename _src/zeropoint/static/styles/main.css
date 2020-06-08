@@ -135,10 +135,10 @@ nav ul li a:active{
 #dituContent{
     position: relative;
     width:700px;
-    height:550px;
+    height:500px;
     margin: auto;
     padding: 1%;
-    border:#ccc solid 1px;
+    border:#c3c solid 5px;
 }
 
 .iw_poi_title {

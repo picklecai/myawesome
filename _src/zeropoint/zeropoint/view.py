@@ -29,3 +29,8 @@ def news(request):
 def about(request):
     context = {}
     return render(request, 'about.html', context)
+
+
+def map(request):
+    context = {}
+    return render(request, 'map.html', context)

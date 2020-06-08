@@ -120,3 +120,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = ''
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+X_FRAME_OPTIONS = 'ALLOWALL url'        # 这个是将值改变为可以响应  url指定地址
