@@ -21,11 +21,6 @@ def case(request):
     return render(request, 'case.html', context)
 
 
-def news(request):
-    context = {}
-    return render(request, 'news.html', context)
-
-
 def about(request):
     context = {}
     return render(request, 'about.html', context)

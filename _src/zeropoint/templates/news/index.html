@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    {% extends 'frame.html' %}
+    {% load static %}
+    {% block title %}News-Zeropoint IT{% endblock %}
+    {% block description %}三维电子沙盘新闻资讯。{% endblock %}
+    <body>
+        {% block content %}
+        <div class="daohang">
+            {% include 'nav.html' %}
+        </div>        
+        <div id="content">
+            {% if news_list %}
+                <ul>
+                    {% for elem in news_list %}
+                        <li>
+                          <p class="title">{{ elem.title }}</p>
+                          <p class="zhengwen">{{ elem.date }}</p>
+                          <p class="zhengwen">{{ elem.abstract }}<a href="" style="color:#555; float:right">>>>查看更多</a></p>
+
+
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>暂无新闻</p>
+            {% endif %}
+        </div>        
+        {% endblock %}
+    </body>
+</html>

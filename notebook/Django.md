@@ -2082,3 +2082,340 @@ datetime有两种，一种是datetime.datetime，另一种是datetime.date。前
 
 
 
+## 8. 做带后台管理的新闻模块
+
+[一杯茶的时间，上手 Django 框架开发 - 掘金](https://juejin.im/post/5dff47ec6fb9a0164c7bb171)
+
+### 8.1 创建app（application）
+
+```
+python manage.py startapp news
+```
+
+添加到settings：
+
+```
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'news',
+]
+```
+
+### 8.2 加内容
+
+独立的app，有自己独立的views和urls，所以现在主站的urls里要加一句：
+
+```
+path('news', include('news.urls')),
+```
+
+用来替代原来那句`view.news`，这样访问主站/news时，就会去app下的urls文件里找路由。新闻模块会有很多页面，独立到app下面的url中，好管理。
+
+主站view里的那个news函数也可以换地方了，换到news app下面的views里去。
+
+现在来写news app下的urls。
+
+```
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.news, name='index'),
+]
+
+```
+
+它的意思是：app的主页（就整站来说，就是/news这个页面），要调用app下的views文件中的news函数。
+
+想到这个模块后面还有挺多页面，这个函数叫news太不方便，还是改为index吧。
+
+```
+# news app下面的views.py
+
+# Create your views here.
+from django.shortcuts import render
+
+
+def index(request):
+    context = {}
+    return render(request, 'news.html', context)
+
+```
+
+```
+# news app下面的urls.py
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.index, name='index'),
+]
+
+```
+
+现在去访问主站/news，像之前一样显示了那个带导航菜单和底部foot的模板页面。惊讶的是，这整个过程中，并没有另外再造一个templates文件夹来。news.html文件仍然在原处未动。
+
+仍然是新闻模块会有很多页面的问题，在这个主站templates下，建立一个news文件夹。未来把新闻模块所有网页都放在其中。这样做，上面的index函数，就要把`news.html`换成`news/news.html`，那索性不叫`news.html`了，也叫`index.html`吧。
+
+
+
+### 8.3 创建数据库
+
+到news app下的models.py中去创建数据结构。
+
+以前一直不知道我建立的testModel是个啥。现在做新闻模块知道了，它就是这个网站的一个子模块。可以是新闻，可以是解决方案，可以是案例。反正是个站内小站。
+
+```
+from django.db import models
+
+# Create your models here.
+
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    date = models.DateField()
+    content = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+```
+
+数据结构创建好后，用manage.py创建迁移文件：
+
+```
+ python manage.py makemigrations
+```
+
+运行结果如下：
+
+```
+Migrations for 'news':
+  news\migrations\0001_initial.py
+    - Create model Post
+```
+
+现在进行数据库迁移：
+
+```
+python manage.py migrate
+```
+
+运行过程：  
+
+```
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, sessions
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying sessions.0001_initial... OK
+  Applying news.0001_initial... OK
+```
+
+前面17行，对应了启动服务器时那句：  
+
+```
+You have 17 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): admin, auth, contenttypes, sessions.
+Run 'python manage.py migrate' to apply them.
+```
+
+最后一行是news模块的。
+
+
+
+### 8.4 创建后台管理员
+
+其实不能叫创建后台，后台早就有了，admin页面一直在那里。现在只是创建管理员而已：
+
+```
+python manage.py createsuperuser
+```
+
+创建如下：
+
+```
+Username (leave blank to use 'asus'): admin
+Email address: caimeijuan@emapgis.com
+Password:
+Password (again):
+Superuser created successfully.
+```
+
+配置后台管理接口：
+
+在 news/admin.py 中填入代码如下：
+
+```
+from django.contrib import admin
+
+from .models import Post
+
+admin.site.register(Post)
+```
+
+### 8.5 后台增加文章
+
+再进入后台管理系统，可以看到 news 应用和 Post 模型了。
+
+此时后台可以正常工作了，不过前台还没有内容。那是因为index没有指向后台数据库。
+
+之前的index函数：
+
+```
+def index(request):
+    context = {
+        'news_list': [
+            {
+                "title": "战疫情 | 零点坐标免费服务于沙溪镇防疫部门",
+                "date": "2020-06-10",
+                "content": "地理信息中心提供新冠肺炎疫情防控在线地图服务,地理信息中心提供新冠肺炎疫情防控在线地图服务,地理信息中心提供新冠肺炎疫情防控在线地图服务,锦丰镇日前使用无人机巡河，大大提高了巡河效率.",
+            },
+            {
+                "title": "无人机在巡河方面的妙用",
+                "date": "2020-05-22",
+                "content": "锦丰镇日前使用无人机巡河，大大提高了巡河效率.锦丰镇日前使用无人机巡河，大大提高了巡河效率.锦丰镇日前使用无人机巡河，大大提高了巡河效率.锦丰镇日前使用无人机巡河，大大提高了巡河效率.",
+            },
+        ]
+    }
+    return render(request, 'news/index.html', context)
+```
+
+用的是字典。
+
+现在改为：
+
+```
+from django.shortcuts import render
+from .models import Post
+
+
+def index(request):
+    context = {
+        'news_list': Post.objects.all()
+    }
+    return render(request, 'news/index.html', context)
+
+```
+
+前台可见！！！！！*★,°*:.☆(￣▽￣)/$:*.°★*  感觉尾巴要翘上天了~~~~
+
+这里的`Post.objects.all()`值得注意一下。以前用bottle时，sqlite是要自己写SQL语句潜入程序的，现在为什么没有写就成功了呢？就是这句话起的作用。
+
+一杯茶作者说：
+
+> 强大的 ORM（Object Relation Mapping，对象关系映射）模块，使得用 Python 操作数据库非常轻松，免去了使用 SQL 的麻烦。
+>
+> 简单来说，ORM 能够将面向对象的代码转换成相应的 SQL 语句，从而对数据库进行操作。SQL 是用于访问和处理数据库的标准的计算机语言，但是直接写在代码里面显然难以维护，而且对使用者的要求也非常高，写的糟糕的 SQL 代码查询效率非常低下。因此，使用设计良好的 ORM 不仅让代码可读性更好，也能帮助开发者进行查询优化，节省不少力气。
+>
+>
+> 作者：图雀社区
+> 链接：https://juejin.im/post/5dff47ec6fb9a0164c7bb171
+> 来源：掘金
+> 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+一些简单的 Django ORM 例子：
+
+```
+# 查询所有模型
+# 等价于 SELECT * FROM Blog
+Blog.objects.all()
+
+# 查询单个模型
+# 等价于 SELECT * FROM Blog WHERE ID=1
+Blog.objects.get(id=1)
+
+# 添加单个模型
+# 等价于 INSERT INTO Blog (title, content) VALUES ('hello', 'world')
+blog = Blog(title='hello', content='world')
+blog.save()
+```
+
+### 8.6 增加新字段
+
+新增一个abstract摘要字段。按一杯茶作者所说，先在models.py中增加字段：
+
+```
+abstract = models.TextField()
+```
+
+然后让manage.py去makemigrations。但是出错了：  
+
+```
+>>> python manage.py makemigrations
+You are trying to add a non-nullable field 'abstract' to post without a default; we can't do that (the database needs something to populate existing rows).
+Please select a fix:
+ 1) Provide a one-off default now (will be set on all existing rows with a null value for this column)
+ 2) Quit, and let me add a default in models.py
+```
+
+原来新增字段，是要有个默认值的。或者设置null为True。null值默认是False，就是不允许空的意思。于是改models.py：
+
+```
+abstract = models.TextField(null=True)
+```
+
+现在makemigrations不出错了。  
+
+继续运行` python manage.py migrate`，打开后台，每篇文章都有了摘要字段。
+
+这时想要让前台显示的字段发生变化，只要改变index.html里的字段就好了，无须再更改index函数。
+
+#### 附：ORM教程
+
+[Django ORM常用操作介绍（新手必看）-《Django 2.0入门文档手册》 - Python学习网](https://www.py.cn/manual/django-orm-operating.html)
+
+
+
+### 8.7 文章排序
+
+[Django中对数据查询结果进行排序的方法_python_脚本之家](https://www.jb51.net/article/69602.htm)
+
+在models.py中可以指定默认排序方法：
+
+```
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    date = models.DateField()
+    abstract = models.TextField(null=True)
+    content = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-date']
+```
+
+注意：负号是加在引号内部的。加了负号表示从最新时间往前排，不加表示从最早时间往后排。
+
+
+
+[Django-ORM 之查询排序 | Python 技术论坛](https://learnku.com/articles/39113)
+
+这个排序语句，不知道加在哪里。它是优先于上面那个统一默认排序的。
+
+
+
+
+
