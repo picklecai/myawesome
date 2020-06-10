@@ -10,14 +10,20 @@
             {% include 'nav.html' %}
         </div>        
         <div id="content">
+            <p class="title">行业新闻</p>
             {% if news_list %}
                 <ul>
                     {% for elem in news_list %}
                         <li>
-                          <p class="title">{{ elem.title }}</p>
-                          <p class="zhengwen">{{ elem.date }}</p>
-                          <p class="zhengwen">{{ elem.abstract }}<a href="" style="color:#555; float:right">>>>查看更多</a></p>
+                            <div class="newscontent">
+                                <hr/>
+                                <div class="primary">
+                                    <p class="newsTitle" >{{ elem.title }}</p>
+                                    <p class="newsZhengwen" >{{ elem.abstract }}</p>
+                                </div>
+                                <p class="second">{{ elem.date }}</p>
 
+                            </div>
 
                         </li>
                     {% endfor %}
@@ -25,6 +31,18 @@
             {% else %}
                 <p>暂无新闻</p>
             {% endif %}
+            <div class="pagination">
+                {% if news_list.has_previous %}
+                    <a href="?page={{news_list.previous_page_number}}">上一页</a>
+                {% endif %}
+                <span class="pagination">
+                    第 {{ news_list.number }} 页 / 共 {{ news_list.paginator.num_pages }} 页
+                  </span>
+                {% if news_list.has_next %}
+                    <a href="?page={{news_list.next_page_number}}">下一页</a>
+                {% endif %}                
+            </div>
+            <br>
         </div>        
         {% endblock %}
     </body>

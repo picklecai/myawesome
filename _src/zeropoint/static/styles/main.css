@@ -136,27 +136,38 @@ nav ul li a:active{
     position: relative;
 }
 
-#dituContent{
-    position: relative;
-    width:700px;
-    height:500px;
-    margin: auto;
-    padding: 1%;
-    border:#c3c solid 5px;
+.newscontent{
+    margin: 2% 15% ;
+    overflow: hidden;
 }
 
-.iw_poi_title {
-    color:#CC5522;
-    font-size:14px;
-    font-weight:bold;
-    overflow:hidden;
-    padding-right:13px;
-    white-space:nowrap
+.primary{
+    width: 80%;
+    float: right;
+    text-align: left;
+    display: inline;
+
 }
-.iw_poi_content {
-    font:12px arial,sans-serif;
-    overflow:visible;
-    padding-top:4px;
-    white-space:-moz-pre-wrap;
-    word-wrap:break-word
+
+.second{
+    width: 20%;
+    float: left;
+    text-align: center;
+    display: inline;
+    color: #ccc;
+    font-size: 2em;
+}
+
+.newsTitle{
+    font-size: 1.5em;
+    color:#777;
+}
+
+.newsZhengwen{
+    font-size: 1.1em;
+    color:#777;    
+}
+
+.pagination a{
+    color: #777;
 }

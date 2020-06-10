@@ -2417,5 +2417,57 @@ class Post(models.Model):
 
 
 
+### 8.8 文章分页
 
+一开始想的是找个css样式，把页码导航先写出来。后来一想，没有变量，写出来也是空壳子啊。结果就搜到了Django自己就有这个模块。怪不得称利器！啥都有。
+
+[使用 Django Pagination 实现简单的分页功能 - 云+社区 - 腾讯云](https://cloud.tencent.com/developer/article/1099696)
+
+引入了新的模块`from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger`，专门用来分页的。index函数要作如下更改，再不能一股脑儿在一个页面展示了：
+
+```
+# Create your views here.
+from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .models import Post
+
+
+def index(request):
+    news_list = Post.objects.all()
+    paginator = Paginator(news_list, 5)
+    page = request.GET.get('page')
+    try:
+        news_list = paginator.page(page)
+    except PageNotAnInteger:
+        news_list = paginator.page(1)
+    except EmptyPage:
+        news_list = paginator.page(paginator.num_pages)
+    context = {
+        'news_list': news_list
+    }
+    return render(request, 'news/index.html', context)
+
+```
+
+分页的功能就做好了。
+
+下面只要在前台添上页码导航就行了：
+
+```
+<div class="pagination">
+    {% if news_list.has_previous %}
+    	<a href="?page={{news_list.previous_page_number}}">上一页</a>
+    {% endif %}
+    <span class="pagination">
+    	第 {{ news_list.number }} 页 / 共 {{ news_list.paginator.num_pages }} 页
+    </span>
+    {% if news_list.has_next %}
+    	<a href="?page={{news_list.next_page_number}}">下一页</a>
+    {% endif %}                
+</div>
+```
+
+
+
+道理上说，也可以把最新新闻条目放到首页上去了。明天可以考虑试试。
 
