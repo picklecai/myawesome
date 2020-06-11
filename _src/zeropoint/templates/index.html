@@ -15,7 +15,25 @@
                 <a href="{% static '/images/sea.jpg' %}"   onmouseover="showPic(this); return false;" onclick="return false;" >·</a></li>
             </div>            
         </div>
-        <div id="content"></div>
+        <div id="content">
+            <p style="text-align: left" >新闻资讯</p>
+            <div style="width: 45%" >
+                 {% if news_list %}
+                    <ul>
+                        {% for elem in news_list %}
+                            <li>
+                                <div class="">
+                                    <p style="text-align: left" >{{ elem.title }}---{{ elem.date }}</p> 
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>暂无新闻</p>
+                {% endif %}
+                <a style="color:#000; text-align:right" href="/news" >>>>查看更多</a><hr/>
+            </div>
+        </div>
         <script type="text/javascript"  src="{% static '/scripts/banner.js' %}"></script>
         {% endblock %}
     </body>

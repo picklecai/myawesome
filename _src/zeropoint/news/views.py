@@ -18,3 +18,11 @@ def index(request):
         'news_list': news_list
     }
     return render(request, 'news/index.html', context)
+
+
+def article_detail(request, id):
+    article = Post.objects.get(id=id)
+    context = {
+        'article': article
+    }
+    return render(request, 'news/detail.html', context)

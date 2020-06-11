@@ -17,14 +17,15 @@
                         <li>
                             <div class="newscontent">
                                 <hr/>
-                                <div class="primary">
-                                    <p class="newsTitle" >{{ elem.title }}</p>
-                                    <p class="newsZhengwen" >{{ elem.abstract }}</p>
-                                </div>
-                                <p class="second">{{ elem.date }}</p>
-
+                                <a href="{% url 'article_detail' article.id %}">
+                                    <p class="second">{{ elem.date }}</p>
+                                    <div class="primary">
+                                        <p class="newsTitle" >{{ elem.title }}</p>
+                                        <p class="newsZhengwen" >{{ elem.abstract }}</p>
+                                    </div> 
+                                    <img src="{{ MEDIA_URL }}{{ elem.image }}" class="newsimage">
+                                </a>
                             </div>
-
                         </li>
                     {% endfor %}
                 </ul>

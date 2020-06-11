@@ -8,6 +8,7 @@ class Post(models.Model):
     date = models.DateField()
     abstract = models.TextField(null=True)
     content = models.TextField()
+    image = models.ImageField(upload_to='', null=True)
 
     def __str__(self):
         return self.title

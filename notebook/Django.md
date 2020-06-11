@@ -729,8 +729,11 @@ ps.试过根目录下使用这个命令`python manage.py collectstatic`，真没
 
 ### 4.6 图片
 
+    <img src="{% static '/images/logo.png' %}" />
+
+
     ```
-<img src="{% static '/images/logo.png' %}" />
+
     ```
 
 html文件中的img写法，和css文件一样，增加`{% static %}`外壳。
@@ -1061,7 +1064,7 @@ startproject之后，要赶紧到settings里去改数据库文件名（上面的
 
 > project 和 app 之间到底有什么不同呢?它们的区别就是一个是配置另一个是代码: 一个project包含很多个Django app以及对它们的配置。 
 > project的作用是提供配置文件，比方说哪里定义数据库连接信息, 安装 的app列表， TEMPLATE_DIRS ，等等。 
-> 一个app是一套Django功能的集合，通常包括模型和视图，按Python的包结构的方 式存在。 
+> 一个app是一套Django功能的集合，通常包括模型和视图，按Python的包结构的方式存在。 
 
 #### 6.2.2 创建数据库的app
 
@@ -2176,7 +2179,6 @@ from django.db import models
 
 # Create your models here.
 
-
 class Post(models.Model):
     title = models.CharField(max_length=200)
     date = models.DateField()
@@ -2318,7 +2320,19 @@ def index(request):
 
 ```
 
-前台可见！！！！！*★,°*:.☆(￣▽￣)/$:*.°★*  感觉尾巴要翘上天了~~~~
+前台可见！！！！！
+
+*★,°*:.☆(￣▽￣)/$:*.°★*  
+
+☀☀☀
+
+🌹🌹🌹🌹
+
+☘☘☘
+
+🌙🌙🌙
+
+感觉尾巴要翘上天了~~~~
 
 这里的`Post.objects.all()`值得注意一下。以前用bottle时，sqlite是要自己写SQL语句潜入程序的，现在为什么没有写就成功了呢？就是这句话起的作用。
 
@@ -2328,8 +2342,7 @@ def index(request):
 >
 > 简单来说，ORM 能够将面向对象的代码转换成相应的 SQL 语句，从而对数据库进行操作。SQL 是用于访问和处理数据库的标准的计算机语言，但是直接写在代码里面显然难以维护，而且对使用者的要求也非常高，写的糟糕的 SQL 代码查询效率非常低下。因此，使用设计良好的 ORM 不仅让代码可读性更好，也能帮助开发者进行查询优化，节省不少力气。
 >
->
-> 作者：图雀社区
+>作者：图雀社区
 > 链接：https://juejin.im/post/5dff47ec6fb9a0164c7bb171
 > 来源：掘金
 > 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
@@ -2471,3 +2484,111 @@ def index(request):
 
 道理上说，也可以把最新新闻条目放到首页上去了。明天可以考虑试试。
 
+### 8.9 上传题图
+
+#### 8.9.1 数据库中增加字段
+
+图片也是个字段，所以第一步就是model.py中增加image字段：
+
+```
+image = models.ImageField(upload_to='', null=True)
+```
+
+然后执行makemigrations和migrate。
+
+这时候去后台看，已经有了image字段，可以上传了。但是传到哪里去，还没设置。
+
+#### 8.9.2 图片路径设置
+
+在settings.py中设置：
+
+```
+MEDIA_URL = '/newsimages/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'images', 'newsimages')
+```
+
+它的templates部分也要增加：
+
+```
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR + '/templates', ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
+            ],
+        },
+    },
+]
+```
+
+`.media`这一句就是增加的。
+
+urls.py中要作如下改动：
+
+```
+urlpatterns = [
+    path('admin/', admin.site.urls), path('news', include('news.urls')),
+    url(r'^$', view.index), url(r'^product$', view.product),
+    url(r'^solution$', view.solution), url(r'^case$', view.case),
+    url(r'^about$', view.about),
+    url(r'^map.html$', view.map),
+    url(r'^favicon.ico$', RedirectView.as_view(url=r'static/images/favicon.ico')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+```
+
+把settings中设置的媒体路径添加进去。不过添加方式和之前的页面不同，是加在列表后面的。
+
+#### 8.9.3 前台显示
+
+```
+<img src="{{ MEDIA_URL }}{{ elem.image }}">
+```
+
+未设置样式，但是刷新前台，已经可以看到图片了。
+
+### 8.10 文章详情页
+
+[Django搭建个人博客：编写文章详情页面 - Django搭建个人博客 - SegmentFault 思否](https://segmentfault.com/a/1190000016459742)
+
+第一步，在news下的views中增加详情函数：  
+
+```
+def article_detail(request, id):
+    article = Post.objects.get(id=id)
+    context = {
+        'article': article
+    }
+    return render(request, 'news/detail.html', context)
+
+```
+
+`Post.objects.get(id=id)`这句是按id选取文章。
+
+第二步，在urls.py中增加路径：
+
+```
+path('/article-detail/<int:id>/', views.article_detail, name='article_detail')
+```
+
+这里犯了一个低级错误，没注意中英文状态，冒号写成了中文。大妈说：  
+
+> 永远不用中文标点符号！
+
+第三步，做一个真正的details.html：
+
+```
+        <div id="content">
+            <h1> {{ article.title }}</h1>
+            <p>  {{ article.content }} </p>
+        </div> 
+```
+
+现在按照urls.py中的路径可以访问详情页了。

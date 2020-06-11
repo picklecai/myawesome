@@ -139,14 +139,16 @@ nav ul li a:active{
 .newscontent{
     margin: 2% 15% ;
     overflow: hidden;
+    height: 0;
+    padding-bottom: 19%;
 }
 
 .primary{
-    width: 80%;
-    float: right;
+    width: 45%;
+    float: left;
     text-align: left;
     display: inline;
-
+    margin: 0 2% ;
 }
 
 .second{
@@ -170,4 +172,14 @@ nav ul li a:active{
 
 .pagination a{
     color: #777;
+}
+
+.newsimage{
+    float: right;
+    width: 30%;
+    margin: 5% 0;
+    overflow: hidden;
+    display: block;
+
+    /*vertical-align: middle;*/
 }
