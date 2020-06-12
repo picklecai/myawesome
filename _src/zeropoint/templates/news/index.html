@@ -17,7 +17,7 @@
                         <li>
                             <div class="newscontent">
                                 <hr/>
-                                <a href="{% url 'article_detail' article.id %}">
+                                <a href="{% url 'news:article_detail' elem.id %} ">
                                     <p class="second">{{ elem.date }}</p>
                                     <div class="primary">
                                         <p class="newsTitle" >{{ elem.title }}</p>

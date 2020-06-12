@@ -15,7 +15,7 @@ def index(request):
     except EmptyPage:
         news_list = paginator.page(paginator.num_pages)
     context = {
-        'news_list': news_list
+        'news_list': news_list,
     }
     return render(request, 'news/index.html', context)
 

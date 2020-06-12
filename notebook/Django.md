@@ -733,7 +733,7 @@ ps.试过根目录下使用这个命令`python manage.py collectstatic`，真没
 
 
     ```
-
+    
     ```
 
 html文件中的img写法，和css文件一样，增加`{% static %}`外壳。
@@ -2592,3 +2592,141 @@ path('/article-detail/<int:id>/', views.article_detail, name='article_detail')
 ```
 
 现在按照urls.py中的路径可以访问详情页了。
+
+第四步，链接到详情页：
+
+在列表页增加`<a></a>`，href的内容一直是我发愁的。按照这个页面[URL dispatcher | Django documentation | Django](https://docs.djangoproject.com/en/3.0/topics/http/urls/)的说法，将href写成这样：
+
+```
+<a href="{% url 'news:article_detail' article.id %}">
+                                    <p class="second">{{ elem.date }}</p>
+                                    <div class="primary">
+                                        <p class="newsTitle" >{{ elem.title }}</p>
+                                        <p class="newsZhengwen" >{{ elem.abstract }}</p>
+                                    </div> 
+                                    <img src="{{ MEDIA_URL }}{{ elem.image }}" class="newsimage">
+                                </a>
+```
+
+明明这个人说news是app的名字的，但是运行起来给的提示是：
+
+```
+'news' is not a registered namespace
+```
+
+[python - Django - is not a registered namespace - Stack Overflow](https://stackoverflow.com/questions/41883254/django-is-not-a-registered-namespace)这个人似乎遇到的问题和我一样，说是urls
+
+里没有这个name的命名。试试根目录下的urls.py：
+
+```
+path('news', include(('news.urls','news'), namespace='news'))
+```
+
+现在的错误提示是：
+
+```
+Reverse for 'article_detail' with arguments '('',)' not found. 1 pattern(s) tried: ['news/article\\-detail/(?P<id>[0-9]+)/$']
+```
+
+[python - Reverse for 'edit_post' with arguments '('',)' not found. 1 pattern(s) tried: ['edit_post/(?P<post_id>\\d+)/$'] - Stack Overflow](https://stackoverflow.com/questions/50810841/reverse-for-edit-post-with-arguments-not-found-1-patterns-tried)，这个人说是因为index里用了‘article'变量，但是views.py中的context却没有这个变量。想想有道理啊。
+
+```
+def index(request):
+    news_list = Post.objects.all()
+    paginator = Paginator(news_list, 5)
+    page = request.GET.get('page')
+    article = Post.objects.get(id=id)  #新增加的
+    try:
+        news_list = paginator.page(page)
+    except PageNotAnInteger:
+        news_list = paginator.page(1)
+    except EmptyPage:
+        news_list = paginator.page(paginator.num_pages)
+    context = {
+        'news_list': news_list,
+        'article': article #新增加的
+    }
+    return render(request, 'news/index.html', context)
+```
+
+但是这个id必须有个出处，如果是从参数里来，和article_detail函数一样写成`def index(request, id)`，那么输入网址时就必须也要输入id才行。这显然不符合情况。
+
+试着在上面这个函数里加了一个循环：
+
+```
+def index(request):
+    news_list = Post.objects.all()
+    for newsObj in news_list:
+        article = Post.objects.get(id=newsObj.id)
+    ……
+    context = {
+        'news_list': news_list,
+        'article': article #新增加的
+    }
+```
+
+现在看到所有文章都指向了最后一篇文章，因为循环到最后，保留下来的就是最后一篇的id了。
+
+弄明白了原因，又各种乱七八糟试，还在文章详情页里添加了一个回主页的链接（实际上顶部菜单已经能做这件事了）：
+
+```
+<a href="{% url 'news:index' %}" style="color: #000">新闻列表</a>
+```
+
+通过这个改动，明白了引用机制是：news这个app（的views.py）下的index函数所指向的页面，是它要链接到的页面。  
+
+决定放弃上面这步改动，index函数不变。
+
+```
+def index(request):
+    news_list = Post.objects.all()
+    paginator = Paginator(news_list, 5)
+    page = request.GET.get('page')
+    try:
+        news_list = paginator.page(page)
+    except PageNotAnInteger:
+        news_list = paginator.page(1)
+    except EmptyPage:
+        news_list = paginator.page(paginator.num_pages)
+    context = {
+        'news_list': news_list,
+    }
+    return render(request, 'news/index.html', context)
+```
+
+回到链接详情这里来：
+
+```
+<a href="{% url 'news:article_detail' article.id %} ">
+```
+
+现在的问题就是没有取出正确的article来。  
+
+又向上看了几行：
+
+```
+{% for elem in news_list %}
+                        <li>
+                            <div class="newscontent">
+                                <hr/>
+                                <a href="{% url 'news:article_detail' article.id %} ">
+                                    <p class="second">{{ elem.date }}</p>
+```
+
+突然灵光一闪，elem不就是这个article吗？`.get(id=id)`不过是一种取法，另一种取法就是对`Post对象.all()`结果进行循环啊。
+
+于是把`article`改成elem。
+
+```
+{% for elem in news_list %}
+                        <li>
+                            <div class="newscontent">
+                                <hr/>
+                                <a href="{% url 'news:article_detail' elem.id %} ">
+                                    <p class="second">{{ elem.date }}</p>
+```
+
+万事大吉~！🌹
+
+感谢以上作者，让我彻底理解了其中的传递过程。
+

@@ -21,12 +21,13 @@ from django.conf.urls.static import static
 from django.conf import settings
 from . import view
 
-
 urlpatterns = [
-    path('admin/', admin.site.urls), path('news', include('news.urls')),
+    path('admin/', admin.site.urls),
+    path('news', include(('news.urls', 'news'), namespace='news')),
     url(r'^$', view.index), url(r'^product$', view.product),
     url(r'^solution$', view.solution), url(r'^case$', view.case),
     url(r'^about$', view.about),
     url(r'^map.html$', view.map),
-    url(r'^favicon.ico$', RedirectView.as_view(url=r'static/images/favicon.ico')),
+    url(r'^favicon.ico$',
+        RedirectView.as_view(url=r'static/images/favicon.ico')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
