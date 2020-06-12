@@ -2730,3 +2730,33 @@ def index(request):
 
 感谢以上作者，让我彻底理解了其中的传递过程。
 
+### 8.11 日期格式
+
+
+
+
+
+## 9. 网站地图
+
+现在有了新闻详情页，一下子感觉网站页面多了，想弄个网站地图。
+
+[django 网站地图sitemap - 刘江的django教程](https://www.liujiangblog.com/course/django/169)
+
+第一步：在settings中添加网站地图
+
+```
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'news',
+    'django.contrib.sitemaps'  #新增加的
+]
+```
+
+失败，再说。

@@ -2,7 +2,7 @@
 /* CSS Document */
 
 body{
-    background-color:#06c;
+    background-color:#ddd;
     margin: 0;
     padding: 0;
 }
@@ -13,14 +13,14 @@ img{
 
 a{
     text-decoration: none;
-    color:#fff;
+    color:#555;
 }
 
 li{
     list-style: none;
 }
 
-.get-title {
+.comName {
     font-weight: bold;
     color:#fff;
     font-size:1.5em;
@@ -31,18 +31,23 @@ li{
 
 .banner{
     width: 100%;
-    height: 400px;
+    height: 450px;/**/
     position: relative;
-    background-position: center;
-    text-align: center;
+}
+
+.banner a{
+    color: #fff;
 }
 
 .daohang{
     width: 100%;
-    height: 100px;
+    padding: 3.2em 0;
     position: relative;
-    background-position: center;
-    text-align: center;
+    background-color: #06c;
+}
+
+.daohang a{
+    color: #fff;
 }
 
 nav{
@@ -64,20 +69,22 @@ nav ul li{
     display: inline-block; /*让块级元素在一行显示*/
 }
 
+nav ul li a{
+    color:#fff;
+}
+
 nav ul li a:active{
-    text-decoration:none;
-    background-color: #06c;
     color:#000;
 }
 
 .tel{
-    display: inline-block;
     position: absolute;
     top:0.5em;
     right: 3%;
     padding: 0.8em 0.8em 0.1em;
     background-color: rgba(190, 190, 190, 0.6);
     font-size: 0.95em;
+    color:#fff;
 }
 
 .tel img{
@@ -85,88 +92,89 @@ nav ul li a:active{
     margin-right: 0.5em;
 }
 
-.img-item {
+.bannerItem {
     font-weight: bold;
     font-size: 3em;
     position: absolute;
     left:45%;
-    top:85%;
+    bottom: 5%;
+}
+
+#foot {
+    width: 100%;
+    position: relative;
+    padding:0.5em 0;
+    text-align: center;
+    background:#333;
+    color:#bbb;
 }
 
 #content {
-    width: 100%;
-    /*height: 800px;*/
+    width: 75%;
+    margin: auto;
     position: relative;
-    background-position: center;
-    background:#fff;
-    color:#000;
-    text-align: center;
     overflow: hidden;
+    background: #fff;
+    color: #555;
+    text-indent: 2em;    
 }
-#foot {
-    width: 100%;
-    height: 80px;
-    position: relative;
-    background-position: center;
-    padding-top:0.5em;
-    text-align: center;
-    background:#ccc;
-    color:#000;
+
+#content img{
+    margin: 0 auto;
+    display: block;
+}
+
+#content iframe{
+    margin: 0 auto;
+    display: block;
 }
 
 .title{
-    position: relative;
-    left:3%;
     font-size: 2em;
     text-align: left;
-    padding:1em;
-    color:#555;
+    padding:0.4% 1%;
+    letter-spacing:0.3em;
 }
 
 .zhengwen{
-    position: relative;
-    left:5%;
-    color:#555; 
-    text-align: left; 
-    text-indent: 2em;  
-    width: 90%;
-}
-
-.office{
-    position: relative;
+    line-height: 200%;
+    letter-spacing:0.1em;
+    text-align: left;       
+    width: 80%;
+    margin: auto;
+    padding: 1%;
 }
 
 .newscontent{
-    margin: 2% 15% ;
+    margin: 2% 8% ;
     overflow: hidden;
     height: 0;
-    padding-bottom: 19%;
+    padding-bottom: 18em;
 }
 
 .primary{
-    width: 45%;
+    width: 46%;
     float: left;
     text-align: left;
-    display: inline;
     margin: 0 2% ;
 }
 
 .second{
-    width: 20%;
+    width: 18%;
     float: left;
     text-align: center;
-    display: inline;
     color: #ccc;
-    font-size: 2em;
+    font-size: 1.8em;
+    margin: 8% auto;
 }
 
 .newsTitle{
-    font-size: 1.5em;
+    font-size: 1.4em;
     color:#777;
 }
 
 .newsZhengwen{
-    font-size: 1.1em;
+    font-size: 0.9em;
     color:#777;    
 }
 
@@ -177,9 +185,6 @@ nav ul li a:active{
 .newsimage{
     float: right;
     width: 30%;
-    margin: 5% 0;
+    margin: 10% 2%;
     overflow: hidden;
-    display: block;
-
-    /*vertical-align: middle;*/
 }

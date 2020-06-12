@@ -6,7 +6,7 @@ from django.db import models
 class Post(models.Model):
     title = models.CharField(max_length=200)
     date = models.DateField()
-    abstract = models.TextField(null=True)
+    abstract = models.TextField(null=True, max_length=200)
     content = models.TextField()
     image = models.ImageField(upload_to='', null=True)
 

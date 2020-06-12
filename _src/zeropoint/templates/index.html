@@ -9,14 +9,14 @@
         <div class="banner">
             <img id="placeholder" src="{% static '/images/hills.jpg' %} " class="banner" />
             {% include 'nav.html' %}
-            <div class="img-item">
+            <div class="bannerItem">
                 <a href="{% static '/images/hills.jpg' %}" onmouseover="showPic(this); return false;" onclick="return false;" >·</a></li>
                 <a href="{% static '/images/stone.jpg' %}" onmouseover="showPic(this); return false;" onclick="return false;" >·</a></li>
                 <a href="{% static '/images/sea.jpg' %}"   onmouseover="showPic(this); return false;" onclick="return false;" >·</a></li>
             </div>            
         </div>
         <div id="content">
-            <p style="text-align: left" >新闻资讯</p>
+            <p class="title" >最新资讯</p>
             <div style="width: 45%" >
                  {% if news_list %}
                     <ul>

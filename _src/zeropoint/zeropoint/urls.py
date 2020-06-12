@@ -21,10 +21,11 @@ from django.conf.urls.static import static
 from django.conf import settings
 from . import view
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('news', include(('news.urls', 'news'), namespace='news')),
-    url(r'^$', view.index), url(r'^product$', view.product),
+    url(r'^$', view.index, name='index'), url(r'^product$', view.product),
     url(r'^solution$', view.solution), url(r'^case$', view.case),
     url(r'^about$', view.about),
     url(r'^map.html$', view.map),

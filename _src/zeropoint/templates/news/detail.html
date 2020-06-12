@@ -10,9 +10,11 @@
             {% include 'nav.html' %}
         </div>        
         <div id="content">
-            <h1> {{ article.title }}</h1>
+            <p style="text-align: left"> <a href="{% url 'news:index' %}" >新闻资讯</a> >> {{ article.title }}</p>
+            <h1 > {{ article.title }}</h1>
+            <p> {{ article.date | date:"Y-m-d"}} </p>
             <img src="{{ MEDIA_URL }}{{ article.image }}" >
-            <p>  {{ article.content }} </p>
+            <p class="zhengwen">  {{ article.content }} </p>
         </div>        
         {% endblock %}
     </body>
