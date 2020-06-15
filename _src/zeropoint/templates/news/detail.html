@@ -11,10 +11,10 @@
         </div>        
         <div id="content">
             <p style="text-align: left"> <a href="{% url 'news:index' %}" >新闻资讯</a> >> {{ article.title }}</p>
-            <h1 > {{ article.title }}</h1>
-            <p> {{ article.date | date:"Y-m-d"}} </p>
+            <h1 class="newsTitle" > {{ article.title }}</h1>
+            <p class="newsDate"> {{ article.date | date:"Y-m-d"}} </p>
             <img src="{{ MEDIA_URL }}{{ article.image }}" >
-            <p class="zhengwen">  {{ article.content }} </p>
+            <p class="zhengwen">  {{ article.content | safe}} </p>
         </div>        
         {% endblock %}
     </body>

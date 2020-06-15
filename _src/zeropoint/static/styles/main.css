@@ -171,11 +171,16 @@ nav ul li a:active{
 .newsTitle{
     font-size: 1.4em;
     color:#777;
+    text-align: center;
 }
 
 .newsZhengwen{
     font-size: 0.9em;
     color:#777;    
+}
+
+.newsDate{
+    text-align: center;
 }
 
 .pagination a{

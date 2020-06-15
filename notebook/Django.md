@@ -2732,7 +2732,186 @@ def index(request):
 
 ### 8.11 日期格式
 
+```
+ {{ article.date | date:"Y-m-d"}} 
+```
 
+### 8.12 富文本编辑器
+
+[Django搭建个人博客：使用django-ckeditor富文本编辑器 - 掘金](https://juejin.im/post/5c9396276fb9a070fa3763ff)
+
+[Django搭建个人博客：使用django-ckeditor富文本编辑器 - 杜赛的个人网站](https://www.dusaiphoto.com/article/detail/60/)
+
+第一步：安装ckeditor
+
+```
+pip install django-ckeditor
+```
+
+第二步：在settings中设置
+
+```
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'news',
+    'django.contrib.sitemaps',
+    'ckeditor',
+]
+```
+
+
+
+第三步：到models中使用富文本编辑
+
+```
+from ckeditor.fields import RichTextField
+
+# Create your models here.
+
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    date = models.DateField()
+    abstract = models.TextField(null=True, max_length=200)
+    content = RichTextField() #新修改的
+    image = models.ImageField(upload_to='', null=True)
+
+```
+
+第四步：makemigrations和migrate
+
+做完打开后台，富文本编辑器已经显示出来了。可以进行编辑。但是编辑完回到前台一看，显示了`<p></p>`这些，还是整段显示的。所以还差一步要做。
+
+第五步：修改前台html显示方式
+
+```
+<p class="zhengwen">  {{ article.content | safe}} </p>
+```
+
+增加了`| safe`部分。这样前台显示就正常了。
+
+不过产生了一个新问题：由于有了富文本编辑器可以编辑样式，所以原本写在html里的css就失去了作用。
+
+#### 上传图片
+
+刚才的做法，无法上传图片，只能填写url地址插入图片。
+
+[django-ckeditor后台富文本编辑器 - 杨仕航的博客](http://yshblog.com/blog/193)
+
+这里说了怎么添加插入图片功能。
+
+第一步：添加uploader的app
+
+settings里作这样的改动。
+
+```
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'news',
+    'django.contrib.sitemaps',
+    'ckeditor',
+    'ckeditor_uploader',  #新增
+]
+```
+
+第二步：settings中增加路径
+
+```
+
+MEDIA_URL = '/newsimages/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'images', 'newsimages')
+CKEDITOR_UPLOAD_PATH = MEDIA_ROOT  #新增，根据实际需要写等号后面的内容
+```
+
+第三步：修改url中的路径配置
+
+在根目录的url.py文件中增加：
+
+```
+    path('ckeditor/', include('ckeditor_uploader.urls')),
+```
+
+第四步：修改models.py
+
+```
+# from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
+
+# Create your models here.
+
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    date = models.DateField()
+    image = models.ImageField(upload_to='', null=True)
+    abstract = models.TextField(null=True, max_length=200)
+    content = RichTextUploadingField()
+```
+
+刚才的RichTextField用现在的RichTextUploadingField代替。
+
+修改后，照例makemigrations和migrate。
+
+重新打开后台，就发现图片里有了上传按钮。
+
+#### 对toolbar的配置
+
+在settings中添加类似这样的一段，可以对toolbar进行配置：
+
+```
+CKEDITOR_CONFIGS = {
+    # django-ckeditor默认使用default配置
+    'default': {
+        # 编辑器宽度自适应
+        'width': '1000px',
+        'height': '500px',
+        # tab键转换空格数
+        'tabSpaces': 4,
+        # 工具栏风格
+        'toolbar': 'full',
+        # 工具栏按钮
+        'toolbar_Custom': [
+            # 表情 代码块
+            ['Smiley', 'CodeSnippet'],
+            # 字体风格
+            ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Blockquote'],
+            # 字体颜色
+            ['TextColor', 'BGColor'],
+            # 链接
+            ['Link', 'Unlink'],
+            # 列表
+            ['NumberedList', 'BulletedList'],
+            # 最大化
+            ['Maximize']
+        ],
+        # 加入代码块插件
+        'extraPlugins': ','.join(['codesnippet']),
+    }
+}
+
+```
+
+其中，` 'toolbar': 'full',`一句，有几种类型。full是最全的一类，Custom则遵从后面的'toolbar_Custom'配置，`Basic`则是最简的。
+
+### 8.13 默认使用中文
+
+settings中的语言选项修改：
+
+```
+LANGUAGE_CODE = 'zh-hans'
+```
+
+打开后台发现显示中文了。
 
 
 
