@@ -183,6 +183,10 @@ nav ul li a:active{
     text-align: center;
 }
 
+.pagination{
+    text-align: center;
+}
+
 .pagination a{
     color: #777;
 }
@@ -192,4 +196,21 @@ nav ul li a:active{
     width: 30%;
     margin: 10% 2%;
     overflow: hidden;
+}
+
+.zhengwenimage{
+    width: 60%;
+    margin: auto;
+}
+
+.previous{
+    float: left;
+    line-height: 200%;
+    padding: 1%;
+}
+
+.next{
+    float: right;
+    line-height: 200%;
+    padding: 1%;
 }

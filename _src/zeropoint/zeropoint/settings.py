@@ -72,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-'''
+
 CKEDITOR_CONFIGS = {
     # django-ckeditor默认使用default配置
     'default': {
@@ -102,7 +102,7 @@ CKEDITOR_CONFIGS = {
         'extraPlugins': ','.join(['codesnippet']),
     }
 }
-'''
+
 
 WSGI_APPLICATION = 'zeropoint.wsgi.application'
 

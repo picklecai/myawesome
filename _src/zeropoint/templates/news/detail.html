@@ -13,8 +13,20 @@
             <p style="text-align: left"> <a href="{% url 'news:index' %}" >新闻资讯</a> >> {{ article.title }}</p>
             <h1 class="newsTitle" > {{ article.title }}</h1>
             <p class="newsDate"> {{ article.date | date:"Y-m-d"}} </p>
-            <img src="{{ MEDIA_URL }}{{ article.image }}" >
-            <p class="zhengwen">  {{ article.content | safe}} </p>
+            <img class="zhengwenimage" src="{{ MEDIA_URL }}{{ article.image }}" >
+            <div class="zhengwen">  {{ article.content | safe}} </div>
+
+            {% if previous_article %}
+                <a class="previous" href="{% url 'news:article_detail' previous_article.id %}">上一篇: {{ previous_article.title }} </a>
+            {% else %}
+                <div class="previous">已经是第一篇了</div>
+            {% endif %}
+            {% if next_article %}
+                <a class="next" href="{% url 'news:article_detail' next_article.id %}">下一篇: {{ next_article.title }} </a>
+            {% else %}
+                <div class="next">已经是最后一篇了</div>
+            {% endif %}
+            <br/>
         </div>        
         {% endblock %}
     </body>

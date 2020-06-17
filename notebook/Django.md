@@ -95,6 +95,126 @@ django-admin startproject testdj
 
 启动也没有什么幺蛾子，也成功了。
 
+---
+
+2020.06.17，今天启动项目出现幺蛾子了。
+
+```
+ python manage.py runserver
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+June 17, 2020 - 11:08:34
+Django version 3.0.6, using settings 'zeropoint.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+Error: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。
+```
+
+[Error: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。_gsls200808的专栏-CSDN博客](https://blog.csdn.net/gsls200808/article/details/52456136)
+
+按照这个人的，在刚才的目录下输入：
+
+```
+ netstat -ano|findstr 8000
+```
+
+结果有很多：
+
+```
+ TCP    0.0.0.0:8000           0.0.0.0:0              LISTENING       2444
+  TCP    0.0.0.0:18000          0.0.0.0:0              LISTENING       2444
+  TCP    127.0.0.1:8000         127.0.0.1:57541        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57542        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57547        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57549        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57551        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57552        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57553        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57554        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57562        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57619        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57639        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57651        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57657        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57665        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57669        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57671        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57679        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57687        TIME_WAIT       0
+  TCP    127.0.0.1:8000         127.0.0.1:57691        TIME_WAIT       0
+  TCP    127.0.0.1:57541        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57542        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57546        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57547        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57548        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57549        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57550        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57551        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57552        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57553        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57558        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57562        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57579        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57592        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57604        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57619        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57623        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57634        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57635        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57637        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57639        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57643        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57645        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57651        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57657        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57659        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57662        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57663        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57669        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57671        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57681        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57685        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57687        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57689        127.0.0.1:8000         TIME_WAIT       0
+  TCP    127.0.0.1:57693        127.0.0.1:8000         TIME_WAIT       0
+```
+
+第二条命令：
+
+```
+ tasklist |findstr 2444
+```
+
+结果显示为：
+
+```
+CLodopPrint32.exe             2444 Services                   0      3,532 K
+```
+
+查了这个CLodopPrint32.exe，说是个web打印程序。[Lodop是什么？ - 淡定的米哥 - OSCHINA](https://my.oschina.net/miger/blog/261142)
+
+这两天也没有做什么跟web打印有关的事情啊。和前天的区别在于：昨天成功安装了国信CA助手。于是停掉了国信CA和行助手两个助手。但也没有什么帮助。
+
+使用第三条命令：
+
+```
+ taskkill /pid 2444 /F
+错误: 无法终止 PID 为 2444 的进程。
+原因: 拒绝访问。
+```
+
+在任务管理器中停止行助手和国信CA助手，也没有帮助。等等，突然发现任务管理器里真的有这个进程：
+
+> CLodopPrint32.exe
+> 文件描述：Web打印服务C-Lodop ()
+> 创建时间：‎2020‎年‎6‎月‎15‎日，‏‎16:35:09
+
+手动停止这个进程。再运行runserver，果然成功了。
+
+
+
 ## 2. 做点什么
 
 两大方法来显示：path，url
@@ -2334,7 +2454,7 @@ def index(request):
 
 感觉尾巴要翘上天了~~~~
 
-这里的`Post.objects.all()`值得注意一下。以前用bottle时，sqlite是要自己写SQL语句潜入程序的，现在为什么没有写就成功了呢？就是这句话起的作用。
+这里的`Post.objects.all()`值得注意一下。以前用bottle时，sqlite是要自己写SQL语句嵌入程序的，现在为什么没有写就成功了呢？就是这句话起的作用。
 
 一杯茶作者说：
 
@@ -2482,11 +2602,224 @@ def index(request):
 
 
 
-道理上说，也可以把最新新闻条目放到首页上去了。明天可以考虑试试。
+道理上说，也可以把最新新闻条目放到首页上去了。明天可以考虑试试（已成功）。
 
-### 8.9 上传题图
 
-#### 8.9.1 数据库中增加字段
+
+[Django Pagination 完善分页 - 云+社区 - 腾讯云](https://cloud.tencent.com/developer/article/1099806)
+
+ListView从哪里来？一开头就懵圈了。上一篇并没有提到，事实上上一篇根本没有用到类。
+
+还是这位大兄弟，[基于类的通用视图：ListView 和 DetailView_Django博客教程_追梦人物的博客](https://www.zmrenwu.com/courses/django-blog-tutorial/materials/19/)，在这里找到了。
+
+> 要写一个类视图，首先需要继承 Django 提供的某个类视图。至于继承哪个类视图，需要根据你的视图功能而定。比如这里 `IndexView` 的功能是从数据库中获取文章（Post）列表，`ListView` 就是从数据库中获取某个模型列表数据的，所以 `IndexView` 继承 `ListView`。
+
+url.py也要改，不用views.index了，改用下面这个：
+
+```
+    # path('', views.index, name='index'),
+    path('', views.Indexview.as_view(), name='index'),
+```
+
+原因是：
+
+>  `IndexView` 是一个类，不能直接替代 `index` 函数。好在将类视图转换成函数视图非常简单，只需调用类视图的 `as_view()` 方法即可
+
+好了，有了父类，可以继续下文了。
+
+上一篇文章不是开头那篇，是这篇：
+
+[Django Pagination 简单分页_Django博客教程_追梦人物的博客](https://www.zmrenwu.com/courses/django-blog-tutorial/materials/20/)
+
+views.py中，Indexview的类要这么写：
+
+```
+class Indexview(ListView):
+    """docstring for Indexview"""
+    model = Post
+    template_name = 'news/index.html'
+    context_object_name = 'news_list'
+    paginate_by = 2
+
+    def get_context_data(self, **kwargs):
+        # 首先获得父类生成的传递给模板的字典
+        context = super().get_context_data(**kwargs)
+        # 父类生成的字典中已有 paginator、page_obj、is_paginated 这三个模板变量，
+        # paginator 是 Paginator 的一个实例，
+        # page_obj 是 Page 的一个实例，
+        # is_paginated 是一个布尔变量，用于指示是否已分页。
+        paginator = context.get('paginator')
+        page = context.get('page_obj')
+        is_paginated = context.get('is_paginated')
+        # 调用自己写的 pagination_data 方法获得显示分页导航条需要的数据
+        pagination_data = self.pagination_data(paginator, page, is_paginated)
+        # 将分页导航条的模板变量更新到 context 中，注意 pagination_data 方法返回的也是一个字典。
+        context.update(pagination_data)
+        # 将更新后的 context 返回，以便 ListView 使用这个字典中的模板变量去渲染模板。
+        # 注意此时 context 字典中已有了显示分页导航条所需的数据。
+        return context
+
+    def pagination_data(self, paginator, page, is_paginated):
+        if not is_paginated:
+            return{}
+        left = []
+        right = []
+        left_has_more = False
+        right_has_more = False
+        first = False
+        last = False
+        page_number = page.number
+        total_pages = paginator.num_pages
+        page_range = paginator.page_range
+        if page_number == 1:
+            right = page_range[page_number:page_number + 2]
+            if right[-1] < total_pages - 1:
+                right_has_more = True
+            if right[-1] < total_pages:
+                last = True
+        elif page_number == total_pages:
+            left = page_range[(page_number - 3) if (page_number - 3) > 0 else 0:page_number - 1]
+            if left[0] > 2:
+                left_has_more = True
+            if left[0] > 1:
+                first = True
+        else:
+            left = page_range[(page_number - 3) if (page_number - 3) > 0 else 0:page_number - 1]
+            right = page_range[page_number:page_number + 2]
+            if right[-1] < total_pages - 1:
+                right_has_more = True
+            if right[-1] < total_pages:
+                last = True
+            if left[0] > 2:
+                left_has_more = True
+            if left[0] > 1:
+                first = True
+
+        data = {
+            'left': left,
+            'right': right,
+            'left_has_more': left_has_more,
+            'right_has_more': right_has_more,
+            'first': first,
+            'last': last,
+        }
+        return data
+```
+
+index.html文件作如下改动，注意只改导航条部分，不改正文内容：
+
+```
+<div class="pagination">
+                <!--
+                {% if news_list.has_previous %}
+                    <a href="?page={{news_list.previous_page_number}}">上一页</a>
+                {% endif %}
+                <span class="pagination">
+                    第 {{ news_list.number }} 页 / 共 {{ news_list.paginator.num_pages }} 页
+                  </span>
+                {% if news_list.has_next %}
+                    <a href="?page={{news_list.next_page_number}}">下一页</a>
+                {% endif %}  
+                -->
+                {% if is_paginated %}
+                    {% if first %}
+                        <a href="?page=1">1</a>
+                    {% endif %}
+                    {% if left %}
+                        {% if left_has_more %}
+                            <span>...</span>
+                        {% endif %}
+                        {% for i in left %}
+                            <a href="?page={{ i }}">{{ i }}</a>
+                        {% endfor %}
+                    {% endif %}
+                    <a href="?page={{ page_obj.number }}" style="color: red">{{ page_obj.number }}</a>
+                    {% if right %}
+                        {% for i in right %}
+                            <a href="?page={{ i }}">{{ i }}</a>
+                        {% endfor %}
+                        {% if right_has_more %}
+                            <span>...</span>
+                        {% endif %}
+                    {% endif %}
+                    {% if last %}
+                        <a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+                    {% endif %}
+                {% endif %}              
+            </div>
+```
+
+这三个文件改下来，就可以顺利实现新页码导航效果了。
+
+### 8.9 上一篇和下一篇
+
+重点是view.py的改写。刚开始想复杂了，觉得要用类。后来发现类还是写不来，注意是对内部太不熟悉。于是就在原来的函数基础上改写了。
+
+参照：[Django针对上一篇和下一篇文章标题的实现逻辑_i168wintop的博客-CSDN博客](https://blog.csdn.net/i168wintop/article/details/100077288)
+
+view.py的改写：
+
+```
+def article_detail(request, id):
+    news_list = Post.objects.all()
+    curr_article = Post.objects.get(id=id)
+    for index, article in enumerate(news_list):
+        if index == 0:
+            previous_index = 0
+            next_index = index + 1
+        elif index == len(news_list) - 1:
+            previous_index = index - 1
+            next_index = index
+        else:
+            previous_index = index - 1
+            next_index = index + 1
+        # 通过id判断当前文章
+        if article.id == id:
+            curr_article = article
+            if previous_index != 0:
+                previous_article = news_list[previous_index]
+            else:
+                previous_article = None
+            if next_index != index:
+                next_article = news_list[next_index]
+            else:
+                next_article = None
+            break
+
+    context = {
+        'article': curr_article,
+        'previous_article': previous_article,
+        'next_article': next_article,
+    }
+    return render(request, 'news/detail.html', context)
+```
+
+for循环主要的作用是让文章和它的id建立联系。for循环中的文章和当前文章建立了联系后，就能用id去判断上一篇是什么，下一篇是什么了。
+
+原作者没有考虑第一篇和最后一篇的特殊性，只让它显示现有的第一篇和最后一篇。考虑了一下，把第一篇的前一篇和最后一篇的后一篇都改成None。然后在前台用if判断来显示其他内容。这是学的新闻首页那个“暂无新闻”。
+
+detail.html文件：
+
+```
+            {% if previous_article %}
+                <a class="previous" href="{% url 'news:article_detail' previous_article.id %}">上一篇: {{ previous_article.title }} </a>
+            {% else %}
+                <div class="previous">已经是第一篇了</div>
+            {% endif %}
+            {% if next_article %}
+                <a class="next" href="{% url 'news:article_detail' next_article.id %}">下一篇: {{ next_article.title }} </a>
+            {% else %}
+                <div class="next">已经是最后一篇了</div>
+            {% endif %}
+```
+
+
+
+
+
+### 8.10 上传题图
+
+#### 8.10.1 数据库中增加字段
 
 图片也是个字段，所以第一步就是model.py中增加image字段：
 
@@ -2498,7 +2831,7 @@ image = models.ImageField(upload_to='', null=True)
 
 这时候去后台看，已经有了image字段，可以上传了。但是传到哪里去，还没设置。
 
-#### 8.9.2 图片路径设置
+#### 8.10.2 图片路径设置
 
 在settings.py中设置：
 
@@ -2546,7 +2879,7 @@ urlpatterns = [
 
 把settings中设置的媒体路径添加进去。不过添加方式和之前的页面不同，是加在列表后面的。
 
-#### 8.9.3 前台显示
+#### 8.10.3 前台显示
 
 ```
 <img src="{{ MEDIA_URL }}{{ elem.image }}">
@@ -2554,7 +2887,7 @@ urlpatterns = [
 
 未设置样式，但是刷新前台，已经可以看到图片了。
 
-### 8.10 文章详情页
+### 8.11 文章详情页
 
 [Django搭建个人博客：编写文章详情页面 - Django搭建个人博客 - SegmentFault 思否](https://segmentfault.com/a/1190000016459742)
 
@@ -2730,13 +3063,13 @@ def index(request):
 
 感谢以上作者，让我彻底理解了其中的传递过程。
 
-### 8.11 日期格式
+### 8.12 日期格式
 
 ```
  {{ article.date | date:"Y-m-d"}} 
 ```
 
-### 8.12 富文本编辑器
+### 8.13 富文本编辑器
 
 [Django搭建个人博客：使用django-ckeditor富文本编辑器 - 掘金](https://juejin.im/post/5c9396276fb9a070fa3763ff)
 
@@ -2903,7 +3236,7 @@ CKEDITOR_CONFIGS = {
 
 其中，` 'toolbar': 'full',`一句，有几种类型。full是最全的一类，Custom则遵从后面的'toolbar_Custom'配置，`Basic`则是最简的。
 
-### 8.13 默认使用中文
+### 8.14 默认使用中文
 
 settings中的语言选项修改：
 
@@ -2913,7 +3246,14 @@ LANGUAGE_CODE = 'zh-hans'
 
 打开后台发现显示中文了。
 
+### 8.15 富文本编辑器和全局css冲突问题
 
+自从使用了富文本编辑器后，新闻详情页的正文就变成了默认格式，在detail.html中写的css样式失效了。研究了几天后，有两个解决方案：
+
+1. 每次新增文章，都打开源代码格式，在头尾包一个`<div class="zhengwen"></div>`。
+2. 到detail.html里仔细观察，发现我现在写的是`<p class="zhengwen"></div>`。想想不对啊，我现在都富文本编辑了。每篇正文都好多段落呢。岂能用一个段落来概括？于是改成了`<div class="zhengwen"></div>`。再打开新闻详情页，发现一劳永逸了。
+
+怪不得这个问题搜不到答案，想来是太简单了，所以没有人犯这个错误。😭
 
 ## 9. 网站地图
 
