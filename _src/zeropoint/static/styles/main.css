@@ -206,11 +206,11 @@ nav ul li a:active{
 .previous{
     float: left;
     line-height: 200%;
-    padding: 1%;
+    padding: 1% 2%;
 }
 
 .next{
     float: right;
     line-height: 200%;
-    padding: 1%;
+    padding: 1% 2%;
 }

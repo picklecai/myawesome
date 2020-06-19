@@ -1,7 +1,8 @@
 # Create your views here.
 from django.shortcuts import render
 # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView
+# from django.views.generic import DetailView
 from .models import Post
 
 '''
