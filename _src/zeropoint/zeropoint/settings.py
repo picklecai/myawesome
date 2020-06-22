@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'news',
+    'news', 'case', 'solution',
     'django.contrib.sitemaps',
     'ckeditor',
     'ckeditor_uploader',
@@ -158,8 +158,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = ''
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-MEDIA_URL = '/newsimages/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'images', 'newsimages')
+MEDIA_URL = '/mediaimages/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'images', 'mediaimages')
 CKEDITOR_UPLOAD_PATH = MEDIA_ROOT
 
-X_FRAME_OPTIONS = 'ALLOWALL url'        # 这个是将值改变为可以响应  url指定地址
+X_FRAME_OPTIONS = 'ALLOWALL url'        # 这个是将值改变为可以响应url指定地址

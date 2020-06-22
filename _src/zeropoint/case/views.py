@@ -1,34 +1,34 @@
-# Create your views here.
 from django.shortcuts import render
-# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views.generic import ListView
-# from django.views.generic import DetailView
-from .models import Post
 
-'''
+# Create your views here.
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.generic import ListView
+from .models import AnliArcs
+
+
 def index(request):
-    news_list = Post.objects.all()
-    paginator = Paginator(news_list, 5)
+    case_list = AnliArcs.objects.all()
+    paginator = Paginator(case_list, 5)
     page = request.GET.get('page')
     try:
-        news_list = paginator.page(page)
+        case_list = paginator.page(page)
     except PageNotAnInteger:
-        news_list = paginator.page(1)
+        case_list = paginator.page(1)
     except EmptyPage:
-        news_list = paginator.page(paginator.num_pages)
+        case_list = paginator.page(paginator.num_pages)
     context = {
-        'news_list': news_list,
+        'case_list': case_list,
     }
-    return render(request, 'news/index.html', context)
-'''
+    return render(request, 'case/index.html', context)
 
 
 class Indexview(ListView):
     """docstring for Indexview"""
-    model = Post
-    template_name = 'news/index.html'
-    context_object_name = 'news_list'
-    paginate_by = 5
+    model = AnliArcs
+    template_name = 'case/index.html'
+    context_object_name = 'case_list'
+    paginate_by = 1
 
     def get_context_data(self, **kwargs):
         # 首先获得父类生成的传递给模板的字典
@@ -95,15 +95,15 @@ class Indexview(ListView):
         return data
 
 
-def article_detail(request, id):
-    news_list = Post.objects.all()
-    curr_article = Post.objects.get(id=id)
-    for index, article in enumerate(news_list):
-        if len(news_list) != 1:
+def case_detail(request, id):
+    case_list = AnliArcs.objects.all()
+    curr_case = AnliArcs.objects.get(id=id)
+    for index, caseArc in enumerate(case_list):
+        if len(case_list) != 1:
             if index == 0:
                 previous_index = 'None'
                 next_index = index + 1
-            elif index == len(news_list) - 1:
+            elif index == len(case_list) - 1:
                 previous_index = index - 1
                 next_index = index
             else:
@@ -112,23 +112,23 @@ def article_detail(request, id):
         else:
             previous_index = next_index = 'None'
         # 通过id判断当前文章
-        if article.id == id:
-            curr_article = article
+        if caseArc.id == id:
+            curr_case = caseArc
             if previous_index == 'None':
-                previous_article = None
+                previous_caseArc = None
             else:
-                previous_article = news_list[previous_index]
+                previous_caseArc = case_list[previous_index]
             if next_index == 'None':
-                next_article = None
+                next_caseArc = None
             elif next_index == index:
-                next_article = None
+                next_caseArc = None
             else:
-                next_article = news_list[next_index]
+                next_caseArc = case_list[next_index]
             break
 
     context = {
-        'article': curr_article,
-        'previous_article': previous_article,
-        'next_article': next_article,
+        'caseArc': curr_case,
+        'previous_caseArc': previous_caseArc,
+        'next_caseArc': next_caseArc,
     }
-    return render(request, 'news/detail.html', context)
+    return render(request, 'case/detail.html', context)

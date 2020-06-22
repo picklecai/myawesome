@@ -1,20 +1,17 @@
 from django.shortcuts import render
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from news.models import Post
+from case.models import AnliArcs
+from solution.models import SoluArcs
 
 
 def index(request):
-    news_list = Post.objects.all()
-    paginator = Paginator(news_list, 5)
-    page = request.GET.get('page')
-    try:
-        news_list = paginator.page(page)
-    except PageNotAnInteger:
-        news_list = paginator.page(1)
-    except EmptyPage:
-        news_list = paginator.page(paginator.num_pages)
+    news_list = Post.objects.all()[:5]
+    case_list = AnliArcs.objects.all()[:5]
+    solution_list = SoluArcs.objects.all()[:5]
     context = {
-        'news_list': news_list
+        'news_list': news_list,
+        'case_list': case_list,
+        'solution_list': solution_list
     }
     return render(request, 'index.html', context)
 
@@ -27,11 +24,6 @@ def product(request):
 def solution(request):
     context = {}
     return render(request, 'solution.html', context)
-
-
-def case(request):
-    context = {}
-    return render(request, 'case.html', context)
 
 
 def about(request):

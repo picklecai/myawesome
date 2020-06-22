@@ -25,9 +25,10 @@ from . import view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('news', include(('news.urls', 'news'), namespace='news')),
+    path('case', include(('case.urls', 'case'), namespace='case')),
+    path('solution', include(('solution.urls', 'solution'), namespace='solution')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     url(r'^$', view.index, name='index'), url(r'^product$', view.product),
-    url(r'^solution$', view.solution), url(r'^case$', view.case),
     url(r'^about$', view.about),
     url(r'^map.html$', view.map),
     url(r'^favicon.ico$',

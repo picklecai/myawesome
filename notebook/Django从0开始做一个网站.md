@@ -1142,69 +1142,7 @@ index.html文件作如下改动，注意只改导航条部分，不改正文内�
 
 这三个文件改下来，就可以顺利实现新页码导航效果了。
 
-#### 6.2.3 上一篇和下一篇
-
-重点是view.py的改写。刚开始想复杂了，觉得要用类。后来发现类还是写不来，注意是对内部太不熟悉。于是就在原来的函数基础上改写了。
-
-参照：[Django针对上一篇和下一篇文章标题的实现逻辑_i168wintop的博客-CSDN博客](https://blog.csdn.net/i168wintop/article/details/100077288)
-
-view.py的改写：
-
-```
-def article_detail(request, id):
-    news_list = Post.objects.all()
-    curr_article = Post.objects.get(id=id)
-    for index, article in enumerate(news_list):
-        if index == 0:
-            previous_index = 0
-            next_index = index + 1
-        elif index == len(news_list) - 1:
-            previous_index = index - 1
-            next_index = index
-        else:
-            previous_index = index - 1
-            next_index = index + 1
-        # 通过id判断当前文章
-        if article.id == id:
-            curr_article = article
-            if previous_index != 0:
-                previous_article = news_list[previous_index]
-            else:
-                previous_article = None
-            if next_index != index:
-                next_article = news_list[next_index]
-            else:
-                next_article = None
-            break
-
-    context = {
-        'article': curr_article,
-        'previous_article': previous_article,
-        'next_article': next_article,
-    }
-    return render(request, 'news/detail.html', context)
-```
-
-for循环主要的作用是让文章和它的id建立联系。for循环中的文章和当前文章建立了联系后，就能用id去判断上一篇是什么，下一篇是什么了。
-
-原作者没有考虑第一篇和最后一篇的特殊性，只让它显示现有的第一篇和最后一篇。考虑了一下，把第一篇的前一篇和最后一篇的后一篇都改成None。然后在前台用if判断来显示其他内容。这是学的新闻首页那个“暂无新闻”。
-
-detail.html文件：
-
-```
-            {% if previous_article %}
-                <a class="previous" href="{% url 'news:article_detail' previous_article.id %}">上一篇: {{ previous_article.title }} </a>
-            {% else %}
-                <div class="previous">已经是第一篇了</div>
-            {% endif %}
-            {% if next_article %}
-                <a class="next" href="{% url 'news:article_detail' next_article.id %}">下一篇: {{ next_article.title }} </a>
-            {% else %}
-                <div class="next">已经是最后一篇了</div>
-            {% endif %}
-```
-
-#### 6.2.4 文章详情页
+#### 6.2.3 文章详情页
 
 [Django搭建个人博客：编写文章详情页面 - Django搭建个人博客 - SegmentFault 思否](https://segmentfault.com/a/1190000016459742)
 
@@ -1379,6 +1317,177 @@ def index(request):
 万事大吉~！🌹
 
 感谢以上作者，让我彻底理解了其中的传递过程。
+
+#### 6.2.4 上一篇和下一篇
+
+重点是view.py的改写。刚开始想复杂了，觉得要用类。后来发现类还是写不来，注意是对内部太不熟悉。于是就在原来的函数基础上改写了。
+
+参照：[Django针对上一篇和下一篇文章标题的实现逻辑_i168wintop的博客-CSDN博客](https://blog.csdn.net/i168wintop/article/details/100077288)
+
+##### 6.2.4.1 起初写法
+
+view.py的改写：
+
+```
+def article_detail(request, id):
+    news_list = Post.objects.all()
+    curr_article = Post.objects.get(id=id)
+    for index, article in enumerate(news_list):
+        if index == 0:
+            previous_index = 0
+            next_index = index + 1
+        elif index == len(news_list) - 1:
+            previous_index = index - 1
+            next_index = index
+        else:
+            previous_index = index - 1
+            next_index = index + 1
+        # 通过id判断当前文章
+        if article.id == id:
+            curr_article = article
+            if previous_index != 0:
+                previous_article = news_list[previous_index]
+            else:
+                previous_article = None
+            if next_index != index:
+                next_article = news_list[next_index]
+            else:
+                next_article = None
+            break
+
+    context = {
+        'article': curr_article,
+        'previous_article': previous_article,
+        'next_article': next_article,
+    }
+    return render(request, 'news/detail.html', context)
+```
+
+for循环主要的作用是让文章和它的id建立联系。for循环中的文章和当前文章建立了联系后，就能用id去判断上一篇是什么，下一篇是什么了。
+
+原作者没有考虑第一篇和最后一篇的特殊性，只让它显示现有的第一篇和最后一篇。考虑了一下，把第一篇的前一篇和最后一篇的后一篇都改成None。然后在前台用if判断来显示其他内容。这是学的新闻首页那个“暂无新闻”。
+
+##### 6.2.4.2 一个bug
+
+2020.06.22：
+
+这里发现了一个bug。
+
+新闻第二篇，index=1，按理它的`previous_index == 0`，这是真的，因为前一篇就是第一篇。可是按照上面的判断，如果`previous_index != 0`，才显示前一篇。否则就说这是None，已经是第一篇了。这样第二篇的前一篇就显示不了了，被认为也是第一篇。
+
+于是修改：
+
+```
+def article_detail(request, id):
+    news_list = Post.objects.all()
+    curr_article = Post.objects.get(id=id)
+    for index, article in enumerate(news_list):
+        if index == 0:
+            previous_index = 'None'
+            next_index = index + 1
+        elif index == len(news_list) - 1:
+            previous_index = index - 1
+            next_index = index
+        else:
+            previous_index = index - 1
+            next_index = index + 1
+        # 通过id判断当前文章
+        if article.id == id:
+            curr_article = article
+            if previous_index == 'None':
+                previous_article = None
+            else:
+                previous_article = news_list[previous_index]
+            if next_index != index:
+                next_article = news_list[next_index]
+            else:
+                next_article = None
+            break
+```
+
+之所以给None加上引号，是因为起初没想换ifelse顺序，None被认为和0是相同的。使用`!==`没成功。于是就改成了字符串。
+
+
+
+detail.html文件：
+
+```
+            {% if previous_article %}
+                <a class="previous" href="{% url 'news:article_detail' previous_article.id %}">上一篇: {{ previous_article.title }} </a>
+            {% else %}
+                <div class="previous">已经是第一篇了</div>
+            {% endif %}
+            {% if next_article %}
+                <a class="next" href="{% url 'news:article_detail' next_article.id %}">下一篇: {{ next_article.title }} </a>
+            {% else %}
+                <div class="next">已经是最后一篇了</div>
+            {% endif %}
+```
+
+##### 6.2.4.3 另一个bug
+
+当文章只有1篇时，下一篇的bug也出现了。发现原来因为此时index==0，但len(list)==1，所以
+
+```
+elif index == len(news_list) - 1:
+            previous_index = index - 1
+            next_index = index
+```
+
+这里，next_index == 0了。
+
+修改如下：
+
+```
+for index, caseArc in enumerate(case_list):
+        if len(case_list) != 1:
+            if index == 0:
+                previous_index = 'None'
+                next_index = index + 1
+            elif index == len(case_list) - 1:
+                previous_index = index - 1
+                next_index = index
+            else:
+                previous_index = index - 1
+                next_index = index + 1
+        else:
+            previous_index = next_index = 'None'
+        # 通过id判断当前文章
+        if caseArc.id == id:
+            curr_case = caseArc
+            if previous_index == 'None':
+                previous_caseArc = None
+            else:
+                previous_caseArc = case_list[previous_index]
+            if next_index == 'None':
+                next_caseArc = None
+            elif next_index == index:
+                next_caseArc = None
+            else:
+                next_caseArc = case_list[next_index]
+            break
+```
+
+这样在前台产生了一个前后皆空的情况需要专门写：
+
+```
+            {% if previous_caseArc != next_caseArc %}
+                {% if previous_caseArc %}
+                    <a class="previous" href="{% url 'case:case_detail' previous_caseArc.id %}">上一篇: {{ previous_caseArc.title }} </a>
+                {% else %}
+                    <div class="previous">已经是第一篇了</div>
+                {% endif %}
+                {% if next_caseArc %}
+                    <a class="next" href="{% url 'case:case_detail' next_caseArc.id %}">下一篇: {{ next_caseArc.title }} </a>
+                {% else %}
+                    <div class="next">已经是最后一篇了</div>
+                {% endif %}
+            {% else %}
+                <br/>
+            {% endif %}
+```
+
+只要前不等于后，就照常。否则只写一个空行就行了。
 
 #### 6.2.5 日期格式
 

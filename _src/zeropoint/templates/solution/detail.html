@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    {% extends 'frame.html' %}
+    {% load static %}
+    {% block title %}{{ soluArc.title }}-Case-Zeropoint IT{% endblock %}
+    {% block description %}{{ soluArc.abstract }}{% endblock %}
+    <body>
+        {% block content %}
+        <div class="daohang">
+            {% include 'nav.html' %}
+        </div>
+        <div id="content">
+            <p style="text-align: left"> <a href="{% url 'solution:index' %}" >解决方案</a> >> {{ soluArc.title }}</p>
+            <h1 class="newsTitle" > {{ soluArc.title }}</h1>
+            <img class="zhengwenimage" src="{{ MEDIA_URL }}{{ soluArc.image }}" >
+            <div class="zhengwen">  {{ soluArc.content | safe}} </div>
+            {% if previous_soluArc != next_soluArc %}
+                {% if previous_soluArc %}
+                    <a class="previous" href="{% url 'solution:solution_detail' previous_soluArc.id %}">上一篇: {{ previous_soluArc.title }} </a>
+                {% else %}
+                    <div class="previous">已经是第一篇了</div>
+                {% endif %}
+                {% if next_soluArc %}
+                    <a class="next" href="{% url 'solution:solution_detail' next_soluArc.id %}">下一篇: {{ next_soluArc.title }} </a>
+                {% else %}
+                    <div class="next">已经是最后一篇了</div>
+                {% endif %}
+                <br/>
+            {% else %}
+                <br/>
+            {% endif %}
+        </div>        
+        {% endblock %}
+    </body>
+</html>

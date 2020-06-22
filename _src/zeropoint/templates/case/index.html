@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    {% extends 'frame.html' %}
+    {% load static %}
+    {% block title %}Case-Zeropoint IT{% endblock %}
+    {% block description %}三维电子沙盘典型客户案例。{% endblock %}
+    <body>
+        {% block content %}
+        <div class="daohang">
+            {% include 'nav.html' %}
+        </div>        
+        <div id="content">
+            <p class="title">典型案例</p>
+            
+            {% if case_list %}
+                <ul>
+                    {% for elem in case_list %}
+                        <li>
+                            <div class="newscontent">
+                                <hr/>
+                                <a href="{% url 'case:case_detail' elem.id %} ">                                    
+                                    <div class="primary">
+                                        <p class="newsTitle" >{{ elem.title }}</p>
+                                        <p class="newsZhengwen" >{{ elem.abstract }}</p>
+                                    </div> 
+                                    <img src="{{ MEDIA_URL }}{{ elem.image }}" class="newsimage">
+                                </a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>暂无案例</p>
+            {% endif %}
+        
+        
+            <div class="pagination">
+                <!--
+                {% if case_list.has_previous %}
+                    <a href="?page={{case_list.previous_page_number}}">上一页</a>
+                {% endif %}
+                <span class="pagination">
+                    第 {{ case_list.number }} 页 / 共 {{ case_list.paginator.num_pages }} 页
+                  </span>
+                {% if case_list.has_next %}
+                    <a href="?page={{case_list.next_page_number}}">下一页</a>
+                {% endif %}  
+                -->
+                
+                {% if is_paginated %}
+                    {% if first %}
+                        <a href="?page=1">1</a>
+                    {% endif %}
+                    {% if left %}
+                        {% if left_has_more %}
+                            <span>...</span>
+                        {% endif %}
+                        {% for i in left %}
+                            <a href="?page={{ i }}">{{ i }}</a>
+                        {% endfor %}
+                    {% endif %}
+                    <a href="?page={{ page_obj.number }}" style="color: red">{{ page_obj.number }}</a>
+                    {% if right %}
+                        {% for i in right %}
+                            <a href="?page={{ i }}">{{ i }}</a>
+                        {% endfor %}
+                        {% if right_has_more %}
+                            <span>...</span>
+                        {% endif %}
+                    {% endif %}
+                    {% if last %}
+                        <a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+                    {% endif %}
+                {% endif %}              
+            </div>
+            <br>
+        </div>        
+        {% endblock %}
+    </body>
+</html>

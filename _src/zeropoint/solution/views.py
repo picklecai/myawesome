@@ -1,34 +1,16 @@
-# Create your views here.
 from django.shortcuts import render
-# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views.generic import ListView
-# from django.views.generic import DetailView
-from .models import Post
 
-'''
-def index(request):
-    news_list = Post.objects.all()
-    paginator = Paginator(news_list, 5)
-    page = request.GET.get('page')
-    try:
-        news_list = paginator.page(page)
-    except PageNotAnInteger:
-        news_list = paginator.page(1)
-    except EmptyPage:
-        news_list = paginator.page(paginator.num_pages)
-    context = {
-        'news_list': news_list,
-    }
-    return render(request, 'news/index.html', context)
-'''
+# Create your views here.
+from django.views.generic import ListView
+from .models import SoluArcs
 
 
 class Indexview(ListView):
     """docstring for Indexview"""
-    model = Post
-    template_name = 'news/index.html'
-    context_object_name = 'news_list'
-    paginate_by = 5
+    model = SoluArcs
+    template_name = 'solution/index.html'
+    context_object_name = 'solution_list'
+    paginate_by = 1
 
     def get_context_data(self, **kwargs):
         # 首先获得父类生成的传递给模板的字典
@@ -95,15 +77,15 @@ class Indexview(ListView):
         return data
 
 
-def article_detail(request, id):
-    news_list = Post.objects.all()
-    curr_article = Post.objects.get(id=id)
-    for index, article in enumerate(news_list):
-        if len(news_list) != 1:
+def solution_detail(request, id):
+    solution_list = SoluArcs.objects.all()
+    curr_solution = SoluArcs.objects.get(id=id)
+    for index, soluArc in enumerate(solution_list):
+        if len(solution_list) != 1:
             if index == 0:
                 previous_index = 'None'
                 next_index = index + 1
-            elif index == len(news_list) - 1:
+            elif index == len(solution_list) - 1:
                 previous_index = index - 1
                 next_index = index
             else:
@@ -112,23 +94,23 @@ def article_detail(request, id):
         else:
             previous_index = next_index = 'None'
         # 通过id判断当前文章
-        if article.id == id:
-            curr_article = article
+        if soluArc.id == id:
+            curr_solution = soluArc
             if previous_index == 'None':
-                previous_article = None
+                previous_soluArc = None
             else:
-                previous_article = news_list[previous_index]
+                previous_soluArc = solution_list[previous_index]
             if next_index == 'None':
-                next_article = None
+                next_soluArc = None
             elif next_index == index:
-                next_article = None
+                next_soluArc = None
             else:
-                next_article = news_list[next_index]
+                next_soluArc = solution_list[next_index]
             break
 
     context = {
-        'article': curr_article,
-        'previous_article': previous_article,
-        'next_article': next_article,
+        'soluArc': curr_solution,
+        'previous_soluArc': previous_soluArc,
+        'next_soluArc': next_soluArc,
     }
-    return render(request, 'news/detail.html', context)
+    return render(request, 'solution/detail.html', context)

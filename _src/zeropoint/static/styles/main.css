@@ -214,3 +214,29 @@ nav ul li a:active{
     line-height: 200%;
     padding: 1% 2%;
 }
+
+.indexTitle{
+    font-size: 2em;
+    text-align: center;
+    padding:0.4% 1%;
+    letter-spacing:0.3em;
+    background-color: #ccc;
+    font-family: "黑体";
+    font-weight: bolder;
+}
+
+.indexSolu{
+    float: left;
+    width:50%;
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 100%;/*重要属性*/
+    text-align: center;
+}
+
+.indexSolu img{
+    width: 90%;
+    height: auto;
+    position: absolute;/**/
+
+}
