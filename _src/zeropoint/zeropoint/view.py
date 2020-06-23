@@ -5,9 +5,9 @@ from solution.models import SoluArcs
 
 
 def index(request):
-    news_list = Post.objects.all()[:5]
-    case_list = AnliArcs.objects.all()[:5]
-    solution_list = SoluArcs.objects.all()[:5]
+    solution_list = SoluArcs.objects.all()[:3]
+    case_list = AnliArcs.objects.all()[:3]
+    news_list = Post.objects.all()[:8]
     context = {
         'news_list': news_list,
         'case_list': case_list,

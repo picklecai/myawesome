@@ -16,66 +16,86 @@
             </div>            
         </div>
         <div id="content">
-            <p class="indexTitle" >解决方案</p>
-            <div >
+            <p class="indexTitle" >解决方案·SOLUTION</p>
+            <div class="indexCont1">
                  {% if solution_list %}
                     <ul>
                         {% for elem in solution_list %}
                             <li>
-                                <div class="indexSolu">
-                                    <a href="{% url 'solution:solution_detail' elem.id %} ">
+                                <a href="{% url 'solution:solution_detail' elem.id %} ">
                                     <img src="{{ MEDIA_URL }}{{ elem.image }}">
-                                    <div>{{ elem.title }}</div>
-                                    <div>{{ elem.abstract }}</div>
-                                    </a> 
-                                </div>
+                                    <h2>{{elem.title}}</h2>
+                                    <p>{{elem.abstract | slice:":100"}}……</p>
+                                </a> 
                             </li>
                         {% endfor %}
                     </ul>
                 {% else %}
                     <p>暂无方案</p>
                 {% endif %}
-                <a style="color:#000; text-align:right" href="/solution" >>>>查看更多</a><hr/>
+                <div class="more" ><a href="/solution" >MORE INFO</a></div>
             </div>
-            <p class="title" >最新资讯</p>
-            <div style="width: 45%" >
-                 {% if news_list %}
-                    <ul>
-                        {% for elem in news_list %}
-                            <li>
-                                <div class="">
-                                    <a href="{% url 'news:article_detail' elem.id %} ">
-                                    <p style="text-align: left" >{{ elem.title }}---{{ elem.date }}</p> 
-                                    </a>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>暂无新闻</p>
-                {% endif %}
-                <a style="color:#000; text-align:right" href="/news" >>>>查看更多</a><hr/>
-            </div>
-            <p class="title" >典型案例</p>
-            <div style="width: 45%" >
+
+            <p class="indexTitle" >典型案例·CASE</p>
+            <div class="indexCont1">
                  {% if case_list %}
                     <ul>
                         {% for elem in case_list %}
                             <li>
-                                <div class="">
-                                    <a href="{% url 'case:case_detail' elem.id %} ">
-                                    <p style="text-align: left" >{{ elem.title }}</p> 
-                                    </a>
-                                </div>
+                                <a href="{% url 'case:case_detail' elem.id %} ">
+                                    <img src="{{ MEDIA_URL }}{{ elem.image }}">
+                                    <h2>{{elem.title}}</h2>
+                                    <p>{{elem.abstract | slice:":100"}}……</p>
+                                </a>                                
                             </li>
                         {% endfor %}
                     </ul>
                 {% else %}
                     <p>暂无案例</p>
                 {% endif %}
-                <a style="color:#000; text-align:right" href="/case" >>>>查看更多</a><hr/>
+                <div class="more"> <a href="/case" >MORE INFO</a></div>
             </div>
 
+            <p class="indexTitle" >最新资讯·NEWS</p>
+            <div class="indexCont1">
+                 {% if news_list %}
+                    <ul>
+                        {% for elem in news_list %}
+                            {% if forloop.first %}
+                                <div class="indexCont3">
+                                    <a href="{% url 'news:article_detail' elem.id %} ">
+                                        <img src="{{ MEDIA_URL }}{{ elem.image }}">
+                                        <h2>{{ elem.title }}</h2> 
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="indexCont2">
+                                    <a href="{% url 'news:article_detail' elem.id %} ">
+                                        {{ elem.title }} <span> {{ elem.date }} </span>
+                                    </a>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>暂无新闻</p>
+                {% endif %}
+                <div class="more"> <a href="/news" >MORE INFO</a></div>
+            </div>
+            
+            <p class="indexTitle" >合作伙伴·PARTNER</p>
+            <div class="indexCont4">
+                <ul>
+                    <li><img src="{% static '/images/logo/01.png' %} "/></li>
+                    <li><img src="{% static '/images/logo/02.png' %} "/></li>
+                    <li><img src="{% static '/images/logo/03.png' %} "/></li>
+                    <li><img src="{% static '/images/logo/04.png' %} "/></li>
+                    <li><img src="{% static '/images/logo/05.png' %} "/></li>
+                    <li><img src="{% static '/images/logo/06.png' %} "/></li>
+                    <li><img src="{% static '/images/logo/07.png' %} "/></li>
+                    <li><img src="{% static '/images/logo/08.png' %} "/></li>
+                </ul>
+            </div>
         </div>        
         <script type="text/javascript"  src="{% static '/scripts/banner.js' %}"></script>
         {% endblock %}

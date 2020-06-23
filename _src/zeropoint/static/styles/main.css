@@ -29,6 +29,7 @@ li{
     vertical-align: middle;
 }
 
+/*index页面banner轮播图*/
 .banner{
     width: 100%;
     height: 450px;/**/
@@ -39,6 +40,7 @@ li{
     color: #fff;
 }
 
+/*非index页面顶部菜单的背景*/
 .daohang{
     width: 100%;
     padding: 3.2em 0;
@@ -50,6 +52,7 @@ li{
     color: #fff;
 }
 
+/*顶部菜单部分*/
 nav{
     position: absolute;
     top: 0.5em;
@@ -77,6 +80,7 @@ nav ul li a:active{
     color:#000;
 }
 
+/* 顶部右边的联系我们 */
 .tel{
     position: absolute;
     top:0.5em;
@@ -92,6 +96,7 @@ nav ul li a:active{
     margin-right: 0.5em;
 }
 
+/* 轮播图的切换按钮 */
 .bannerItem {
     font-weight: bold;
     font-size: 3em;
@@ -100,6 +105,7 @@ nav ul li a:active{
     bottom: 5%;
 }
 
+/* 底部 */
 #foot {
     width: 100%;
     position: relative;
@@ -109,6 +115,7 @@ nav ul li a:active{
     color:#bbb;
 }
 
+/*顶部和底部之间*/
 #content {
     width: 75%;
     margin: auto;
@@ -128,6 +135,126 @@ nav ul li a:active{
     margin: 0 auto;
     display: block;
 }
+
+/*index页面，banner以下正文部分*/
+/*子模块标题*/
+.indexTitle{
+    /*字*/
+    font-family: "黑体";
+    color: #aaa;
+    font-size: 2em;
+    /*字间*/
+    text-indent: 0;
+    letter-spacing: 0.1em;
+    /*段落*/
+    text-align: center;
+    width: fit-content;
+    padding: 1%;
+    margin: 5% auto 2%;    
+}
+
+.indexTitle::after{
+    content: "";
+    background: linear-gradient(to right, #188eee, #999);
+    display: block;    
+    width: 100%;
+    height: 3px; 
+    margin: 3% auto;
+}
+
+/*子模块内容*/
+.indexCont1{
+    background-color: #eee;
+    padding: 2% 0;
+}
+
+.indexCont1 li{
+    width: 31%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.indexCont1 img{
+    width: 90%;
+    height: 160px;
+    margin:auto;
+}
+.indexCont1 h2{
+    font-size: 1.1em;
+    font-family: "思源黑体";
+    text-align: center;
+    text-indent: 0;
+}
+
+.indexCont1 p{
+    font-size:0.5em;
+    text-align: left;
+    padding:2% 4%;
+}
+
+.indexCont2{
+    /*字*/
+    font-size: 0.8em;
+    /*字间*/
+    text-indent: 0;
+    /*段落*/
+    width: 50%;
+    padding: 0.2% 1%;
+    margin: 0 3% 1%;
+    border-bottom: 1px dashed #999; /*下划线 虚线*/
+    /*块*/
+    float: right;
+}
+
+.indexCont2::before{
+    content:">";
+}
+
+.indexCont2 span{
+    float: right;
+    text-align: right;
+}
+
+.indexCont3{
+    /*字*/
+    font-size: 0.8em;
+    /*字间*/
+    text-indent: 0;
+    /*段落*/
+    width: 40%;
+    /*块*/
+    float: left;    
+}
+
+.indexCont4{
+    text-indent: 0;
+    margin: auto;
+}
+
+.indexCont4 li{
+    width: 25%;
+    display: inline-block;
+    margin: 1%;
+    padding: 2%;
+    /*vertical-align: top;    
+    margin: auto;
+    */
+}
+
+.more{
+    margin: auto;
+    padding: 1% 2%;
+    background: linear-gradient(to right, #188eee, #999); 
+    width: fit-content; /*根据内容自适应长度*/
+    border-radius:15px;
+    text-indent: 0; 
+    clear: both;
+}
+
+.more a {
+    color:#fff;    
+}
+
 
 .title{
     font-size: 2em;
@@ -150,6 +277,7 @@ nav ul li a:active{
     overflow: hidden;
     height: 0;
     padding-bottom: 18em;
+    vertical-align: middle;
 }
 
 .primary{
@@ -195,6 +323,7 @@ nav ul li a:active{
     float: right;
     width: 30%;
     margin: 10% 2%;
+    height: 150px;
     overflow: hidden;
 }
 
@@ -213,30 +342,4 @@ nav ul li a:active{
     float: right;
     line-height: 200%;
     padding: 1% 2%;
-}
-
-.indexTitle{
-    font-size: 2em;
-    text-align: center;
-    padding:0.4% 1%;
-    letter-spacing:0.3em;
-    background-color: #ccc;
-    font-family: "黑体";
-    font-weight: bolder;
-}
-
-.indexSolu{
-    float: left;
-    width:50%;
-    position: relative;
-    overflow: hidden;
-    padding-bottom: 100%;/*重要属性*/
-    text-align: center;
-}
-
-.indexSolu img{
-    width: 90%;
-    height: auto;
-    position: absolute;/**/
-
 }
