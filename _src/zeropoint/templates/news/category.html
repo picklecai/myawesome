@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    {% extends 'frame.html' %}
+    {% load static %}
+    {% block title %}{{ cate.name }}-News-Zeropoint IT{% endblock %}
+    {% block description %}{% endblock %}
+    <body>
+        {% block content %}
+        <div class="daohang">
+            {% include 'nav.html' %}
+        </div>        
+        <div id="content">
+            <p style="text-align: left"> <a href="{% url 'news:index' %}" >新闻资讯</a> >> {{ cate.name }}</p>
+                 <div class="indexCont1">
+                     {% if cate_news %}                
+                        <ul>
+                            {% for elem in cate_news %}
+                                    <li>
+                                        <a href="{% url 'news:article_detail' elem.id %} ">
+                                            <img src="{{ MEDIA_URL }}{{ elem.image }}">
+                                            <h2>{{ elem.title }}</h2> 
+                                        </a>
+                                    </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>暂无新闻</p>
+                    {% endif %}
+                </div>
+        </div>        
+        {% endblock %}
+    </body>
+</html>

@@ -3,7 +3,8 @@ from django.shortcuts import render
 # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
 # from django.views.generic import DetailView
-from .models import Post
+from .models import *
+
 
 '''
 def index(request):
@@ -114,6 +115,7 @@ def article_detail(request, id):
         # 通过id判断当前文章
         if article.id == id:
             curr_article = article
+            cate = article.category
             if previous_index == 'None':
                 previous_article = None
             else:
@@ -127,8 +129,19 @@ def article_detail(request, id):
             break
 
     context = {
+        'cate': cate,
         'article': curr_article,
         'previous_article': previous_article,
         'next_article': next_article,
     }
     return render(request, 'news/detail.html', context)
+
+
+def category(request, id):
+    cate = Category.objects.get(id=id)
+    cate_news = Post.objects.filter(category=cate)
+    context = {
+        'cate': cate,
+        'cate_news': cate_news
+    }
+    return render(request, 'news/category.html', context)

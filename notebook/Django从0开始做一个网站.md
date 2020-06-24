@@ -1142,7 +1142,42 @@ index.html文件作如下改动，注意只改导航条部分，不改正文内�
 
 这三个文件改下来，就可以顺利实现新页码导航效果了。
 
-#### 6.2.3 文章详情页
+#### 6.2.3 首条不同
+
+在网站首页引用新闻模块，打算实现的效果是：第一条新闻显示图片，其他新闻只显示标题。
+
+前提：引用新闻模块的前若干选项。
+
+这个其实很简单，前几天想多了，把分页第一页放进来了。实际上只要数组取前若干个就好了。
+
+```
+news_list = Post.objects.all()[:8]
+```
+
+到了前台html，果然有这样专门用于首页不同的：`{% if forloop.first %}`确实是用来判断是不是第一条的，如果是，下面就写它的显示样式。否则，就写另一种显示样式。
+
+```
+                        {% for elem in news_list %}
+                            {% if forloop.first %}
+                                <div class="indexCont3">
+                                    <a href="{% url 'news:article_detail' elem.id %} ">
+                                        <img src="{{ MEDIA_URL }}{{ elem.image }}">
+                                        <h2>{{ elem.title }}</h2> 
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="indexCont2">
+                                    <a href="{% url 'news:article_detail' elem.id %} ">
+                                        {{ elem.title }} <span> {{ elem.date }} </span>
+                                    </a>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+```
+
+
+
+#### 6.2.4 文章详情页
 
 [Django搭建个人博客：编写文章详情页面 - Django搭建个人博客 - SegmentFault 思否](https://segmentfault.com/a/1190000016459742)
 
@@ -1318,13 +1353,13 @@ def index(request):
 
 感谢以上作者，让我彻底理解了其中的传递过程。
 
-#### 6.2.4 上一篇和下一篇
+#### 6.2.5 上一篇和下一篇
 
 重点是view.py的改写。刚开始想复杂了，觉得要用类。后来发现类还是写不来，注意是对内部太不熟悉。于是就在原来的函数基础上改写了。
 
 参照：[Django针对上一篇和下一篇文章标题的实现逻辑_i168wintop的博客-CSDN博客](https://blog.csdn.net/i168wintop/article/details/100077288)
 
-##### 6.2.4.1 起初写法
+##### 6.2.5.1 起初写法
 
 view.py的改写：
 
@@ -1367,7 +1402,7 @@ for循环主要的作用是让文章和它的id建立联系。for循环中的文
 
 原作者没有考虑第一篇和最后一篇的特殊性，只让它显示现有的第一篇和最后一篇。考虑了一下，把第一篇的前一篇和最后一篇的后一篇都改成None。然后在前台用if判断来显示其他内容。这是学的新闻首页那个“暂无新闻”。
 
-##### 6.2.4.2 一个bug
+##### 6.2.5.2 一个bug
 
 2020.06.22：
 
@@ -1424,7 +1459,7 @@ detail.html文件：
             {% endif %}
 ```
 
-##### 6.2.4.3 另一个bug
+##### 6.2.5.3 另一个bug
 
 当文章只有1篇时，下一篇的bug也出现了。发现原来因为此时index==0，但len(list)==1，所以
 
@@ -1489,15 +1524,137 @@ for index, caseArc in enumerate(case_list):
 
 只要前不等于后，就照常。否则只写一个空行就行了。
 
-#### 6.2.5 模板过滤器
+#### 6.2.6 新闻增加分类的前台页面
 
-##### 6.2.5.1 日期格式
+仿照detail.html的做法，逐步实施。
+
+第一步，在news下的views中增加分类函数：
+
+```
+def category(request, id):
+    cate = Category.objects.get(id=id)
+    context = {
+        'cate': cate,
+    }
+    return render(request, 'news/category.html', context)
+
+```
+
+在文章详情函数里增加：
+
+```
+        if article.id == id:
+            curr_article = article
+            cate = article.category
+```
+
+这个cate才真正建立文章和分类的联系。
+
+第二步，在urls.py中增加路径：
+
+```
+    path('category/<int:id>', views.category, name='category')
+```
+
+第三步，做一个真正的category.html：
+
+```
+            <p style="text-align: left"> <a href="{% url 'news:index' %}" >新闻资讯</a> >> {{ cate.name }}</p>
+            <h1 class="newsTitle" > {{ cate.name }}</h1>
+```
+
+第四步，链接到分类页：
+
+在detail.html中，面包屑部分，需要加上这个链接。
+
+```
+<p style="text-align: left"> <a href="{% url 'news:index' %}" >新闻资讯</a> >> <a href="{% url 'news:category' cate.id %}"> {{cate.name}}</a> >> {{ article.title }}</p>
+```
+
+到目前为止，顺利。只是分类页面比较单薄，只有分类名称，没有下属文章。
+
+第五步，在category.html中增加文章列表。
+
+```
+
+def category(request, id):
+    cate = Category.objects.get(id=id)
+    cate_news = Post.objects.get(category=cate)
+    context = {
+        'cate': cate,
+        'cate_news': cate_news
+    }
+    return render(request, 'news/category.html', context)
+
+```
+
+在这里增加了cate_news字段，用了存储一个分类下的文章列表。
+
+在category.html中增加读取文章列表的部分：
+
+```
+                 <div class="indexCont1">
+                     {% if cate_news %}                
+                        <ul>
+                            {% for elem in cate_news %}
+                                    <li>
+                                        <a href="{% url 'news:article_detail' elem.id %} ">
+                                            <img src="{{ MEDIA_URL }}{{ elem.image }}">
+                                            <h2>{{ elem.title }}</h2> 
+                                        </a>
+                                    </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>暂无新闻</p>
+                    {% endif %}
+                </div>
+```
+
+现在出错了，系统好委屈：
+
+```
+MultipleObjectsReturned at /newscategory/2
+get() returned more than one Post -- it returned 11!
+
+……
+
+    cate_news = Post.objects.get(category=cate) 
+```
+
+查了一下，get这个方法，就是只要一个的。结果有11条我当然知道，我都在后台看到了。
+
+[django入门：get() returned more than one topic_foryouslgme的博客-CSDN博客_get() returned more than one blog -- it returned 2](https://blog.csdn.net/foryouslgme/article/details/51375246)
+
+这篇文章说：要用filter.
+
+```
+# views.py
+
+def category(request, id):
+    cate = Category.objects.get(id=id)
+    cate_news = Post.objects.filter(category=cate)
+    context = {
+        'cate': cate,
+        'cate_news': cate_news
+    }
+    return render(request, 'news/category.html', context)
+
+```
+
+现在成功了。
+
+还剩下最后一个问题：新闻首页如何安排两个分类？
+
+#### 6.2.7 模板过滤器
+
+##### 6.2.7.1 日期格式
 
 ```
  {{ article.date | date:"Y-m-d"}} 
 ```
 
-##### 6.2.5.2 取前n个字符
+##### 6.2.7.2 取前n个字符
 
 ```
 {{elem.abstract | slice:":100"}}
@@ -1754,3 +1911,100 @@ CKEDITOR_CONFIGS = {
 
 怪不得这个问题搜不到答案，想来是太简单了，所以没有人犯这个错误。😭
 
+#### 6.3.3 新闻增加分类的后台设置
+
+2020.06.24
+
+一直想要个能分类的新闻模块，例如“行业新闻”和“公司新闻”。想了一上午，觉得应该就是增加数据库字段的事情。不过正确的分类应该是下拉框选择，而不是输入。结果找了半天，并不能找到什么叫下拉框的输入控件，能选择的是数据类型，字符串、数值、布尔等。觉得肯定是想错了。于是找“新闻分类”的文章，终于在这两篇文章的拼凑下，搞懂了：分类是独立的类（数据表），它应该与文章数据表建立外键联系。之前的思路全错了。
+
+两篇很有帮助的文章：
+
+[Django前后端分离开发-新闻管理系统(二) - 简书](https://www.jianshu.com/p/562de40917ac)
+
+[Django 开发内容管理系统 - Django 教程 - 自强学堂](https://code.ziqiangxuetang.com/django/django-cms-develop.html)
+
+在它们的启发下，居然真的做成了后台部分。
+
+一共只需要改两个地方，一个是models，一个是admin。前者是数据库结构，后者是后台操作。
+
+```
+#models.py
+
+from django.db import models
+# from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
+
+# Create your models here.
+
+# 增加分类的类
+class Category(models.Model):
+    """docstring for ClassName"""
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = '分类'
+        verbose_name_plural = '分类' #后台显示的复数，也就是分类和分类们。如果不写，会显示“分类s”，有点滑稽。所以大家都写上。
+        ordering = ['name']
+
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    #增加分类字段，与分类class产生关联。
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True) 
+    date = models.DateField()
+    image = models.ImageField(upload_to='', null=True)
+    abstract = models.TextField(null=True, max_length=200)
+    content = RichTextUploadingField()
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-date']
+
+```
+
+做完这个改动，makemigrations和migrate一下就好了。
+
+```
+# admin.py
+
+from django.contrib import admin
+from .models import *
+
+# Register your models here.
+
+
+class PostAdmin(admin.ModelAdmin):
+    list_display = ('title', 'category', 'date')
+    list_per_page = 10
+
+
+class CateAdmin(admin.ModelAdmin):
+    list_display = ('name', 'article_count')
+
+    def article_count(self, obj):
+        return Post.objects.filter(category=obj).count()
+
+
+admin.site.register(Post, PostAdmin)
+admin.site.register(Category, CateAdmin)
+
+```
+
+
+
+原先models中只有一个Post类，所以只import了Post。现在全引入方便一些。
+
+增加的这两个类，是在后台显示时方便看一些。
+
+至此，打开后台，就能添加类别，并在文章中设置类别了。
+
+[ManyToOneRel和ForeignKey的区别？ - 问答 - 云+社区 - 腾讯云](https://cloud.tencent.com/developer/ask/38817)
+
+这篇提到了一对多和多对多等。对于类别来说，就是一个类别下可以有多篇文章，而一篇文章只能属于一个分类，所以选择了ManyToOne。一开始写的就是这个，但是参数没搞懂，就按前面文章里一样，写了外键。
+
+现在轮到前台页面了。
