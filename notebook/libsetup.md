@@ -417,4 +417,12 @@ ImportError: html5lib not found, please install it
 
 ```
 
+## 安装sqlparse
+
+在win10下是正常运行的，到了mac下，提示说没有sqlparse模块，于是用pip3安装：
+
+`pip3 install sqlparse`
+
+通过了。
+
 

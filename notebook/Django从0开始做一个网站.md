@@ -1461,7 +1461,7 @@ detail.html文件：
 
 ##### 6.2.5.3 另一个bug
 
-当文章只有1篇时，下一篇的bug也出现了。发现原来因为此时index==0，但len(list)==1，所以
+当文章只有1篇时，下一篇的bug也出现了。发现原来因为此时`index==0`，但`len(list)==1`，所以
 
 ```
 elif index == len(news_list) - 1:
@@ -1469,7 +1469,7 @@ elif index == len(news_list) - 1:
             next_index = index
 ```
 
-这里，next_index == 0了。
+这里，`next_index == 0`了。
 
 修改如下：
 
@@ -2014,3 +2014,4 @@ admin.site.register(Category, CateAdmin)
 这篇提到了一对多和多对多等。对于类别来说，就是一个类别下可以有多篇文章，而一篇文章只能属于一个分类，所以选择了ManyToOne。一开始写的就是这个，但是参数没搞懂，就按前面文章里一样，写了外键。
 
 现在轮到前台页面了。
+
