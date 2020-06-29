@@ -1,0 +1,3 @@
+没有成功，后来放弃了。不过这些教程先存折吧。主要是对input没理解。
+
+[善用CSS伪类，不用JS也能做出选项卡功能 - CSS技术学习 - SegmentFault 思否](https://segmentfault.com/a/1190000019214800) [纯css制作tab选项卡（一）_web_xiaolei的博客-CSDN博客_css tab选项卡](https://blog.csdn.net/web_xiaolei/article/details/78206674) [纯 CSS 利用 label + input 实现选项卡 - Mr.曹 - 博客园](https://www.cnblogs.com/cckui/p/9968246.html) [django模板标签{% for %}的使用（含forloop用法）_李谦的博客-CSDN博客_django for](https://blog.csdn.net/weixin_39198406/article/details/78910532) [纯CSS3制作TAB选项卡的两种方式-前端开发博客](http://caibaojian.com/css3-tabs.html) [Django 模板 | 菜鸟教程](https://www.runoob.com/django/django-template.html) [Django——模板层(template)（模板语法、自定义模板过滤器及标签、模板继承） - 听风。 - 博客园](https://www.cnblogs.com/huchong/p/7723525.html)
