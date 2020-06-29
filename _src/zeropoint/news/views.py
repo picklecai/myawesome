@@ -47,6 +47,7 @@ class Indexview(ListView):
         context.update(pagination_data)
         # 将更新后的 context 返回，以便 ListView 使用这个字典中的模板变量去渲染模板。
         # 注意此时 context 字典中已有了显示分页导航条所需的数据。
+        print(pagination_data)
         return context
 
     def pagination_data(self, paginator, page, is_paginated):
@@ -85,6 +86,8 @@ class Indexview(ListView):
             if left[0] > 1:
                 first = True
 
+        cates = Category.objects.all()
+
         data = {
             'left': left,
             'right': right,
@@ -92,6 +95,7 @@ class Indexview(ListView):
             'right_has_more': right_has_more,
             'first': first,
             'last': last,
+            'cates': cates,
         }
         return data
 

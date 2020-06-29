@@ -252,7 +252,6 @@ nav ul li a:active{
     color:#fff;    
 }
 
-
 .title{
     font-size: 2em;
     text-align: left;
@@ -269,7 +268,61 @@ nav ul li a:active{
     padding: 1%;
 }
 
+/*新闻类目选项卡的基础样式*/
+.cateChoose{
+    float: left;
+    display: inline-block;
+    text-indent: 0;
+    padding: 2%;
+    margin: 2% 1%;
+    border: 0;
+    background:#fff;
+    font-size: 1.1em;
+}
+
+/*新闻类目选项卡的切换样式：鼠标*/
+.cateChoose:hover{
+    background: #06c;
+    color:#fff;
+}
+
+/*新闻类目选项卡的切换样式：键盘*/
+.cateChoose:focus{
+    background: #06c;
+    color:#fff;
+}
+
+.cateChoose::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+/*新闻类目选项卡的切换样式：点击后无边框*/
+button{
+    outline: none;
+}
+
+/*新闻类目内容*/
+.tabContent{
+    clear: both;
+    margin: 2% 8% ;
+    overflow: hidden;
+    height: 100%;
+}
+
+/*新闻类目内容：配合js的显示功能*/
+.show{
+    display: block;
+}
+
+/*新闻类目内容：配合js的隐藏功能*/
+.hidden{
+    display: none;
+}
+
 .newscontent{
+    clear: both;
     margin: 2% 8% ;
     overflow: hidden;
     height: 0;
