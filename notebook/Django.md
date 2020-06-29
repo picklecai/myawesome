@@ -217,6 +217,8 @@ def timeAhead(request, offset):
 
 ## 3. Django模板
 
+[Django 模板 | 菜鸟教程](https://www.runoob.com/django/django-template.html)
+
 ### 3.1 模板语法：变量、标签、过滤器  
 
 #### 3.1.1 变量（	variable）  
