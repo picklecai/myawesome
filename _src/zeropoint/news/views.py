@@ -1,27 +1,7 @@
 # Create your views here.
-from django.shortcuts import render
-# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView
-# from django.views.generic import DetailView
 from .models import *
-
-
-'''
-def index(request):
-    news_list = Post.objects.all()
-    paginator = Paginator(news_list, 5)
-    page = request.GET.get('page')
-    try:
-        news_list = paginator.page(page)
-    except PageNotAnInteger:
-        news_list = paginator.page(1)
-    except EmptyPage:
-        news_list = paginator.page(paginator.num_pages)
-    context = {
-        'news_list': news_list,
-    }
-    return render(request, 'news/index.html', context)
-'''
 
 
 class Indexview(ListView):
@@ -141,11 +121,75 @@ def article_detail(request, id):
     return render(request, 'news/detail.html', context)
 
 
-def category(request, id):
-    cate = Category.objects.get(id=id)
-    cate_news = Post.objects.filter(category=cate)
-    context = {
-        'cate': cate,
-        'cate_news': cate_news
-    }
-    return render(request, 'news/category.html', context)
+class Categoryview(ListView):
+    """docstring for Indexview"""
+    model = Post
+    template_name = 'news/category.html'
+    context_object_name = 'news_list'
+    paginate_by = 5
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, id=self.kwargs['id'])
+        return Post.objects.filter(category=self.category)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = self.category
+        paginator = context.get('paginator')
+        page = context.get('page_obj')
+        is_paginated = context.get('is_paginated')
+        pagination_data = self.pagination_data(paginator, page, is_paginated)
+        context.update(pagination_data)
+        print(pagination_data)
+        return context
+
+    def pagination_data(self, paginator, page, is_paginated):
+        if not is_paginated:
+            return{}
+        left = []
+        right = []
+        left_has_more = False
+        right_has_more = False
+        first = False
+        last = False
+        page_number = page.number
+        total_pages = paginator.num_pages
+        page_range = paginator.page_range
+        if page_number == 1:
+            right = page_range[page_number:page_number + 2]
+            if right[-1] < total_pages - 1:
+                right_has_more = True
+            if right[-1] < total_pages:
+                last = True
+        elif page_number == total_pages:
+            left = page_range[(page_number - 3) if (page_number - 3) > 0 else 0:page_number - 1]
+            if left[0] > 2:
+                left_has_more = True
+            if left[0] > 1:
+                first = True
+        else:
+            left = page_range[(page_number - 3) if (page_number - 3) > 0 else 0:page_number - 1]
+            right = page_range[page_number:page_number + 2]
+            if right[-1] < total_pages - 1:
+                right_has_more = True
+            if right[-1] < total_pages:
+                last = True
+            if left[0] > 2:
+                left_has_more = True
+            if left[0] > 1:
+                first = True
+
+        cates = Category.objects.all()
+        cate_curr = Category.objects.get(id=self.kwargs['id'])
+
+        data = {
+            'left': left,
+            'right': right,
+            'left_has_more': left_has_more,
+            'right_has_more': right_has_more,
+            'first': first,
+            'last': last,
+            'cates': cates,
+            'cate_curr': cate_curr,
+        }
+        return data

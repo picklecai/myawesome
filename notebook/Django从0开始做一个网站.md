@@ -975,6 +975,14 @@ def index(request):
 
 分页的功能就做好了。
 
+配套url：
+
+```
+path('', views.index, name='index'),
+```
+
+
+
 下面只要在前台添上页码导航就行了：
 
 ```
@@ -1644,6 +1652,32 @@ def category(request, id):
 
 现在成功了。
 
+附：后来改成了这样：
+
+```
+def category(request, id):
+    cates = Category.objects.all()
+    cate_curr = Category.objects.get(id=id)
+    cate_news = Post.objects.filter(category=cate_curr)
+    context = {
+        'cates': cates,
+        'cate_curr': cate_curr,
+        'cate_news': cate_news
+    }
+    return render(request, 'news/category.html', context)
+
+```
+
+搭配url：
+
+```
+path('category/<int:id>', views.category, name='category')
+```
+
+
+
+
+
 还剩下最后一个问题：新闻首页如何安排两个分类？
 
 感觉这个用js最好，做成选项卡。选项卡1是第一个分类，点击显示此分类下的文章。选项卡2是第二个分类，点击显示此分类下的文章。
@@ -1652,15 +1686,539 @@ def category(request, id):
 
 [js实现简单选项卡功能_javascript技巧_脚本之家](https://www.jb51.net/article/146020.htm)
 
-#### 6.2.7 模板过滤器
+#### 6.2.7  新闻首页安排两个分类
 
-##### 6.2.7.1 日期格式
+2020.06.30
+
+分别尝试了几种方法：
+
+1. 纯css写选项卡，重要控件是input，有人用radio的type，有人用text的type。我没有成功。放弃。
+2. 用js写选项卡，只要把分类新闻部分写成div，然后控制div 的显示与隐藏。这个方法可行。缺点是我在同一个页面里既写全部，又写分类新闻，导致分类新闻只能跟着全部的页码来走。比如第一页一共5条全部新闻，其中2条是分类一，3条是分类2。操作上就是这样的：打开第一页，点击全部，5条。点击分类一，2条。点击分类2，3条。这在逻辑上太奇怪了。具体实现过程在[js实现tab标签页切换.md](./js实现tab标签页切换.md)中。
+3. 用js写选项卡，但使用框架装分类新闻内容。只要把全部新闻、各分类新闻全部做成可以独立访问的iframe，index中，用js对iframe的src进行更改。这个也实现了。具体实现参考了banner图那个做法。js脚本比上一个方法简单很多。但是问题来了，样式难控制不说，iframe的滚动条不好处理不说，点击里面的任何链接，都是在这个框架范围内的。而且地址栏不体现任何细分地址，因为都在框架内。从分类、到详情页，全部去头去尾，乱七八糟。遂弃之。
+4. 山穷水尽之余，突然觉得想多了，直接让选项卡标签链接到新页面不就好了吗？button的href是假的，那就onclick啊。果然实现了。
+
+第二种方法的news部分的index.html文件：
+
+```
+<!DOCTYPE html>
+<html>
+    {% extends 'frame.html' %}
+    {% load static %}
+    {% block title %}News-Zeropoint IT{% endblock %}
+    {% block description %}三维电子沙盘新闻资讯。{% endblock %}
+    <body>
+        {% block content %}
+        <div class="daohang">
+            {% include 'nav.html' %}
+        </div>        
+        <div id="content">
+            <div class="tabs">
+                <button class="cateChoose" > 全部 </button>
+                {% for cate in cates %}
+                    <button class="cateChoose" > {{cate.name}} </button>
+                {% endfor %}
+            </div>
+
+            <div class="tabContent">
+                <div name="tabContent" class="show">
+                    {% if news_list %}
+                        <ul>
+                            {% for elem in news_list %}
+                                <li>
+                                    <div class="newscontent">
+                                        <hr/>
+                                        <a href="{% url 'news:article_detail' elem.id %} ">
+                                            <p class="second">{{ elem.date| date:"m-d Y" }}</p>
+                                            <div class="primary">
+                                                <p class="newsTitle" >{{ elem.title }}</p>
+                                                <p class="newsZhengwen" >{{ elem.abstract }}</p>
+                                            </div> 
+                                            <img src="{{ MEDIA_URL }}{{ elem.image }}" class="newsimage">
+                                        </a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>暂无新闻</p>
+                    {% endif %}
+                </div>
+
+                {% for cate in cates %}
+                <div name="tabContent" class="hidden">
+                    {% if news_list %}
+                        {% for news_art in news_list %}
+                            {% ifequal news_art.category cate %}
+                                <li>
+                                    <div class="newscontent">
+                                        <hr/>
+                                        <a href="{% url 'news:article_detail' news_art.id %} ">
+                                            <p class="second">{{ news_art.date| date:"m-d Y" }}</p>
+                                            <div class="primary">
+                                                <p class="newsTitle" >{{ news_art.title }}</p>
+                                                <p class="newsZhengwen" >{{ news_art.abstract }}</p>
+                                            </div> 
+                                            <img src="{{ MEDIA_URL }}{{ news_art.image }}" class="newsimage">
+                                        </a>
+                                    </div>
+                                </li>
+                            {% endifequal %}
+                        {% endfor %}
+                    {% else %}
+                        <p>暂无新闻</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                
+                <div class="pagination">
+                    <!--
+                    {% if news_list.has_previous %}
+                        <a href="?page={{news_list.previous_page_number}}">上一页</a>
+                    {% endif %}
+                    <span class="pagination">
+                        第 {{ news_list.number }} 页 / 共 {{ news_list.paginator.num_pages }} 页
+                      </span>
+                    {% if news_list.has_next %}
+                        <a href="?page={{news_list.next_page_number}}">下一页</a>
+                    {% endif %}  
+                    -->
+                    {% if is_paginated %}
+                        {% if first %}
+                            <a href="?page=1">1</a>
+                        {% endif %}
+                        {% if left %}
+                            {% if left_has_more %}
+                                <span>...</span>
+                            {% endif %}
+                            {% for i in left %}
+                                <a href="?page={{ i }}">{{ i }}</a>
+                            {% endfor %}
+                        {% endif %}
+                        <a href="?page={{ page_obj.number }}" style="color: red">{{ page_obj.number }}</a>
+                        {% if right %}
+                            {% for i in right %}
+                                <a href="?page={{ i }}">{{ i }}</a>
+                            {% endfor %}
+                            {% if right_has_more %}
+                                <span>...</span>
+                            {% endif %}
+                        {% endif %}
+                        {% if last %}
+                            <a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+                        {% endif %}
+                    {% endif %}              
+                </div>
+                <br>
+            </div>
+
+        <script type="text/javascript"  src="{% static '/scripts/catenews.js' %}"></script>
+        {% endblock %}
+    </body>
+</html>
+```
+
+
+
+
+
+最后一种方法的html文件：
+
+```
+#news index.html
+
+<div class="tabs">
+	<button class="cateChoose1" onclick="window.location.href = '/news'"> 全部 </button>
+    {% for cate in cates %}
+    	<button class="cateChoose2" onclick="window.location.href = 'category/{{ forloop.counter}} '"> {{cate.name}} </button>
+    {% endfor %}
+</div>
+```
+
+```
+# news category.html
+
+<div class="tabs">
+    <button class="cateChoose2"  onclick="window.location.href = '/news'" > 全部 </button>
+    {% for cate in cates %}
+        {% ifequal cate cate_curr %}
+        <button class="cateChoose1" onclick="window.location.href = '{{ forloop.counter}} '"> {{cate.name}} </button>
+        {% else %}
+        <button class="cateChoose2" onclick="window.location.href = '{{ forloop.counter}} '"> {{cate.name}} </button>
+        {% endifequal %}
+    {% endfor %}
+</div>
+```
+
+完整的index.html文件：
+
+```
+<!DOCTYPE html>
+<html>
+    {% extends 'frame.html' %}
+    {% load static %}
+    {% block title %}News-Zeropoint IT{% endblock %}
+    {% block description %}三维电子沙盘新闻资讯。{% endblock %}
+    <body>
+        {% block content %}
+        <div class="daohang">
+            {% include 'nav.html' %}
+        </div>        
+        <div id="content">
+            <div class="tabs">
+                <button class="cateChoose1" onclick="window.location.href = '/news'"> 全部 </button>
+                {% for cate in cates %}
+                    <button class="cateChoose2" onclick="window.location.href = 'category/{{ forloop.counter}} '"> {{cate.name}} </button>
+                {% endfor %}
+            </div>
+
+            <div class="tabContent">
+                {% if news_list %}
+                    <ul>
+                        {% for elem in news_list %}
+                            <li>
+                                <div class="newscontent">
+                                    <hr/>
+                                    <a href="{% url 'news:article_detail' elem.id %} ">
+                                        <p class="second">{{ elem.date| date:"m-d Y" }}</p>
+                                        <div class="primary">
+                                            <p class="newsTitle" >{{ elem.title }}</p>
+                                            <p class="newsZhengwen" >{{ elem.abstract }}</p>
+                                        </div> 
+                                        <img src="{{ MEDIA_URL }}{{ elem.image }}" class="newsimage">
+                                    </a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>暂无新闻</p>
+                {% endif %}
+            </div>
+                
+            <div class="pagination">
+                {% if is_paginated %}
+                    {% if first %}
+                        <a href="?page=1">1</a>
+                    {% endif %}
+                    {% if left %}
+                        {% if left_has_more %}
+                            <span>...</span>
+                        {% endif %}
+                        {% for i in left %}
+                            <a href="?page={{ i }}">{{ i }}</a>
+                        {% endfor %}
+                    {% endif %}
+                    <a href="?page={{ page_obj.number }}" style="color: red">{{ page_obj.number }}</a>
+                    {% if right %}
+                        {% for i in right %}
+                            <a href="?page={{ i }}">{{ i }}</a>
+                        {% endfor %}
+                        {% if right_has_more %}
+                            <span>...</span>
+                        {% endif %}
+                    {% endif %}
+                    {% if last %}
+                        <a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+                    {% endif %}
+                {% endif %}              
+            </div>
+            <br>
+        </div>
+        {% endblock %}
+    </body>
+</html>
+```
+
+
+
+
+
+后者的ifequal，不过是为了让分类页识别出哪个是此页的分类。
+
+道理非常简单。看着也还行。总之是前面想多了。现在可以安心搞分类的页码了（因为是独立页面，不用考虑index混杂在一起的情况。
+
+#### 6.2.8 分类页面的分页页码
+
+想用和首页一样的分页，就需要用ListView。但是ListView默认是不分类的，所以得找到能让它分类的方法。
+
+[Django 教程 6: 通用列表和详细信息视图 - 学习 Web 开发 | MDN](https://developer.mozilla.org/zh-CN/docs/learn/Server-side/Django/Generic_views)
+
+[内置基于类的通用视图| Django文档| Django的](https://docs.djangoproject.com/en/2.0/topics/class-based-views/generic-display/)
+
+这两个教程，说了model还应该是文章，而不是分类。分类只是用来filter的工具。
+
+```
+class Categoryview(ListView):
+    """docstring for Indexview"""
+    model = Post
+    template_name = 'news/category.html'
+    context_object_name = 'news_list'
+    paginate_by = 5
+```
+
+需要写一个`get_queryset`方法来进行筛选：
+
+```
+from django.shortcuts import render, get_object_or_404
+
+def get_queryset(self):
+    self.category = get_object_or_404(Category, id=self.kwargs['id'])
+    return Post.objects.filter(category=self.category)
+```
+
+`get_object_or_404`是新引进来的，它的作用是找对象，找不到就返回404。差不多这个意思吧。
+
+[Django shortcut functions | Django documentation | Django](https://docs.djangoproject.com/en/3.0/topics/http/shortcuts/)
+
+> ## `get_list_or_404()`[¶](https://docs.djangoproject.com/en/3.0/topics/http/shortcuts/#get-list-or-404)
+>
+> - `get_list_or_404`(*klass*, **args*, ***kwargs*)[¶](https://docs.djangoproject.com/en/3.0/topics/http/shortcuts/#django.shortcuts.get_list_or_404)
+>
+>   Returns the result of [`filter()`](https://docs.djangoproject.com/en/3.0/ref/models/querysets/#django.db.models.query.QuerySet.filter) on a given model manager cast to a list, raising [`Http404`](https://docs.djangoproject.com/en/3.0/topics/http/views/#django.http.Http404) if the resulting list is empty.
+>
+> 
+>
+> ### Required arguments[¶](https://docs.djangoproject.com/en/3.0/topics/http/shortcuts/#id3)
+>
+> - `klass`
+>
+>   A [`Model`](https://docs.djangoproject.com/en/3.0/ref/models/instances/#django.db.models.Model), [`Manager`](https://docs.djangoproject.com/en/3.0/topics/db/managers/#django.db.models.Manager) or [`QuerySet`](https://docs.djangoproject.com/en/3.0/ref/models/querysets/#django.db.models.query.QuerySet) instance from which to get the list.
+>
+> - `**kwargs`
+>
+>   Lookup parameters, which should be in the format accepted by `get()` and `filter()`.
+>
+> 
+>
+> ### Example[¶](https://docs.djangoproject.com/en/3.0/topics/http/shortcuts/#id4)
+>
+> The following example gets all published objects from `MyModel`:
+>
+> ```
+> from django.shortcuts import get_list_or_404
+> 
+> def my_view(request):
+>     my_objects = get_list_or_404(MyModel, published=True)
+> ```
+>
+> This example is equivalent to:
+>
+> ```
+> from django.http import Http404
+> 
+> def my_view(request):
+>     my_objects = list(MyModel.objects.filter(published=True))
+>     if not my_objects:
+>         raise Http404("No MyModel matches the given query.")
+> ```
+
+上面的句子里，`id=self.kwargs['id']`折腾很久才明白，这个引号'id'，是来自url里那个`<>`。我一直以为参数就一定要写在方法后面的括号里。但是对照教程上的publisher，终于明白，来自这里：
+
+```
+path('category/<int:id>', views.Categoryview.as_view(), name='category'),
+```
+
+于是真的取到了当前分类。
+
+在这种写法上，如果像之前那样直接写`id=id`，系统会提示：
+
+```
+field 'id' expected a number but got <built-in function id>.
+```
+
+到这里为止，主要的就写好了。
+
+昨天的发现，data中可以增加需要的context字典键值。例如：
+
+```
+        cates = Category.objects.all()
+        cate_curr = Category.objects.get(id=self.kwargs['id'])
+
+        data = {
+            'left': left,
+            'right': right,
+            'left_has_more': left_has_more,
+            'right_has_more': right_has_more,
+            'first': first,
+            'last': last,
+            'cates': cates,
+            'cate_curr': cate_curr,
+        }
+        return data
+
+```
+
+因为那个选项卡标签，还是需要分类数组和当前分类的。于是就加在这里。
+
+完整的view：
+
+```
+class Categoryview(ListView):
+    """docstring for Indexview"""
+    model = Post
+    template_name = 'news/category.html'
+    context_object_name = 'news_list'
+    paginate_by = 5
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, id=self.kwargs['id'])
+        return Post.objects.filter(category=self.category)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = self.category
+        paginator = context.get('paginator')
+        page = context.get('page_obj')
+        is_paginated = context.get('is_paginated')
+        pagination_data = self.pagination_data(paginator, page, is_paginated)
+        context.update(pagination_data)
+        print(pagination_data)
+        return context
+
+    def pagination_data(self, paginator, page, is_paginated):
+        if not is_paginated:
+            return{}
+        left = []
+        right = []
+        left_has_more = False
+        right_has_more = False
+        first = False
+        last = False
+        page_number = page.number
+        total_pages = paginator.num_pages
+        page_range = paginator.page_range
+        if page_number == 1:
+            right = page_range[page_number:page_number + 2]
+            if right[-1] < total_pages - 1:
+                right_has_more = True
+            if right[-1] < total_pages:
+                last = True
+        elif page_number == total_pages:
+            left = page_range[(page_number - 3) if (page_number - 3) > 0 else 0:page_number - 1]
+            if left[0] > 2:
+                left_has_more = True
+            if left[0] > 1:
+                first = True
+        else:
+            left = page_range[(page_number - 3) if (page_number - 3) > 0 else 0:page_number - 1]
+            right = page_range[page_number:page_number + 2]
+            if right[-1] < total_pages - 1:
+                right_has_more = True
+            if right[-1] < total_pages:
+                last = True
+            if left[0] > 2:
+                left_has_more = True
+            if left[0] > 1:
+                first = True
+
+        cates = Category.objects.all()
+        cate_curr = Category.objects.get(id=self.kwargs['id'])
+
+        data = {
+            'left': left,
+            'right': right,
+            'left_has_more': left_has_more,
+            'right_has_more': right_has_more,
+            'first': first,
+            'last': last,
+            'cates': cates,
+            'cate_curr': cate_curr,
+        }
+        return data
+```
+
+```
+# urls.py
+
+app_name = 'news'
+urlpatterns = [
+    # path('', views.index, name='index'),
+    path('', views.Indexview.as_view(), name='index'),
+    path('article-detail/<int:id>', views.article_detail, name='article_detail'),
+    # path('category/<int:id>', views.category, name='category')
+    path('category/<int:id>', views.Categoryview.as_view(), name='category'), #替代上面一句
+]
+```
+
+完整的category.html页：
+
+```
+<div class="tabs">
+    <button class="cateChoose2"  onclick="window.location.href = '/news'" > 全部 </button>
+    {% for cate in cates %}
+        {% ifequal cate cate_curr %}
+        <button class="cateChoose1" onclick="window.location.href = '{{ forloop.counter}} '"> {{cate.name}} </button>
+        {% else %}
+        <button class="cateChoose2" onclick="window.location.href = '{{ forloop.counter}} '"> {{cate.name}} </button>
+        {% endifequal %}
+    {% endfor %}
+</div>
+
+<div class="tabContent">            
+    {% if news_list %}
+        <ul>
+            {% for elem in news_list %}
+                <li>
+                    <div class="newscontent">
+                        <hr/>
+                        <a href="{% url 'news:article_detail' elem.id %} ">
+                            <p class="second">{{ elem.date| date:"m-d Y" }}</p>
+                            <div class="primary">
+                                <p class="newsTitle" >{{ elem.title }}</p>
+                                <p class="newsZhengwen" >{{ elem.abstract }}</p>
+                            </div> 
+                            <img src="{{ MEDIA_URL }}{{ elem.image }}" class="newsimage">
+                        </a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>暂无新闻</p>
+    {% endif %}
+</div>  
+
+<div class="pagination">
+    {% if is_paginated %}
+        {% if first %}
+            <a href="?page=1">1</a>
+        {% endif %}
+        {% if left %}
+            {% if left_has_more %}
+                <span>...</span>
+            {% endif %}
+            {% for i in left %}
+                <a href="?page={{ i }}">{{ i }}</a>
+            {% endfor %}
+        {% endif %}
+        <a href="?page={{ page_obj.number }}" style="color: red">{{ page_obj.number }}</a>
+        {% if right %}
+            {% for i in right %}
+                <a href="?page={{ i }}">{{ i }}</a>
+            {% endfor %}
+            {% if right_has_more %}
+                <span>...</span>
+            {% endif %}
+        {% endif %}
+        {% if last %}
+            <a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+        {% endif %}
+    {% endif %}              
+</div>
+<br>
+```
+
+
+
+#### 6.2.9 模板过滤器
+
+##### 6.2.9.1 日期格式
 
 ```
  {{ article.date | date:"Y-m-d"}} 
 ```
 
-##### 6.2.7.2 取前n个字符
+##### 6.2.9.2 取前n个字符
 
 ```
 {{elem.abstract | slice:":100"}}
