@@ -1690,6 +1690,8 @@ path('category/<int:id>', views.category, name='category')
 
 2020.06.30
 
+**最后一种方法的弊端：上一篇下一篇没有了。不知道是不是list的消失造成的。**
+
 分别尝试了几种方法：
 
 1. 纯css写选项卡，重要控件是input，有人用radio的type，有人用text的type。我没有成功。放弃。
