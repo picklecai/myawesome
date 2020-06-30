@@ -4,6 +4,8 @@
 
 [Django 文档 | Django 文档 | Django](https://docs.djangoproject.com/zh-hans/3.0/)
 
+[django模板标签{% for %}的使用（含forloop用法）_李谦的博客-CSDN博客_django for](https://blog.csdn.net/weixin_39198406/article/details/78910532)
+
 《The Django Book》（中文版），这是一本教材。感觉有点旧，还是2008年的。
 最新版：[Mastering Django 2 – The Book - Python Django Tutorials](https://djangobook.com/)
 
