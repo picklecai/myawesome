@@ -2329,6 +2329,8 @@ return data
 
 原来根本不用再写一个cate_curr。本来就有了。
 
+[Django学习笔记：ListView中get_context_data的用法_Mr.周的博客-CSDN博客_get_context_data](https://blog.csdn.net/mikezhou002/article/details/81293293)
+
 现在修改有方向了。
 
 data中的cates和cate_curr去掉，连带data之外给它俩赋值的都去掉。让凯撒的归凯撒吧。
