@@ -6,9 +6,9 @@
     {% block description %}{{ caseArc.abstract }}{% endblock %}
     <body>
         {% block content %}
-        <div class="daohang">
+        <div class="menuBackground">
             {% include 'nav.html' %}
-        </div>        
+        </div>
         <div id="content">
             <p style="text-align: left"> <a href="{% url 'case:index' %}" >应用案例</a> >> {{ caseArc.title }}</p>
             <h1 class="newsTitle" > {{ caseArc.title }}</h1>

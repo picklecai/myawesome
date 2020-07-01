@@ -6,9 +6,9 @@
     {% block description %}{{ article.abstract }}{% endblock %}
     <body>
         {% block content %}
-        <div class="daohang">
+        <div class="menuBackground">
             {% include 'nav.html' %}
-        </div>        
+        </div>
         <div id="content">
             <p style="text-align: left"> <a href="{% url 'news:index' %}" >新闻资讯</a> >> <a href="{% url 'news:category' cate.id %}"> {{cate.name}}</a> >> {{ article.title }}</p>
             <h1 class="newsTitle" > {{ article.title }}</h1>
