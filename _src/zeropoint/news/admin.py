@@ -10,7 +10,7 @@ class PostAdmin(admin.ModelAdmin):
 
 
 class CateAdmin(admin.ModelAdmin):
-    list_display = ('name', 'article_count')
+    list_display = ('id', 'name', 'article_count')
 
     def article_count(self, obj):
         return Post.objects.filter(category=obj).count()
