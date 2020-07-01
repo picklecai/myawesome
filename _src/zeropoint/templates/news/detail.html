@@ -14,7 +14,7 @@
             <h1 class="newsTitle" > {{ article.title }}</h1>
             <p class="newsDate"> {{ article.date | date:"Y-m-d"}} </p>
             <img class="zhengwenimage" src="{{ MEDIA_URL }}{{ article.image }}" >
-            <div class="zhengwen">  {{ article.content | safe}} </div>
+            <div class="maintext">  {{ article.content | safe}} </div>
             {% if previous_caseArc != next_caseArc %}
                 {% if previous_article %}
                     <a class="previous" href="{% url 'news:article_detail' previous_article.id %}">上一篇: {{ previous_article.title }} </a>
