@@ -8,12 +8,12 @@
         {% block content %}
         <div class="daohang">
             {% include 'nav.html' %}
-        </div>        
+        </div>     
         <div id="content">
             <div class="tabs">
                 <button class="cateChoose2"  onclick="window.location.href = '/news'" > 全部 </button>
                 {% for cate in cates %}
-                    {% ifequal cate cate_curr %}
+                    {% ifequal cate category %}
                     <button class="cateChoose1" onclick="window.location.href = '{{ forloop.counter}} '"> {{cate.name}} </button>
                     {% else %}
                     <button class="cateChoose2" onclick="window.location.href = '{{ forloop.counter}} '"> {{cate.name}} </button>
@@ -41,7 +41,7 @@
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p>暂无新闻</p>
+                    <p class="newscontent">暂无新闻</p>
                 {% endif %}
             </div>  
 

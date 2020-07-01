@@ -14,6 +14,8 @@ class Indexview(ListView):
     def get_context_data(self, **kwargs):
         # 首先获得父类生成的传递给模板的字典
         context = super().get_context_data(**kwargs)
+        cates = Category.objects.all()
+        context['cates'] = cates
         # 父类生成的字典中已有 paginator、page_obj、is_paginated 这三个模板变量，
         # paginator 是 Paginator 的一个实例，
         # page_obj 是 Page 的一个实例，
@@ -66,8 +68,6 @@ class Indexview(ListView):
             if left[0] > 1:
                 first = True
 
-        cates = Category.objects.all()
-
         data = {
             'left': left,
             'right': right,
@@ -75,7 +75,6 @@ class Indexview(ListView):
             'right_has_more': right_has_more,
             'first': first,
             'last': last,
-            'cates': cates,
         }
         return data
 
@@ -134,7 +133,9 @@ class Categoryview(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        cates = Category.objects.all()
         context['category'] = self.category
+        context['cates'] = cates
         paginator = context.get('paginator')
         page = context.get('page_obj')
         is_paginated = context.get('is_paginated')
@@ -179,9 +180,6 @@ class Categoryview(ListView):
             if left[0] > 1:
                 first = True
 
-        cates = Category.objects.all()
-        cate_curr = Category.objects.get(id=self.kwargs['id'])
-
         data = {
             'left': left,
             'right': right,
@@ -189,7 +187,5 @@ class Categoryview(ListView):
             'right_has_more': right_has_more,
             'first': first,
             'last': last,
-            'cates': cates,
-            'cate_curr': cate_curr,
         }
         return data
