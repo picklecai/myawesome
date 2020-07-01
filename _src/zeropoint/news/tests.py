@@ -1,3 +1,7 @@
 from django.test import TestCase
+# Create your views here.
 
-# Create your tests here.
+
+class QuestionModelTests(TestCase):
+    def test(self):
+        self.assertIs(, False)
