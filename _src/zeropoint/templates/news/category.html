@@ -20,30 +20,34 @@
                     {% endifequal %}
                 {% endfor %}
             </div>
-
-            <div class="tabContent">            
-                {% if news_list %}
-                    <ul>
-                        {% for elem in news_list %}
-                            <li>
-                                <div class="newscontent">
-                                    <hr/>
-                                    <a href="{% url 'news:article_detail' elem.id %} ">
-                                        <p class="second">{{ elem.date| date:"m-d Y" }}</p>
+        
+            {% if news_list %}
+                <ul>
+                    {% for elem in news_list %}
+                        <li>
+                            <div class="contentlist">
+                                <hr/>
+                                <a href="{% url 'news:article_detail' elem.id %} ">
+                                    <div class="primary">
                                         <div class="primary">
-                                            <p class="newsTitle" >{{ elem.title }}</p>
-                                            <p class="newsZhengwen" >{{ elem.abstract }}</p>
-                                        </div> 
-                                        <img src="{{ MEDIA_URL }}{{ elem.image }}" class="newsimage">
-                                    </a>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="newscontent">暂无新闻</p>
-                {% endif %}
-            </div>  
+                                            <h3>{{ elem.title }}</h3>
+                                            <p>{{ elem.abstract | slice:":105" }}……</p>
+                                        </div>
+                                        <div class="second">
+                                            <img src="{{ MEDIA_URL }}{{ elem.image }}">
+                                        </div>
+                                    </div>
+                                    <div class="second">
+                                        {{ elem.date| date:"m-d Y" }}
+                                    </div>
+                                </a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="contentlist">暂无新闻</p>
+            {% endif %}
 
             <div class="pagination">
                 {% if is_paginated %}

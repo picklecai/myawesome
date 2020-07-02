@@ -124,7 +124,7 @@ nav ul li a:active{
     overflow: hidden;
     background: #fff;
     color: #555;
-    text-indent: 2em;    
+    text-indent: 2em; 
 }
 
 #content img{
@@ -270,7 +270,6 @@ nav ul li a:active{
     padding: 2%;
     margin: 2% 1%;
     border: 0;
-    background:#fff;
     font-size: 1.1em;
     background: #06c;
     color:#fff;
@@ -328,54 +327,89 @@ button{
     outline: none;
 }
 
-/*新闻类目内容*/
-.tabContent{
+/*各模块的列表页样式*/
+.contentlist{
     clear: both;
     margin: 2% 8% ;
     overflow: hidden;
-    height: 100%;
 }
 
-.newscontent{
-    clear: both;
-    margin: 2% 8% ;
-    overflow: hidden;
-    height: 0;
-    padding-bottom: 18em;
-    vertical-align: middle;
+/*解决方案首页奇偶行图片位置不同*/
+li:nth-child(even) .contentlist .mainimg img{
+    width: 45%;
+    float: right;
 }
 
-.primary{
-    width: 46%;
+li:nth-child(odd) .contentlist .mainimg img{
+    width: 45%;
     float: left;
-    text-align: left;
-    margin: 0 2% ;
 }
 
-.second{
+.contentlist .text{
+    width: 40%;
+    float: left;
+    margin: 0 5%;
+    font-size:0.9em;
+    line-height: 200%;
+    letter-spacing: 0.1em;
+}
+
+/*新闻首页三列：日期，内容，图片*/
+.contentlist .primary{
+    width:80%;
+    float: right;
+    position: relative;
+}
+
+.contentlist .second{
+    /*块*/
     width: 18%;
     float: left;
-    text-align: center;
-    color: #ccc;
-    font-size: 1.8em;
     margin: 8% auto;
+    /*字*/
+    font-size: 1.8em;
+    color: #ccc;   
+    /*字间*/
+    text-indent: 0;    
+    /*段落*/
+    text-align: center;
 }
 
-.newsTitle{
-    font-size: 1.4em;
+.contentlist .primary .primary{
+    width: 55%;
+    float: left;
+    text-align: left;
+    margin: 0 2%;
+    position: absolute;
+    top: 50%;
+    transform: translate(0,-50%);
+}
+
+.contentlist .primary .second{
+    width: 40%;
+    float: right;
+}
+
+.contentlist .primary .second img{
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    margin: auto;
+}
+
+.contentlist .primary .primary h3{
+    font-size: 1.3em;
     color:#777;
     text-align: center;
+    text-indent: 0;
 }
 
-.newsZhengwen{
+.contentlist .primary .primary p{
     font-size: 0.9em;
-    color:#777;    
+    color:#777;
 }
 
-.newsDate{
-    text-align: center;
-}
-
+/* 分页页码导航样式 */
 .pagination{
     text-align: center;
 }
@@ -384,17 +418,24 @@ button{
     color: #777;
 }
 
-.newsimage{
-    float: right;
-    width: 30%;
-    margin: 10% 2%;
-    height: 150px;
-    overflow: hidden;
+/*详情页的样式*/
+.detailtitle{
+    font-size: 1.3em;
+    color:#777;
+    text-align: center;
+    text-indent: 0;
+    margin: 5% auto 1%;
+    letter-spacing: 0.1em;
 }
 
-.zhengwenimage{
-    width: 60%;
-    margin: auto;
+.detailtitle p{
+    font-size: 0.9em;
+    letter-spacing: 0;
+}
+
+.detailtitle img{
+    width: 40%;
+    margin: 1% auto;
 }
 
 .previous{

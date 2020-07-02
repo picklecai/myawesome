@@ -11,8 +11,11 @@
         </div>
         <div id="content">
             <p style="text-align: left"> <a href="{% url 'solution:index' %}" >解决方案</a> >> {{ soluArc.title }}</p>
-            <h1 class="newsTitle" > {{ soluArc.title }}</h1>
-            <img class="zhengwenimage" src="{{ MEDIA_URL }}{{ soluArc.image }}" >
+            <div class="detailtitle" >
+                {{ soluArc.title }}
+                <p></p>
+                <img src="{{ MEDIA_URL }}{{ soluArc.image }}" >
+            </div>            
             <div class="maintext">  {{ soluArc.content | safe}} </div>
             {% if previous_soluArc != next_soluArc %}
                 {% if previous_soluArc %}

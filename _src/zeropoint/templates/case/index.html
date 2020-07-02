@@ -10,27 +10,27 @@
             {% include 'nav.html' %}
         </div>        
         <div id="content">
-            <p class="cateChoose1">全部</p>
             
             {% if case_list %}
                 <ul>
                     {% for elem in case_list %}
                         <li>
-                            <div class="newscontent">
-                                <hr/>
+                            <div class="contentlist">
                                 <a href="{% url 'case:case_detail' elem.id %} ">                                    
-                                    <div class="primary">
-                                        <p class="newsTitle" >{{ elem.title }}</p>
-                                        <p class="newsZhengwen" >{{ elem.abstract }}</p>
-                                    </div> 
-                                    <img src="{{ MEDIA_URL }}{{ elem.image }}" class="newsimage">
+                                    <p class="indexTitle" >{{ elem.title }}</p>
+                                    <div class="mainimg">
+                                        <img src="{{ MEDIA_URL }}{{ elem.image }}"> 
+                                    </div>                                    
+                                    <div class="text">
+                                        <p>{{ elem.abstract | slice:":100" }}……</p>
+                                    </div>
                                 </a>
                             </div>
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <p>暂无案例</p>
+                <p class="contentlist">暂无案例</p>
             {% endif %}
         
         

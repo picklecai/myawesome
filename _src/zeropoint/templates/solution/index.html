@@ -10,27 +10,30 @@
             {% include 'nav.html' %}
         </div>        
         <div id="content">
-            <p class="cateChoose1">全部</p>
+            <div class="maintext" style="margin: 3% auto 1%">
+                数字农村围绕农民群众最关心最直接最现实的收益问题，建设农村综合管理平台、农村生产监管平台和农村惠农服务平台，加快补齐农村发展和民生短板。农村综合管理平台以乡村治理和精准脱贫为抓手，建设村务管理子系统，支持人口、财务、农资和党务等数据共享；建设精准扶贫子系统，实现扶贫项目管理和资金管理；建设GIS一张图子系统，通过数据可视化直观为领导展示农业领域的各项数据。
+            </div>
             
             {% if solution_list %}
                 <ul>
                     {% for elem in solution_list %}
                         <li>
-                            <div class="newscontent">
-                                <hr/>
-                                <a href="{% url 'solution:solution_detail' elem.id %} ">                                    
-                                    <div class="primary">
-                                        <p class="newsTitle" >{{ elem.title }}</p>
-                                        <p class="newsZhengwen" >{{ elem.abstract }}</p>
-                                    </div> 
-                                    <img src="{{ MEDIA_URL }}{{ elem.image }}" class="newsimage">
+                            <div class="contentlist">
+                                <a href="{% url 'solution:solution_detail' elem.id %} ">
+                                    <p class="indexTitle" >{{ elem.title }}</p>
+                                    <div class="mainimg">
+                                        <img src="{{ MEDIA_URL }}{{ elem.image }}"> 
+                                    </div>                                    
+                                    <div class="text">
+                                        <p>{{ elem.abstract | slice:":100" }}……</p>
+                                    </div>
                                 </a>
                             </div>
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <p>暂无案例</p>
+                <p class="contentlist">暂无案例</p>
             {% endif %}
         
         

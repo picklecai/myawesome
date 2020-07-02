@@ -10,7 +10,7 @@ class Indexview(ListView):
     model = SoluArcs
     template_name = 'solution/index.html'
     context_object_name = 'solution_list'
-    paginate_by = 1
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         # 首先获得父类生成的传递给模板的字典

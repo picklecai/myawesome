@@ -28,7 +28,7 @@ class Indexview(ListView):
     model = AnliArcs
     template_name = 'case/index.html'
     context_object_name = 'case_list'
-    paginate_by = 1
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         # 首先获得父类生成的传递给模板的字典
