@@ -19,8 +19,15 @@ from django.urls import path, include
 from django.views.generic.base import RedirectView
 from django.conf.urls.static import static
 from django.conf import settings
+from django.contrib.sitemaps.views import sitemap
+from .sitemaps import StaticViewSitemap
+# from django.contrib.sitemaps import GenericSitemap
 from . import view
 
+
+sitemaps = {
+    'static': StaticViewSitemap
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,9 +35,11 @@ urlpatterns = [
     path('case', include(('case.urls', 'case'), namespace='case')),
     path('solution', include(('solution.urls', 'solution'), namespace='solution')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
-    url(r'^$', view.index, name='index'), url(r'^product$', view.product),
-    url(r'^about$', view.about),
+    url(r'^$', view.index, name='index'),
+    url(r'^product$', view.product, name='product'),
+    url(r'^about$', view.about, name='about'),
     url(r'^map.html$', view.map),
+    url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     url(r'^favicon.ico$',
         RedirectView.as_view(url=r'static/images/favicon.ico')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
