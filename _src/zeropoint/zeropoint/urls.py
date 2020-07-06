@@ -38,7 +38,7 @@ urlpatterns = [
     url(r'^$', view.index, name='index'),
     url(r'^product$', view.product, name='product'),
     url(r'^about$', view.about, name='about'),
-    url(r'^map.html$', view.map),
+    url(r'^map.html$', view.map, name='map'),
     url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     url(r'^favicon.ico$',
         RedirectView.as_view(url=r'static/images/favicon.ico')),

@@ -2747,8 +2747,6 @@ class Category(models.Model):
 
 [The sitemap framework | Django documentation | Django](https://docs.djangoproject.com/en/3.0/ref/contrib/sitemaps/)
 
-#### 6.4.1 静态页面的sitemaps
-
 第一步：在settings中添加网站地图
 
 ```
@@ -2765,6 +2763,12 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps'  #新增加的
 ]
 ```
+
+#### 6.4.1 不想显示的静态页面
+
+对StaticViewSitemap的理解有误，它的意思是：
+
+> 我们不希望在站点地图中出现一些静态页面……解决方案是在items中显式列出这些页面的网址名称，并在网站地图的location方法中调用reverse()。……做法的本质，是我先找出不想展示的页面，然后反向选择一下，获取想生成站点条目的对象，最后展示到站点地图中。你可以简单的理解为‘反选’。
 
 第二步：添加sitemaps.py文件
 
