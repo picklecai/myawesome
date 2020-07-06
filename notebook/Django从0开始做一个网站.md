@@ -2736,3 +2736,135 @@ class Category(models.Model):
 ```
 
 新增的分类，在按name排序时，排在原分类之前。但是点击时又跳动。改了后，就按id 的1234来了。
+
+### 6.4 sitemap
+
+上次开了个头，失败了。今天又重新拿出来做。
+
+上次的教程是这个：[django 网站地图sitemap - 刘江的django教程](https://www.liujiangblog.com/course/django/169)
+
+今天摸索了半天，最后发现还是官方的好用：
+
+[The sitemap framework | Django documentation | Django](https://docs.djangoproject.com/en/3.0/ref/contrib/sitemaps/)
+
+#### 6.4.1 静态页面的sitemaps
+
+第一步：在settings中添加网站地图
+
+```
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'news',
+    'django.contrib.sitemaps'  #新增加的
+]
+```
+
+第二步：添加sitemaps.py文件
+
+在根目录（与settings.py同一目录）下添加这个文件。
+
+内容如下：
+
+```
+from django.contrib.sitemaps import Sitemap
+from django.urls import reverse
+
+
+class StaticViewSitemap(Sitemap):
+    priority = 0.5
+    changefreq = 'never'
+
+    def items(self):
+        return ['index', 'product', 'about']
+
+    def location(self, item):
+        return reverse(item)
+
+```
+
+'index'、 'product'、 'about'这几个页面，在urls.py中，都是静态页面，名字的形式是name，不是namespace。
+
+```
+    url(r'^$', view.index, name='index'),
+    url(r'^product$', view.product, name='product'),
+    url(r'^about$', view.about, name='about'),
+```
+
+第三步：在根目录的urls.py中添加：
+
+```
+from django.contrib.sitemaps.views import sitemap
+from .sitemaps import StaticViewSitemap
+
+sitemaps = {
+    'static': StaticViewSitemap
+}
+
+urlpatterns = [
+    url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+]
+```
+
+现在打开`http://127.0.0.1:8000/sitemap.xml`，就有内容了，表示静态页面部分的sitemaps成功建立。
+
+内容如下：
+
+```
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>http://127.0.0.1:8000/</loc>
+<changefreq>never</changefreq>
+<priority>0.5</priority>
+</url>
+<url>
+<loc>http://127.0.0.1:8000/product</loc>
+<changefreq>never</changefreq>
+<priority>0.5</priority>
+</url>
+<url>
+<loc>http://127.0.0.1:8000/about</loc>
+<changefreq>never</changefreq>
+<priority>0.5</priority>
+</url>
+</urlset>
+```
+
+#### 6.4.2 动态页面的sitemaps
+
+暂存：
+
+```
+# news模块的models.py文件
+# from django.contrib.sitemaps import Sitemap
+# from django.urls import reverse
+
+Post类中增加这个方法：
+'''def get_absolute_url(self):
+        return reverse('views.article_detail', args=[str(self.id)])
+        # return "/news/article-detail/%i/" % self.id'''
+
+增加新的sitemap类：
+'''class PostSitemap(Sitemap):
+
+    changefreq = "never"
+    priority = 0.5
+
+    def items(self):
+        return Post.objects.all()'''
+
+'''def location(self, item):
+        return reverse(item)'''
+```
+
+
+
+
+
