@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,9 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'news', 'case', 'solution',
     'django.contrib.sitemaps',
+    'django.contrib.sites',
     'ckeditor',
     'ckeditor_uploader',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

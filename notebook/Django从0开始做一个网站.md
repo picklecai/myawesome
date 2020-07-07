@@ -2743,9 +2743,13 @@ class Category(models.Model):
 
 上次的教程是这个：[django 网站地图sitemap - 刘江的django教程](https://www.liujiangblog.com/course/django/169)
 
-今天摸索了半天，最后发现还是官方的好用：
+今天（2020.07.06）摸索了半天，最后发现还是官方的好用：
 
 [The sitemap framework | Django documentation | Django](https://docs.djangoproject.com/en/3.0/ref/contrib/sitemaps/)
+
+发现刘江只是翻译了这篇。
+
+#### 6.4.1 settings设置
 
 第一步：在settings中添加网站地图
 
@@ -2764,22 +2768,159 @@ INSTALLED_APPS = [
 ]
 ```
 
-#### 6.4.1 不想显示的静态页面
+第二步：确认templates部分是这样：
 
-对StaticViewSitemap的理解有误，它的意思是：
+```
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        ……
+        'APP_DIRS': True,
+        ……
+    }
+```
 
-> 我们不希望在站点地图中出现一些静态页面……解决方案是在items中显式列出这些页面的网址名称，并在网站地图的location方法中调用reverse()。……做法的本质，是我先找出不想展示的页面，然后反向选择一下，获取想生成站点条目的对象，最后展示到站点地图中。你可以简单的理解为‘反选’。
+默认就是这样的，一般无需更改。
 
-第二步：添加sitemaps.py文件
+第三步：安装sites框架
 
-在根目录（与settings.py同一目录）下添加这个文件。
+[“网站”框架| Django文档| Django的](https://docs.djangoproject.com/en/3.0/ref/contrib/sites/#module-django.contrib.sites)
 
-内容如下：
+这篇里说了如何发布一篇文章到多个站点。目前还用不上。安装框架是这里：
+
+> ## 启用网站框架[¶](https://docs.djangoproject.com/en/3.0/ref/contrib/sites/#enabling-the-sites-framework)
+>
+> 若要启用站点框架，请按照下列步骤操作：
+>
+> 1. 添加`'django.contrib.sites'`到您的[`INSTALLED_APPS`](https://docs.djangoproject.com/en/3.0/ref/settings/#std:setting-INSTALLED_APPS)设置。
+>
+> 2. 定义一个[`SITE_ID`](https://docs.djangoproject.com/en/3.0/ref/settings/#std:setting-SITE_ID)设置：
+>
+>    ```
+>    SITE_ID = 1
+>    ```
+>
+> 3. 运行[`migrate`](https://docs.djangoproject.com/en/3.0/ref/django-admin/#django-admin-migrate)。
+
+现在settings是这样：
+
+```
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'news', 'case', 'solution',
+    'django.contrib.sitemaps',
+    'django.contrib.sites', #新增
+    'ckeditor',
+    'ckeditor_uploader',
+]
+
+SITE_ID = 1 #新增
+```
+
+然后执行migrate。它的命令没管用，用了`python manage.py migrate`，这个迁移无须先makemigrations。
+
+结果如下：
+
+```
+Operations to perform:
+  Apply all migrations: admin, auth, case, contenttypes, news, sessions, sites, solution
+Running migrations:
+  Applying sites.0001_initial... OK
+  Applying sites.0002_alter_domain_unique... OK
+```
+
+#### 6.4.2 urls中的设置
+
+在根目录的urls.py中添加：
+
+```
+from django.contrib.sitemaps.views import sitemap
+
+sitemaps = {
+    ……
+}
+
+urlpatterns = [
+    url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+]
+```
+
+为`http://127.0.0.1:8000/sitemap.xml`提供路径支撑。
+
+#### 6.4.3 建立sitemaps.py
+
+> 站点地图文件的名称并不重要，但是位置很重要。搜索引擎只会为您的站点地图中当前URL级别及以下的链接建立索引。例如，如果`sitemap.xml`位于您的根目录中，则它可以引用您网站中的任何URL。但是，如果您的站点地图位于 `/content/sitemap.xml`，则只能引用以开头的URL `/content/`
+
+在和settings同目录处（即根目录）下建立sitemaps.py文件。这个文件，其实主要就是用来写sitemap类的。虽然这些类随便放在哪里都行。
+
+以下各类目，主要讲的是location方法，因为昨天在这个上面吃了很大苦头。
+
+##### 6.4.3.1 想显示的页面：静态页面：
 
 ```
 from django.contrib.sitemaps import Sitemap
-from django.urls import reverse
 
+class IndexSitemap(Sitemap):
+    priority = 0.5
+    changefreq = 'daily'
+
+    def items(self):
+        return ['index', 'product', 'solution', 'case', 'news', ]
+
+    def location(self, item):
+        return '/' + item
+```
+
+静态页面，item就是items的各个列表项，路径也很简单，只要加上'/'就行。
+
+##### 6.4.3.2 想显示的页面：动态页面
+
+以新闻分类为例，是这么写的：
+
+```
+from django.contrib.sitemaps import Sitemap
+from news.models import *
+
+class CateSitemap(Sitemap):
+    priority = 0.6
+    changefreq = 'daily'
+
+    def items(self):
+        return Category.objects.all()
+
+    def location(sef, item):
+        return '/category/' + str(item.id)
+```
+
+items方法就是一条条页面记录（例如有两个分类，那一个item就是一个分类）。
+
+location就是url地址。可以在这里写方法，或者直接写属性`location=……`，也可以到Category类中去添加方法`get_absolute_url`方法。总之就是为了让sitemap知道这个页面的路径。
+
+这个return也可以写成：
+
+```
+return '/category/%i' %(item.id)
+```
+
+照样能返回这个路径。
+
+##### 6.4.3.3 不想显示的页面：静态页面
+
+有些页面不想显示。
+
+> 我们不希望在站点地图中出现一些静态页面……解决方案是在items中显式列出这些页面的网址名称，并在网站地图的location方法中调用reverse()。……做法的本质，是我先找出不想展示的页面，然后反向选择一下，获取想生成站点条目的对象，最后展示到站点地图中。你可以简单的理解为‘反选’。
+
+可以写一个静态类，也放在`sitemaps.py`文件中，但是location方法有区别：
+
+```
+from django.urls import reverse
 
 class StaticViewSitemap(Sitemap):
     priority = 0.5
@@ -2790,10 +2931,9 @@ class StaticViewSitemap(Sitemap):
 
     def location(self, item):
         return reverse(item)
-
 ```
 
-'index'、 'product'、 'about'这几个页面，在urls.py中，都是静态页面，名字的形式是name，不是namespace。
+注意：提到的这几个页面，'index'、 'product'、 'about'，在urls.py中，都是静态页面，名字的形式是name，不是namespace。
 
 ```
     url(r'^$', view.index, name='index'),
@@ -2801,74 +2941,91 @@ class StaticViewSitemap(Sitemap):
     url(r'^about$', view.about, name='about'),
 ```
 
-第三步：在根目录的urls.py中添加：
+##### 6.4.3.4 不想显示的页面：动态页面
+
+如果不想显示的是动态页面，例如上面说的新闻分类页。那就要用reverse了。但是reverse的参数，是有name的item。
+
+直接写`return reverse('/category/' + str(item.id))`是肯定不对的。
+
+写`return reverse(item)`还是不对的，它会说“公司新闻”不是一个name。
+
+参照这里[python-Django Sitemap-'str'对象没有属性'get_absolute_url'错误-代码日志](https://stackoverflow.com/questions/49700123/django-sitemap-str-object-has-no-attribute-get-absolute-url-error)：
 
 ```
-from django.contrib.sitemaps.views import sitemap
-from .sitemaps import StaticViewSitemap
+def get_absolute_url(self):
+        return reverse('blog:blog_post', kwargs={'slug': self.slug})
+```
 
+写成：
+
+```
+    def location(sef, item):
+        return reverse('news:category', kwargs={'id': item.id})
+```
+
+> app_name不是路径，所以用冒号
+
+冒号隔开了子模块news和news下的name：category，后面的关键词参数正是category分类url中所需要的。
+
+或者写成这样也行：
+
+```
+ return reverse('news:category', args=[str(item.id)])
+```
+
+
+
+#### 6.4.4 重新回到urls.py
+
+sitemaps.py文件写好了，重新回到根目录的urls.py中，填充sitemaps字典：
+
+```
 sitemaps = {
-    'static': StaticViewSitemap
+    'newsCate': CateSitemap,
+    'static': StaticViewSitemap,
 }
-
-urlpatterns = [
-    url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-]
 ```
 
-现在打开`http://127.0.0.1:8000/sitemap.xml`，就有内容了，表示静态页面部分的sitemaps成功建立。
-
-内容如下：
+现在打开`http://127.0.0.1:8000/sitemap.xml`，就有内容了:
 
 ```
 This XML file does not appear to have any style information associated with it. The document tree is shown below.
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-<loc>http://127.0.0.1:8000/</loc>
+<loc>http://example.com/category/1</loc>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+<url>
+<loc>http://example.com/category/2</loc>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+<url>
+<loc>http://example.com/about</loc>
 <changefreq>never</changefreq>
 <priority>0.5</priority>
 </url>
 <url>
-<loc>http://127.0.0.1:8000/product</loc>
-<changefreq>never</changefreq>
-<priority>0.5</priority>
-</url>
-<url>
-<loc>http://127.0.0.1:8000/about</loc>
+<loc>http://example.com/map.html</loc>
 <changefreq>never</changefreq>
 <priority>0.5</priority>
 </url>
 </urlset>
 ```
 
-#### 6.4.2 动态页面的sitemaps
+开头的这一行字`This XML file does not appear to have any style information associated with it. The document tree is shown below.`，如果用IE打开就没有。总之，xml的网站地图是建立起来了。
 
-暂存：
+#### 6.4.5 更改域名
+
+上面的内容显示的是：`http://example.com/`，显得很奇怪。不知道在哪里设置的。[Creating Sitemaps in Django - OverIQ.com](https://overiq.com/django-1-10/creating-sitemaps-in-django/)这篇里说，后台已经有了站点了。
+
+赶紧打开admin，进去果然看到了站点，和Post它们是并列的。点进去就看到了`example.com`，于是改成了自己的域名。现在显示站点域名了。
 
 ```
-# news模块的models.py文件
-# from django.contrib.sitemaps import Sitemap
-# from django.urls import reverse
-
-Post类中增加这个方法：
-'''def get_absolute_url(self):
-        return reverse('views.article_detail', args=[str(self.id)])
-        # return "/news/article-detail/%i/" % self.id'''
-
-增加新的sitemap类：
-'''class PostSitemap(Sitemap):
-
-    changefreq = "never"
-    priority = 0.5
-
-    def items(self):
-        return Post.objects.all()'''
-
-'''def location(self, item):
-        return reverse(item)'''
+127.0.0.1:8000/
 ```
 
+顺便加上斜杠，免得那几个item要另外加斜杠了。
 
-
-
-
+算了，还是改回去吧。因为用了reverse的部分，它会自动加斜杠，导致那几个页面找不到。

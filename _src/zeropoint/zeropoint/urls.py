@@ -20,13 +20,17 @@ from django.views.generic.base import RedirectView
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.sitemaps.views import sitemap
-from .sitemaps import StaticViewSitemap
+from .sitemaps import *
 # from django.contrib.sitemaps import GenericSitemap
 from . import view
 
-
 sitemaps = {
-    'static': StaticViewSitemap
+    'index': IndexSitemap,
+    'solution': SoluSitemap,
+    'case': CaseSitemap,
+    'newsCate': CateSitemap,
+    'newsPost': PostSitemap,
+    'static': StaticViewSitemap,
 }
 
 urlpatterns = [
@@ -39,7 +43,8 @@ urlpatterns = [
     url(r'^product$', view.product, name='product'),
     url(r'^about$', view.about, name='about'),
     url(r'^map.html$', view.map, name='map'),
-    url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    url(r'^sitemap.xml$', sitemap, {'sitemaps': sitemaps,}, name='django.contrib.sitemaps.views.sitemap'),
     url(r'^favicon.ico$',
         RedirectView.as_view(url=r'static/images/favicon.ico')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# 'template_name': 'sitemap.html'
