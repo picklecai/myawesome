@@ -10,7 +10,7 @@ pip3 install lxml
 pip3 install beautifulsoup4
 pip3 install requests
 
-```  
+```
 
 从昨天开始，每次使用了pip，都会提示我从8升级到19.但其实已经升级了。
 
@@ -30,7 +30,7 @@ pip3 install --upgrade pip
 conda install lxml
 conda install beautifulsoup4
 conda install requests
-``` 
+```
 安装成功。
 
 打开ipython notebook试，在py3下，一个都不能import，在py2下，除了beautifulsoup4之外的其他两个可以import。查看了`conda list`，三个包都显示在py2.7下。
@@ -112,6 +112,10 @@ Requirement already satisfied, skipping upgrade: six>=1.5 in ./anaconda/envs/pyt
 selenium有点麻烦。虽然装好了，但是不能使用chrome。需要下载Chromedriver，放到环境变量中去。
 
 查看selenium版本号： `pip3 list selenium`
+
+安装Phantomjs：[Phantomjs下载及安装_M996246017的博客-CSDN博客](https://blog.csdn.net/M996246017/article/details/81545713)
+
+
 
 ## 安装openpyxl、pillow  
 
@@ -238,7 +242,7 @@ pip3 install db
 ```
      import urlparse
     ModuleNotFoundError: No module named 'urlparse'
-    
+
 
 ```
 仔细看了一下，又是db文件里，继续手动改至`from urllib.parse import urlparse`。
@@ -426,3 +430,5 @@ ImportError: html5lib not found, please install it
 通过了。
 
 
+
+```

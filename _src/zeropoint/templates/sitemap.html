@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    {% extends 'frame.html' %}
+    {% load static %}
+    {% block title %}SiteMap-Zeropoint IT{% endblock %}
+    {% block description %}网站地图{% endblock %}
+    <body>
+        {% block content %}
+        <div class="menuBackground">
+            {% include 'nav.html' %}
+        </div>        
+        <div id="content">
+            {% include 'sitemap.xml' %}
+        </div>        
+        {% endblock %}
+    </body>
+</html>
