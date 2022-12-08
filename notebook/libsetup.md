@@ -432,3 +432,11 @@ ImportError: html5lib not found, please install it
 
 
 ```
+    
+## 安装folium
+    
+   ```
+     pip install folium
+   ```
+    
+    
