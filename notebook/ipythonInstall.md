@@ -1418,3 +1418,6 @@ pip install --upgrade pip
 升级成了pip19.2.1。
 
 
+
+# 5. 更新conda
+
