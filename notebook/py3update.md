@@ -124,7 +124,19 @@ cat 上面这个路径
 
 
 
+# 4. powshell无法打开jupyter notebook
 
+无法将“jupyter”项识别为+cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，请确保路+径正确，然后再试一次。
+
+
+
+在环境变量里，添加三个变量：
+
+\anaconda3
+
+\anaconda3\scripts
+
+\anaconda3\Library\bin
 
 
 

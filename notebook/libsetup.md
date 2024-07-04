@@ -432,11 +432,28 @@ ImportError: html5lib not found, please install it
 
 
 ```
-    
+
 ## 安装folium
-    
+
    ```
      pip install folium
    ```
-    
-    
+
+## 安装docx
+
+过去安装，都是直接`pip install docx`就好了。今天也这么操作了，没想到报错：
+
+`ModuleNotFoundError: No module named 'exceptions'`
+
+搜索后发现，原来是python3取消了exceptions这个模块。
+
+那能不能直接安装呢？不能。
+
+后来发现有个人说，在python3的情况下，应该卸载掉docx，安装python-docx：
+
+`pip install python-docx`
+
+安装成功后。回到代码页面，仍然使用原句：`import docx`，就可以了。
+
+
+
